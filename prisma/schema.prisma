@@ -854,7 +854,7 @@ model ProductTranslation {
   name        String
   description String
   productId   Int
-  languageId  Int       @map("LanguageId")
+  languageId  Int
   language    Language  @relation(fields: [languageId], references: [id])
   deletedAt   DateTime?
   createdAt   DateTime  @default(now())
