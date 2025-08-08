@@ -8,7 +8,13 @@ export class HashService {
     return await bcrypt.hash(value, this.saltRounds);
   }
 
-  async compare(plainText: string, hashed: string): Promise<boolean> {
+  async compare({
+    plainText,
+    hashed,
+  }: {
+    plainText: string;
+    hashed: string;
+  }): Promise<boolean> {
     return await bcrypt.compare(plainText, hashed);
   }
 }

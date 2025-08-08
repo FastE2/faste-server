@@ -22,9 +22,28 @@ export const RegisterBodySchema = UserSchema.pick({
     }
   });
 
+export const LoginBodySchema = UserSchema.pick({
+  email: true,
+  password: true,
+}).strict();
+
+export const LoginResSchema = z.object({
+  accessToken: z.string(),
+});
+
+export const RefreshTokenResSchema = LoginResSchema;
+
 export const RegisterResSchema = UserSchema.omit({
   password: true,
 });
 
+// -- Register
 export type RegisterBodyType = z.infer<typeof RegisterBodySchema>;
 export type RegisterResType = z.infer<typeof RegisterResSchema>;
+
+// -- Login
+export type LoginBodyType = z.infer<typeof LoginBodySchema>;
+export type LoginResType = z.infer<typeof LoginResSchema>;
+
+// -- RefreshToken
+export type RefreshTokenResType = z.infer<typeof RefreshTokenResSchema>;
