@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { UserType } from 'src/common/schemas/user.schema';
-import { RegisterResType } from 'src/modules/auth/auth.schema';
+import {
+  RefreshTokenType,
+  RegisterResType,
+} from 'src/modules/auth/auth.schema';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 type UserWithoutPassword = Omit<UserType, 'password'> & {
@@ -86,5 +89,13 @@ export class AuthRepository {
         },
       })
       .then((result) => result?.user ?? null);
+  }
+
+  deleteRefreshToken(token: string): Promise<RefreshTokenType> {
+    return this.prismaService.refreshToken.delete({
+      where: {
+        token,
+      },
+    });
   }
 }

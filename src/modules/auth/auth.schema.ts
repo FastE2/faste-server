@@ -22,6 +22,14 @@ export const RegisterBodySchema = UserSchema.pick({
     }
   });
 
+export const RefreshTokenSchema = z.object({
+  token: z.string(),
+  userId: z.number(),
+  deviceId: z.number(),
+  expiresAt: z.date(),
+  createdAt: z.date(),
+});
+
 export const LoginBodySchema = UserSchema.pick({
   email: true,
   password: true,
@@ -46,4 +54,5 @@ export type LoginBodyType = z.infer<typeof LoginBodySchema>;
 export type LoginResType = z.infer<typeof LoginResSchema>;
 
 // -- RefreshToken
+export type RefreshTokenType = z.infer<typeof RefreshTokenSchema>;
 export type RefreshTokenResType = z.infer<typeof RefreshTokenResSchema>;

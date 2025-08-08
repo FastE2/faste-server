@@ -10,6 +10,8 @@ import {
 import { AuthService } from './auth.service';
 import { UserAgent } from 'src/common/decorators/user-agent.decorator';
 import { Request, Response } from 'express';
+import { EmptyBodyDTO } from 'src/common/dtos/request.dto';
+import { MessageResDto } from 'src/common/dtos/response.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -35,8 +37,23 @@ export class AuthController {
 
   @Post('refresh-token')
   @ZodSerializerDto(RefreshTokenResDTO)
-  refreshToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+  refreshToken(
+    @Body() body: EmptyBodyDTO,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const token = req.cookies['refreshToken'];
     return this.authService.refreshToken(token, res);
+  }
+
+  @Post('logout')
+  @ZodSerializerDto(MessageResDto)
+  logout(
+    @Body() body: EmptyBodyDTO,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const token = req.cookies['refreshToken'];
+    return this.authService.logout(token, res);
   }
 }

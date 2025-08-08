@@ -1,5 +1,9 @@
 import { Body, Injectable, Req, Res } from '@nestjs/common';
-import { LoginBodyType, RegisterBodyType } from './auth.schema';
+import {
+  LoginBodyType,
+  RefreshTokenType,
+  RegisterBodyType,
+} from './auth.schema';
 import { CommonUserRepository } from 'src/common/repositories/common-user.repository';
 import {
   EmailAlreadyExistsException,
@@ -108,7 +112,7 @@ export class AuthService {
         maxAge: 1 * 24 * 3600 * 1000,
       });
 
-      return accessToken;
+      return { accessToken };
     } catch (error) {
       console.log('/auth/login', error);
       throw error;
@@ -148,6 +152,24 @@ export class AuthService {
       return accessToken;
     } catch (error) {
       console.log('auht/refresh-token', error);
+      throw error;
+    }
+  }
+
+  async logout(token: string, res: Response) {
+    try {
+      res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+        path: '/',
+      });
+
+      await this.authRepository.deleteRefreshToken(token);
+
+      return { message: 'Logout successfully' };
+    } catch (error) {
+      console.log('/auth/logout', error);
       throw error;
     }
   }
