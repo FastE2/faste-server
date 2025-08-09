@@ -11,19 +11,19 @@ import {
   InvalidPasswordException,
   InvalidTokenException,
 } from './auth.error';
-import { HashService } from 'src/libs/crypto/hash.service';
 import { AuthRepository } from './auth.repository';
 import { CommonRoleRepository } from 'src/common/repositories/common-role.repository';
-import { TokenService } from 'src/libs/token/token.service';
 import { Request, Response, response } from 'express';
+import { HashService } from 'src/common/libs/crypto/hash.service';
+import { TokenService } from 'src/common/libs/token/token.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly commonUserRepository: CommonUserRepository,
     private readonly commonRoleRepository: CommonRoleRepository,
-    private readonly hashService: HashService,
     private readonly authRepository: AuthRepository,
+    private readonly hashService: HashService,
     private readonly tokenService: TokenService,
   ) {}
 
@@ -149,7 +149,7 @@ export class AuthService {
         roleId,
       });
 
-      return accessToken;
+      return { accessToken };
     } catch (error) {
       console.log('auht/refresh-token', error);
       throw error;

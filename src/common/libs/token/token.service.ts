@@ -3,20 +3,20 @@ import { JwtService } from '@nestjs/jwt';
 import envConfig from 'src/common/configs/validate-env';
 import { v4 as uuidv4 } from 'uuid';
 
-type PayloadAccessTokenType = {
+export interface PayloadAccessTokenTypeCreate {
   userId: number;
   roleId: number;
-};
+}
 
-type PayloadRefreshTokenType = {
+export interface PayloadRefreshTokenTypeCreate {
   userId: number;
-};
+}
 
 @Injectable()
 export class TokenService {
   constructor(private jwtService: JwtService) {}
 
-  signAccessToken(payload: PayloadAccessTokenType): Promise<string> {
+  signAccessToken(payload: PayloadAccessTokenTypeCreate): Promise<string> {
     return this.jwtService.signAsync(
       { ...payload, uuid: uuidv4() },
       {
@@ -27,7 +27,7 @@ export class TokenService {
     );
   }
 
-  signRefreshToken(payload: PayloadRefreshTokenType): Promise<string> {
+  signRefreshToken(payload: PayloadRefreshTokenTypeCreate): Promise<string> {
     return this.jwtService.signAsync(
       { ...payload, uuid: uuidv4() },
       {

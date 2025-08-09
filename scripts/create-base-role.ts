@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from 'src/app.module';
 import { ROLE_NAME } from 'src/common/constants/role-base.constant';
-import { HashService } from 'src/libs/crypto/hash.service';
+import { HashService } from 'src/common/libs/crypto/hash.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 const prisma = new PrismaService();

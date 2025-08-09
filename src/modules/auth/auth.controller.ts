@@ -12,18 +12,21 @@ import { UserAgent } from 'src/common/decorators/user-agent.decorator';
 import { Request, Response } from 'express';
 import { EmptyBodyDTO } from 'src/common/dtos/request.dto';
 import { MessageResDto } from 'src/common/dtos/response.dto';
+import { Ispublic } from 'src/common/decorators/auth.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
+  @Ispublic()
   @ZodSerializerDto(RegisterResDTO)
   register(@Body() body: RegisterBodyDTO) {
     return this.authService.register(body);
   }
 
   @Post('login')
+  @Ispublic()
   @ZodSerializerDto(LoginResDTO)
   login(
     @Body() body: LoginBodyDTO,
