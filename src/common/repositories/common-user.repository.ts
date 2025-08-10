@@ -16,4 +16,17 @@ export class CommonUserRepository {
       },
     });
   }
+
+  update(
+    where: { id: number },
+    data: Partial<UserType>,
+  ): Promise<UserType | null> {
+    return this.prismaService.user.update({
+      where: {
+        ...where,
+        deletedAt: null,
+      },
+      data,
+    });
+  }
 }

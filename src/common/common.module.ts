@@ -6,10 +6,12 @@ import { APP_GUARD, Reflector } from '@nestjs/core';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { TokenService } from './libs/token/token.service';
 import { HashService } from './libs/crypto/hash.service';
+import { MailModule } from './libs/mail/mail.module';
+import { MailService } from './libs/mail/mail.service';
 
 @Global()
 @Module({
-  imports: [JwtModule],
+  imports: [JwtModule, MailModule],
   providers: [
     CommonUserRepository,
     CommonRoleRepository,
@@ -26,6 +28,7 @@ import { HashService } from './libs/crypto/hash.service';
     CommonRoleRepository,
     TokenService,
     HashService,
+    MailModule,
   ],
 })
 export class CommonModule {}

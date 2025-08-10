@@ -1,11 +1,13 @@
 import { Body, Controller, Ip, Post, Req, Res } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import {
+  ForgotPasswordBodyDTO,
   LoginBodyDTO,
   LoginResDTO,
   RefreshTokenResDTO,
   RegisterBodyDTO,
   RegisterResDTO,
+  SendOTPBodyDTO,
 } from './auth.dto';
 import { AuthService } from './auth.service';
 import { UserAgent } from 'src/common/decorators/user-agent.decorator';
@@ -58,5 +60,19 @@ export class AuthController {
   ) {
     const token = req.cookies['refreshToken'];
     return this.authService.logout(token, res);
+  }
+
+  @Post('otp')
+  @Ispublic()
+  @ZodSerializerDto(MessageResDto)
+  sendOTP(@Body() body: SendOTPBodyDTO) {
+    return this.authService.sendOTP(body);
+  }
+
+  @Post('forgot-password')
+  @Ispublic()
+  @ZodSerializerDto(MessageResDto)
+  forgotPassowrd(@Body() body: ForgotPasswordBodyDTO) {
+    return this.authService.forgotPassowrd(body);
   }
 }

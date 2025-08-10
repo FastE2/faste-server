@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-import * as cookieParser from 'cookie-parser';
+import  cookieParser from 'cookie-parser';
 import { AuthGuard } from './common/guards/auth.guard';
 import { NestExpressApplication } from '@nestjs/platform-express';
 

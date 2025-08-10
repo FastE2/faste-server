@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 import z from 'zod';
-import * as fs from 'fs';
-import * as path from 'path';
+import  fs from 'fs';
+import  path from 'path';
 
 config({
   path: '.env',
@@ -18,6 +18,9 @@ const configSchema = z.object({
   EXPIRES_IN_REFRESHTOKEN: z.string(),
   SERECT_KEY_ACCESSTOKEN: z.string(),
   SERECT_KEY_REFRESHTOKEN: z.string(),
+  MAIL_USER: z.string(),
+  MAIL_PASS: z.string(),
+  OTP_EXPIRES_IN: z.string()
 });
 
 const configServer = configSchema.safeParse(process.env);

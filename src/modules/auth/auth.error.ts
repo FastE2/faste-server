@@ -24,3 +24,13 @@ export const InvalidTokenException = new UnauthorizedException({
   message: 'Error.InvalidToken',
   path: 'token',
 });
+
+export const InvalidOTPException = new NotFoundException({
+  message: 'Error.InvalidOTP',
+  path: 'code',
+});
+
+export const ExpiredOTPException = new BadRequestException({
+  message: 'Error.ExpiredOTPException',
+  path: 'code',
+});
