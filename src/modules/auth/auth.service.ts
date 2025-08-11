@@ -1,6 +1,7 @@
 import { Body, Injectable, Req, Res } from '@nestjs/common';
 import {
   ForgotPasswordBodyType,
+  GoogleAuthBodyType,
   LoginBodyType,
   RegisterBodyType,
   SendOTPBodyType,
@@ -31,6 +32,7 @@ import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { TwoFactorService } from './2fa.service';
 import { EncryptionService } from 'src/common/libs/crypto/encryption.service';
+import { GoogleService } from './google.service';
 
 @Injectable()
 export class AuthService {
@@ -43,6 +45,7 @@ export class AuthService {
     private readonly mailService: MailService,
     private readonly twoFactorService: TwoFactorService,
     private readonly encryptionService: EncryptionService,
+    private readonly googleService: GoogleService,
   ) {}
 
   async register(body: RegisterBodyType) {
@@ -117,7 +120,7 @@ export class AuthService {
       const deviceUser = await this.authRepository.updateOrCreateDeviceUser({
         ip: body.ip,
         userAgent: body.userAgent,
-        UserId: user.id,
+        userId: user.id,
       });
 
       // create accessToken and refreshToken

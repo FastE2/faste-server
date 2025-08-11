@@ -22,7 +22,12 @@ const configSchema = z.object({
   MAIL_PASS: z.string(),
   OTP_EXPIRES_IN: z.string(),
   APP_NAME: z.string(),
-  ENCRYPTION_KEY: z.string()
+  ENCRYPTION_KEY: z.string(),
+  GOOGLE_SCOPES_API: z.string(),
+  GOOGLE_CLIENT_ID: z.string(),
+  GOOGLE_CLIENT_SECRET: z.string(),
+  GOOGLE_REDIRECT_URI: z.string(),
+  GOOGLE_CLIENT_REDIRECT_URI: z.string(),
 });
 
 const configServer = configSchema.safeParse(process.env);

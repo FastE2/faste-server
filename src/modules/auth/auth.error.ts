@@ -49,3 +49,8 @@ export const TOTPNotEnabledException = new BadRequestException({
   message: 'Error.TOTPNotEnabledException',
   path: '2fa',
 });
+
+export const GoogleUserInfoError = new BadRequestException({
+  message: 'Error.GoogleUserInfoError',
+  path: 'google',
+});

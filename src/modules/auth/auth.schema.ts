@@ -58,6 +58,7 @@ export const RefreshTokenResSchema = LoginResSchema;
 
 export const RegisterResSchema = UserSchema.omit({
   password: true,
+  totpSecret: true,
 });
 
 export const SendOTPBodySchema = VerificationCodeSchema.pick({
@@ -92,6 +93,22 @@ export const TwoFAEnableResSchema = z.object({
   uri: z.string(),
 });
 
+// ** DIVCE
+export const DeviceSchema = z.object({
+  id: z.number(),
+  userId: z.number(),
+  userAgent: z.string(),
+  ip: z.string(),
+  lastActive: z.date(),
+  createdAt: z.date(),
+  isActive: z.boolean(),
+});
+
+export const GoogleAuthStateSchema = DeviceSchema.pick({
+  userAgent: true,
+  ip: true,
+});
+
 // -- Register
 export type RegisterBodyType = z.infer<typeof RegisterBodySchema>;
 export type RegisterResType = z.infer<typeof RegisterResSchema>;
@@ -113,4 +130,8 @@ export type ForgotPasswordBodyType = z.infer<typeof ForgotPasswordBodySchema>;
 
 // -- 2FA
 export type TwoFADisableBodyType = z.infer<typeof TwoFADisableBodySchema>;
-export type TwoFAEnableResType = z.infer<typeof TwoFAEnableResSchema>
+export type TwoFAEnableResType = z.infer<typeof TwoFAEnableResSchema>;
+
+// -- Google
+export type GoogleAuthStateType = z.infer<typeof GoogleAuthStateSchema>;
+export type GoogleAuthBodyType = GoogleAuthStateType;

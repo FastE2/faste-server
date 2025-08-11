@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { VerificationCodeTypeType } from 'src/common/constants/auth.constant';
+import { RoleType } from 'src/common/schemas/role.schema';
 import { UserType } from 'src/common/schemas/user.schema';
 import {
   RefreshTokenType,
@@ -25,6 +26,21 @@ export class AuthRepository {
       data: user,
       omit: {
         password: true,
+        totpSecret: true,
+      },
+    });
+  }
+
+  async createUserIncludeRole(
+    user: Pick<
+      UserType,
+      'roleId' | 'email' | 'name' | 'password' | 'phoneNumber' | 'avatar'
+    >,
+  ): Promise<Promise<UserType & { role: RoleType }>> {
+    return this.prismaService.user.create({
+      data: user,
+      include: {
+        role: true,
       },
     });
   }
@@ -32,7 +48,7 @@ export class AuthRepository {
   updateOrCreateDeviceUser(body: {
     ip: string;
     userAgent: string;
-    UserId: number;
+    userId: number;
   }) {
     const deviceUser = this.prismaService.device.upsert({
       where: {
@@ -41,7 +57,7 @@ export class AuthRepository {
       create: {
         ip: body.ip,
         userAgent: body.userAgent,
-        userId: body.UserId,
+        userId: body.userId,
       },
       update: {
         lastActive: new Date(),

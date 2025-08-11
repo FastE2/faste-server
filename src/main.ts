@@ -2,13 +2,19 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-import  cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import { AuthGuard } from './common/guards/auth.guard';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.use(cookieParser());
+
+  app.enableCors({
+    origin: 'http://localhost:3300',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    credentials: true,
+  });
 
   // -- guard
   // app.useGlobalGuards(app.get(AuthGuard));
