@@ -18,6 +18,8 @@ model User {
   dateOfBirth DateTime?
   roleId      Int
   role        Role      @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  // 2FA
+  totpSecret  String?   @db.VarChar(1000)
 
   createdById  Int?
   createdBy    User?  @relation("CreatorUsers", fields: [createdById], references: [id], onDelete: SetNull, onUpdate: NoAction)

@@ -14,6 +14,20 @@ if (!fs.existsSync(path.resolve('.env'))) {
 
 const configSchema = z.object({
   DATABASE_URL: z.string(),
+  EXPIRES_IN_ACCESSTOKEN: z.string(),
+  EXPIRES_IN_REFRESHTOKEN: z.string(),
+  SERECT_KEY_ACCESSTOKEN: z.string(),
+  SERECT_KEY_REFRESHTOKEN: z.string(),
+  MAIL_USER: z.string(),
+  MAIL_PASS: z.string(),
+  OTP_EXPIRES_IN: z.string(),
+  APP_NAME: z.string(),
+  ENCRYPTION_KEY: z.string(),
+  GOOGLE_SCOPES_API: z.string(),
+  GOOGLE_CLIENT_ID: z.string(),
+  GOOGLE_CLIENT_SECRET: z.string(),
+  GOOGLE_REDIRECT_URI: z.string(),
+  GOOGLE_CLIENT_REDIRECT_URI: z.string(),
 });
 
 const configServer = configSchema.safeParse(process.env);

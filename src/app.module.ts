@@ -1,17 +1,25 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_PIPE, Reflector } from '@nestjs/core';
 import { CustomZodValidationPipe } from './common/pipes/custom-zod-validation.pipe';
+import { PrismaModule } from './prisma/prisma.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { CommonModule } from './common/common.module';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 @Module({
-  imports: [],
+  imports: [PrismaModule, CommonModule, AuthModule],
   controllers: [AppController],
   providers: [
     AppService,
     {
       provide: APP_PIPE,
       useClass: CustomZodValidationPipe,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
     },
   ],
 })
