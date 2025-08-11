@@ -44,7 +44,11 @@ export const VerificationCodeSchema = z.object({
 export const LoginBodySchema = UserSchema.pick({
   email: true,
   password: true,
-}).strict();
+})
+  .extend({
+    totpCode: z.string().length(6).optional(),
+  })
+  .strict();
 
 export const LoginResSchema = z.object({
   accessToken: z.string(),
@@ -80,6 +84,14 @@ export const ForgotPasswordBodySchema = UserSchema.pick({
     }
   });
 
+export const TwoFADisableBodySchema = z.object({
+  totpCode: z.string().min(6),
+});
+
+export const TwoFAEnableResSchema = z.object({
+  uri: z.string(),
+});
+
 // -- Register
 export type RegisterBodyType = z.infer<typeof RegisterBodySchema>;
 export type RegisterResType = z.infer<typeof RegisterResSchema>;
@@ -98,3 +110,7 @@ export type VerificationCodeType = z.infer<typeof VerificationCodeSchema>;
 
 // -- ForgotPassword
 export type ForgotPasswordBodyType = z.infer<typeof ForgotPasswordBodySchema>;
+
+// -- 2FA
+export type TwoFADisableBodyType = z.infer<typeof TwoFADisableBodySchema>;
+export type TwoFAEnableResType = z.infer<typeof TwoFAEnableResSchema>

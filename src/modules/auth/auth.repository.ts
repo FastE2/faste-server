@@ -79,6 +79,7 @@ export class AuthRepository {
               avatar: true,
               dateOfBirth: true,
               roleId: true,
+              totpSecret: true,
               createdById: true,
               updatedById: true,
               deletedAt: true,
@@ -127,10 +128,10 @@ export class AuthRepository {
           email_type: {
             email: string;
             // code: string;
-            type: VerificationCodeTypeType;
+            type: keyof typeof VerificationCodeTypeType;
           };
         },
-  ) {
+  ): Promise<VerificationCodeType | null> {
     return this.prismaService.verificationCode.findUnique({
       where: uniqueValue,
     });
@@ -143,7 +144,7 @@ export class AuthRepository {
           email_type: {
             // code: string;
             email: string;
-            type: VerificationCodeTypeType;
+            type: keyof typeof VerificationCodeTypeType;
           };
         },
   ) {

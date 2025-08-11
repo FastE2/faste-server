@@ -1,4 +1,4 @@
-import { Body, Controller, Ip, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, HttpCode, Ip, Post, Req, Res } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import {
   ForgotPasswordBodyDTO,
@@ -8,6 +8,8 @@ import {
   RegisterBodyDTO,
   RegisterResDTO,
   SendOTPBodyDTO,
+  TwoFADisableBodyDTO,
+  TwoFAEnableResDTO,
 } from './auth.dto';
 import { AuthService } from './auth.service';
 import { UserAgent } from 'src/common/decorators/user-agent.decorator';
@@ -15,6 +17,7 @@ import { Request, Response } from 'express';
 import { EmptyBodyDTO } from 'src/common/dtos/request.dto';
 import { MessageResDto } from 'src/common/dtos/response.dto';
 import { Ispublic } from 'src/common/decorators/auth.decorator';
+import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -43,7 +46,7 @@ export class AuthController {
   @Post('refresh-token')
   @ZodSerializerDto(RefreshTokenResDTO)
   refreshToken(
-    @Body() body: EmptyBodyDTO,
+    @Body() _: EmptyBodyDTO,
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
@@ -54,7 +57,7 @@ export class AuthController {
   @Post('logout')
   @ZodSerializerDto(MessageResDto)
   logout(
-    @Body() body: EmptyBodyDTO,
+    @Body() _: EmptyBodyDTO,
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
@@ -64,6 +67,7 @@ export class AuthController {
 
   @Post('otp')
   @Ispublic()
+  @HttpCode(200)
   @ZodSerializerDto(MessageResDto)
   sendOTP(@Body() body: SendOTPBodyDTO) {
     return this.authService.sendOTP(body);
@@ -72,7 +76,30 @@ export class AuthController {
   @Post('forgot-password')
   @Ispublic()
   @ZodSerializerDto(MessageResDto)
+  @HttpCode(200)
   forgotPassowrd(@Body() body: ForgotPasswordBodyDTO) {
     return this.authService.forgotPassowrd(body);
+  }
+
+  @Post('2fa/enable')
+  @ZodSerializerDto(TwoFAEnableResDTO)
+  enableTwoFactorAuth(
+    @Body() _: EmptyBodyDTO,
+    @ActiveUser('userId') userId: number,
+  ) {
+    return this.authService.enableTwoFactorAuth(userId);
+  }
+
+  @Post('2fa/disable')
+  @ZodSerializerDto(MessageResDto)
+  @HttpCode(200)
+  disableTwoFactorAuth(
+    @Body() body: TwoFADisableBodyDTO,
+    @ActiveUser('userId') userId: number,
+  ) {
+    return this.authService.disableTwoFactorAuth({
+      totpCode: body.totpCode,
+      userId,
+    });
   }
 }

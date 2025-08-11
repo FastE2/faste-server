@@ -4,6 +4,7 @@ import {
   LoginBodyType,
   RegisterBodyType,
   SendOTPBodyType,
+  TwoFADisableBodyType,
 } from './auth.schema';
 import { CommonUserRepository } from 'src/common/repositories/common-user.repository';
 import {
@@ -13,6 +14,9 @@ import {
   InvalidOTPException,
   InvalidPasswordException,
   InvalidTokenException,
+  InvalidTokenTOTPException,
+  TOTPNotEnabledException,
+  TwoFactorAlreadyEnabledException,
 } from './auth.error';
 import { AuthRepository } from './auth.repository';
 import { CommonRoleRepository } from 'src/common/repositories/common-role.repository';
@@ -24,7 +28,9 @@ import { generateOTP } from 'src/utils/generate-otp';
 import { VerificationCodeTypeType } from 'src/common/constants/auth.constant';
 import envConfig from 'src/common/configs/validate-env';
 import { addMilliseconds } from 'date-fns';
-import  ms from 'ms';
+import ms from 'ms';
+import { TwoFactorService } from './2fa.service';
+import { EncryptionService } from 'src/common/libs/crypto/encryption.service';
 
 @Injectable()
 export class AuthService {
@@ -35,6 +41,8 @@ export class AuthService {
     private readonly hashService: HashService,
     private readonly tokenService: TokenService,
     private readonly mailService: MailService,
+    private readonly twoFactorService: TwoFactorService,
+    private readonly encryptionService: EncryptionService,
   ) {}
 
   async register(body: RegisterBodyType) {
@@ -75,6 +83,26 @@ export class AuthService {
       });
       if (!user) {
         throw EmailNotExistsException;
+      }
+      if (
+        (user.totpSecret && !body.totpCode) ||
+        (!user.totpSecret && body.totpCode)
+      ) {
+        throw InvalidTokenTOTPException;
+      }
+      if (body.totpCode) {
+        const decryptedSecret = this.encryptionService.decrypt(
+          user.totpSecret!,
+        );
+        const isValid = this.twoFactorService.verifyTOTP({
+          email: body.email,
+          token: body.totpCode,
+          secret: decryptedSecret,
+        });
+        console.log('ISVALID', isValid);
+        if (!isValid) {
+          throw InvalidTokenTOTPException;
+        }
       }
 
       const isMatchPassword = await this.hashService.compare({
@@ -191,7 +219,7 @@ export class AuthService {
   }: {
     email: string;
     code: string;
-    type: VerificationCodeTypeType;
+    type: keyof typeof VerificationCodeTypeType;
   }) {
     const verifyCode = await this.authRepository.findUniqueVerificationCode({
       email_type: {
@@ -292,6 +320,64 @@ export class AuthService {
       };
     } catch (error) {
       console.log('/auth/forgot-password', error);
+      throw error;
+    }
+  }
+
+  async enableTwoFactorAuth(id: number) {
+    try {
+      const user = await this.commonUserRepository.findUniqueUser({ id });
+      if (!user) {
+        throw EmailNotExistsException;
+      }
+      if (user.totpSecret) {
+        throw TwoFactorAlreadyEnabledException;
+      }
+      const { secret, uri } = this.twoFactorService.generateTOTPSecret(
+        user.email,
+      );
+      const encryptedSecret = this.encryptionService.encrypt(secret);
+      await this.twoFactorService.enableTwoFaForUser(id, encryptedSecret);
+
+      return { uri };
+    } catch (error) {
+      console.log('/auth/2fa/enable', error);
+      throw error;
+    }
+  }
+
+  async disableTwoFactorAuth(
+    data: TwoFADisableBodyType & {
+      userId: number;
+    },
+  ) {
+    try {
+      const { totpCode, userId } = data;
+      const user = await this.commonUserRepository.findUniqueUser({
+        id: userId,
+      });
+      if (!user) {
+        throw EmailNotExistsException;
+      }
+
+      if (!user.totpSecret) {
+        throw TOTPNotEnabledException;
+      }
+      if (totpCode) {
+        const decryptedSecret = this.encryptionService.decrypt(user.totpSecret);
+        const isValid = this.twoFactorService.verifyTOTP({
+          email: user.email,
+          secret: decryptedSecret,
+          token: totpCode,
+        });
+        if (!isValid) {
+          throw InvalidTokenTOTPException;
+        }
+      }
+      await this.twoFactorService.disableTwoFaForUser(userId);
+      return { message: 'Disable 2FA successfully' };
+    } catch (error) {
+      console.log('/auth/2fa/disable', error);
       throw error;
     }
   }

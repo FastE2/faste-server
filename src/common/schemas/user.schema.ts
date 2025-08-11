@@ -1,4 +1,4 @@
-import z from "zod";
+import z from 'zod';
 
 export const UserSchema = z.object({
   id: z.number(),
@@ -8,6 +8,7 @@ export const UserSchema = z.object({
   phoneNumber: z.string().min(9).max(15),
   avatar: z.string().nullable(),
   roleId: z.number().positive(),
+  totpSecret: z.string().nullable(),
   dateOfBirth: z.date().nullable(),
   createdById: z.number().nullable(),
   updatedById: z.number().nullable(),
@@ -15,6 +16,6 @@ export const UserSchema = z.object({
   deletedAt: z.date().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
-})
+});
 
 export type UserType = z.infer<typeof UserSchema>;

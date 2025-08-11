@@ -7,6 +7,8 @@ import {
   RegisterBodySchema,
   RegisterResSchema,
   SendOTPBodySchema,
+  TwoFADisableBodySchema,
+  TwoFAEnableResSchema,
 } from './auth.schema';
 
 // -- Register
@@ -27,3 +29,7 @@ export class SendOTPBodyDTO extends createZodDto(SendOTPBodySchema) {}
 export class ForgotPasswordBodyDTO extends createZodDto(
   ForgotPasswordBodySchema,
 ) {}
+
+// -- 2FA
+export class TwoFADisableBodyDTO extends createZodDto(TwoFADisableBodySchema) {}
+export class TwoFAEnableResDTO extends createZodDto(TwoFAEnableResSchema) {}

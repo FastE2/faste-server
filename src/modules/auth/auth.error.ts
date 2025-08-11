@@ -34,3 +34,18 @@ export const ExpiredOTPException = new BadRequestException({
   message: 'Error.ExpiredOTPException',
   path: 'code',
 });
+
+export const TwoFactorAlreadyEnabledException = new BadRequestException({
+  message: 'Error.TwoFactorAlreadyEnabled',
+  path: '2fa',
+});
+
+export const InvalidTokenTOTPException = new BadRequestException({
+  message: 'Error.InvalidTokenTOTPException',
+  path: 'code',
+});
+
+export const TOTPNotEnabledException = new BadRequestException({
+  message: 'Error.TOTPNotEnabledException',
+  path: '2fa',
+});
