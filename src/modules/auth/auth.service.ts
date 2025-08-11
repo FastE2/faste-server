@@ -1,7 +1,6 @@
-import { Body, Injectable, Req, Res } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
   ForgotPasswordBodyType,
-  GoogleAuthBodyType,
   LoginBodyType,
   RegisterBodyType,
   SendOTPBodyType,
@@ -21,7 +20,7 @@ import {
 } from './auth.error';
 import { AuthRepository } from './auth.repository';
 import { CommonRoleRepository } from 'src/common/repositories/common-role.repository';
-import { Request, Response, response } from 'express';
+import { Response } from 'express';
 import { HashService } from 'src/common/libs/crypto/hash.service';
 import { TokenService } from 'src/common/libs/token/token.service';
 import { MailService } from 'src/common/libs/mail/mail.service';
@@ -32,7 +31,6 @@ import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { TwoFactorService } from './2fa.service';
 import { EncryptionService } from 'src/common/libs/crypto/encryption.service';
-import { GoogleService } from './google.service';
 
 @Injectable()
 export class AuthService {
@@ -45,7 +43,6 @@ export class AuthService {
     private readonly mailService: MailService,
     private readonly twoFactorService: TwoFactorService,
     private readonly encryptionService: EncryptionService,
-    private readonly googleService: GoogleService,
   ) {}
 
   async register(body: RegisterBodyType) {
@@ -53,9 +50,16 @@ export class AuthService {
       const existedUser = await this.commonUserRepository.findUniqueUser({
         email: body.email,
       });
+
       if (existedUser) {
         throw EmailAlreadyExistsException;
       }
+
+      await this.validateVerificationCode({
+        code: body.code,
+        email: body.email,
+        type: VerificationCodeTypeType.REGISTER,
+      });
       const [passwordHash, roleClientId] = await Promise.all([
         this.hashService.hash(body.password),
         this.commonRoleRepository.getClientRoleId(),
