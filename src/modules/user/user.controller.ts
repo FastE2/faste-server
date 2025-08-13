@@ -1,6 +1,11 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { UserService } from './user.service';
-import { GetUsersQueryDTO, GetUsersResDTO } from './user.dto';
+import {
+  GetUserByIdParamsDTO,
+  GetUserByIdResDTO,
+  GetUsersQueryDTO,
+  GetUsersResDTO,
+} from './user.dto';
 import { ZodSerializerDto } from 'nestjs-zod';
 
 @Controller('user')
@@ -11,5 +16,11 @@ export class UserController {
   @ZodSerializerDto(GetUsersResDTO)
   getAllUser(@Query() query: GetUsersQueryDTO) {
     return this.userService.getAllUsers(query);
+  }
+
+  @Get('/:id')
+  @ZodSerializerDto(GetUserByIdResDTO)
+  getById(@Param() params: GetUserByIdParamsDTO) {
+    return this.userService.getUserById(params.id);
   }
 }

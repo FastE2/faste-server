@@ -14,6 +14,12 @@ export const GetUsersInclueRoleSchema = UserSchema.omit({
     .strip(),
 });
 
+export const GetUserByIdParamsSchema = z
+  .object({
+    id: z.coerce.number().int().positive(),
+  })
+  .strict();
+
 export const GetUsersResSchema = z
   .object({
     data: z.array(GetUsersInclueRoleSchema),
@@ -26,3 +32,4 @@ export const GetUsersResSchema = z
 
 export type GetUsersInclueRoleType = z.infer<typeof GetUsersInclueRoleSchema>;
 export type GetUsersResType = z.infer<typeof GetUsersResSchema>;
+export type GetUserByIdParamsType = z.infer<typeof GetUserByIdParamsSchema>;
