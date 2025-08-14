@@ -1,12 +1,24 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PaginationQueryType } from 'src/common/schemas/request.schema';
 import { UserRepository } from './user.repository';
-import { GetUserByIdParamsType, UpdateUserBodyType } from './user.schema';
+import {
+  CreateUserBodyType,
+  GetUserByIdParamsType,
+  UpdateUserBodyType,
+} from './user.schema';
 import { CommonUserRepository } from 'src/common/repositories/common-user.repository';
-import { NotFoundRecordException } from 'src/common/errors';
+import {
+  EmailAlreadyExistsException,
+  NotFoundRecordException,
+} from 'src/common/errors';
 import { CannotUpdateOrDeleteYourselfException } from './user.error';
 import { ROLE_NAME } from 'src/common/constants/role-base.constant';
 import { CommonRoleRepository } from 'src/common/repositories/common-role.repository';
+import { HashService } from 'src/common/libs/crypto/hash.service';
 
 @Injectable()
 export class UserService {
@@ -14,6 +26,7 @@ export class UserService {
     private readonly userRepository: UserRepository,
     private readonly commonUserRepository: CommonUserRepository,
     private readonly commonRoleRepository: CommonRoleRepository,
+    private readonly hashService: HashService,
   ) {}
   async getAllUsers(query: PaginationQueryType) {
     try {
@@ -32,6 +45,43 @@ export class UserService {
       if (!user) {
         throw NotFoundRecordException;
       }
+      return user;
+    } catch (error) {
+      console.log('/user/:id', error);
+      throw error;
+    }
+  }
+
+  async createUser({
+    data,
+    updatedById,
+    updatedByRoleName,
+  }: {
+    data: CreateUserBodyType;
+    updatedById: number;
+    updatedByRoleName: string;
+  }) {
+    try {
+      const existEmail = await this.commonUserRepository.findUniqueUser({
+        email: data.email,
+      });
+      if (existEmail) {
+        throw EmailAlreadyExistsException;
+      }
+      await this.verifyRoleAdmin({
+        roleIdTarget: data.roleId,
+        roleNameAgent: updatedByRoleName,
+      });
+
+      const hasPassword = await this.hashService.hash(data.password);
+
+      const user = await this.userRepository.create({
+        createdById: updatedById,
+        data: {
+          ...data,
+          password: hasPassword,
+        },
+      });
       return user;
     } catch (error) {
       console.log('/user/:id', error);
@@ -65,7 +115,12 @@ export class UserService {
 
       // 3. update user
       const updateUser = await this.commonUserRepository.update({ id }, data);
-      return updateUser;
+      if (!updateUser) {
+        throw new NotFoundException();
+      }
+
+      const { password, totpSecret, ...safeUser } = updateUser;
+      return safeUser;
     } catch (error) {
       console.log('/user/:id', error);
       throw error;

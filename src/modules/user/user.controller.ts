@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   Put,
   Query,
 } from '@nestjs/common';
@@ -15,6 +16,8 @@ import {
   GetUsersResDTO,
   UpdateUserBodyDTO,
   UpdateUserResDTO,
+  CreateUserBodyDTO,
+  CreateUserResDTO,
 } from './user.dto';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
@@ -34,6 +37,20 @@ export class UserController {
   @ZodSerializerDto(GetUserByIdResDTO)
   getById(@Param() params: GetUserParamsDTO) {
     return this.userService.getUserById(params.id);
+  }
+
+  @Post()
+  @ZodSerializerDto(CreateUserResDTO)
+  createUser(
+    @Body() body: CreateUserBodyDTO,
+    @ActiveUser('userId') userId: number,
+    @ActiveRolePermissions('name') roleName: string,
+  ) {
+    return this.userService.createUser({
+      data: body,
+      updatedById: userId,
+      updatedByRoleName: roleName,
+    });
   }
 
   @Patch('/:id')

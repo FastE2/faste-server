@@ -58,3 +58,4 @@ export type GetUsersInclueRoleType = z.infer<typeof GetUsersInclueRoleSchema>;
 export type GetUsersResType = z.infer<typeof GetUsersResSchema>;
 export type GetUserByIdParamsType = z.infer<typeof GetUserParamsSchema>;
 export type UpdateUserBodyType = z.infer<typeof UpdateUserBodySchema>;
+export type CreateUserBodyType = z.infer<typeof CreateUserBodySchema>;

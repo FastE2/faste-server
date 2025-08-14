@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PaginationQueryType } from 'src/common/schemas/request.schema';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { GetUsersInclueRoleSchema, GetUsersResType } from './user.schema';
+import {
+  CreateUserBodyType,
+  GetUsersInclueRoleSchema,
+  GetUsersResType,
+} from './user.schema';
 import { zodToPrismaSelect } from 'src/utils/zod-prisma-select.util';
+import { UserType } from 'src/common/schemas/user.schema';
 
 @Injectable()
 export class UserRepository {
@@ -46,5 +51,35 @@ export class UserRepository {
       limmit: pagination.limit,
       totalPage: Math.ceil(totalItem / pagination.limit),
     };
+  }
+  update(
+    where: { id: number },
+    data: Partial<UserType>,
+  ): Promise<UserType | null> {
+    return this.prismaService.user.update({
+      where: {
+        ...where,
+        deletedAt: null,
+      },
+      data,
+    });
+  }
+  create({
+    createdById,
+    data,
+  }: {
+    createdById: number | null;
+    data: CreateUserBodyType;
+  }): Promise<Omit<UserType, 'password' | 'totpSecret'>> {
+    return this.prismaService.user.create({
+      data: {
+        ...data,
+        createdById,
+      },
+      omit: {
+        password: true,
+        totpSecret: true,
+      },
+    });
   }
 }

@@ -60,9 +60,9 @@ export class AuthGuard implements CanActivate {
         this.throwException('Error.InvalidToken');
       }
       request[REQUEST_USER_KEY] = payload;
-    } catch (e) {
-      console.log('authorize', e);
-      this.throwException('Error.InvalidToken');
+    } catch (error) {
+      console.log('authorize', error);
+      throw error;
     }
   }
 

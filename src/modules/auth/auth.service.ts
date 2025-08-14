@@ -8,7 +8,6 @@ import {
 } from './auth.schema';
 import { CommonUserRepository } from 'src/common/repositories/common-user.repository';
 import {
-  EmailAlreadyExistsException,
   EmailNotExistsException,
   ExpiredOTPException,
   InvalidOTPException,
@@ -31,6 +30,7 @@ import ms from 'ms';
 import { TwoFactorService } from './2fa.service';
 import { EncryptionService } from 'src/common/libs/crypto/encryption.service';
 import { generateOTP } from 'src/utils/generate-otp.util';
+import { EmailAlreadyExistsException } from 'src/common/errors';
 
 @Injectable()
 export class AuthService {
