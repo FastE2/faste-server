@@ -11,7 +11,7 @@ export class UserRepository {
   async list(pagination: PaginationQueryType): Promise<GetUsersResType> {
     const skip = (pagination.page - 1) * pagination.limit;
     const take = pagination.limit;
-    console.log(zodToPrismaSelect(GetUsersInclueRoleSchema));
+    // console.log(zodToPrismaSelect(GetUsersInclueRoleSchema));
     const [data, totalItem] = await Promise.all([
       this.prismaService.user.findMany({
         where: {

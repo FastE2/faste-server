@@ -1,12 +1,24 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import {
-  GetUserByIdParamsDTO,
+  GetUserParamsDTO,
   GetUserByIdResDTO,
   GetUsersQueryDTO,
   GetUsersResDTO,
+  UpdateUserBodyDTO,
+  UpdateUserResDTO,
 } from './user.dto';
 import { ZodSerializerDto } from 'nestjs-zod';
+import { ActiveUser } from 'src/common/decorators/active-user.decorator';
+import { ActiveRolePermissions } from 'src/common/decorators/active-role-permissions.decorator';
 
 @Controller('user')
 export class UserController {
@@ -20,7 +32,23 @@ export class UserController {
 
   @Get('/:id')
   @ZodSerializerDto(GetUserByIdResDTO)
-  getById(@Param() params: GetUserByIdParamsDTO) {
+  getById(@Param() params: GetUserParamsDTO) {
     return this.userService.getUserById(params.id);
+  }
+
+  @Patch('/:id')
+  @ZodSerializerDto(UpdateUserResDTO)
+  updateUser(
+    @Body() body: UpdateUserBodyDTO,
+    @Param() params: GetUserParamsDTO,
+    @ActiveUser('userId') userId: number,
+    @ActiveRolePermissions('name') roleName: string,
+  ) {
+    return this.userService.updateUser({
+      id: params.id,
+      data: body,
+      updatedById: userId,
+      updatedByRoleName: roleName,
+    });
   }
 }
