@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { boolean, z } from 'zod';
 
 export const EmptyBodySchema = z.object({}).strict();
 
@@ -9,5 +9,12 @@ export const PaginationQuerySchema = z
   })
   .strict();
 
+export const DeleteBodySchema = z
+  .object({
+    isHard: z.boolean().optional(),
+  })
+  .strict();
+
 export type EmptyBodyType = z.infer<typeof EmptyBodySchema>;
+export type DeleteBodyType = z.infer<typeof DeleteBodySchema>;
 export type PaginationQueryType = z.infer<typeof PaginationQuerySchema>;

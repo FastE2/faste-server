@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -22,6 +23,7 @@ import {
 import { ZodSerializerDto } from 'nestjs-zod';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { ActiveRolePermissions } from 'src/common/decorators/active-role-permissions.decorator';
+import { MessageResDto } from 'src/common/dtos/response.dto';
 
 @Controller('user')
 export class UserController {
@@ -66,6 +68,20 @@ export class UserController {
       data: body,
       updatedById: userId,
       updatedByRoleName: roleName,
+    });
+  }
+
+  @Delete('/:id')
+  @ZodSerializerDto(MessageResDto)
+  deleteUser(
+    @Param() params: GetUserParamsDTO,
+    @ActiveUser('userId') userId: number,
+    @ActiveRolePermissions('name') roleName: string,
+  ) {
+    return this.userService.deleteUser({
+      id: params.id,
+      deletedById: userId,
+      deletedByRoleName: roleName,
     });
   }
 }

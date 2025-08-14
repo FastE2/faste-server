@@ -5,11 +5,7 @@ import {
 } from '@nestjs/common';
 import { PaginationQueryType } from 'src/common/schemas/request.schema';
 import { UserRepository } from './user.repository';
-import {
-  CreateUserBodyType,
-  GetUserByIdParamsType,
-  UpdateUserBodyType,
-} from './user.schema';
+import { CreateUserBodyType, UpdateUserBodyType } from './user.schema';
 import { CommonUserRepository } from 'src/common/repositories/common-user.repository';
 import {
   EmailAlreadyExistsException,
@@ -19,6 +15,7 @@ import { CannotUpdateOrDeleteYourselfException } from './user.error';
 import { ROLE_NAME } from 'src/common/constants/role-base.constant';
 import { CommonRoleRepository } from 'src/common/repositories/common-role.repository';
 import { HashService } from 'src/common/libs/crypto/hash.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -101,13 +98,13 @@ export class UserService {
     updatedByRoleName: string;
   }) {
     try {
-      // 1. kiểm tra xem có phài đang cập nhập chính bản thân không
+      // 1. kiểm tra xem có phải đang cập nhập chính bản thân không
       this.verifyYourself({ userId: updatedById, userTargetId: id });
 
       // lấy ra role id của người dùng được update
       const userRoleId = await this.getRoleIdByUserId(id);
 
-      // 2. kiểm tra xem role của người cập có phải là admin không và người đi cập nhập có phải là admin không
+      // 2. kiểm tra xem role của người cập nhật có phải là admin không và người đi cập nhập có phải là admin không
       await this.verifyRoleAdmin({
         roleIdTarget: userRoleId,
         roleNameAgent: updatedByRoleName,
@@ -165,5 +162,43 @@ export class UserService {
       throw NotFoundRecordException;
     }
     return currentUser.roleId;
+  }
+
+  async deleteUser({
+    id,
+    deletedById,
+    deletedByRoleName,
+  }: {
+    id: number;
+    deletedById: number;
+    deletedByRoleName: string;
+  }) {
+    try {
+      // 1. kiểm tra xem có phải đang xóa chính bản thân không
+      this.verifyYourself({ userId: deletedById, userTargetId: id });
+
+      // lấy ra role id của người dùng được delete
+      const userRoleId = await this.getRoleIdByUserId(id);
+
+      // 2. kiểm tra xem role của người bị xóa có phải là admin không và người đi xóa có phải là admin không
+      await this.verifyRoleAdmin({
+        roleIdTarget: userRoleId,
+        roleNameAgent: deletedByRoleName,
+      });
+
+      // 3. delete user (xóa mềm)
+      await this.userRepository.delete({ id, deletedById });
+
+      return { message: 'Delete user successfully' };
+    } catch (error) {
+      console.log('/user/:id', error);
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw NotFoundRecordException;
+      }
+      throw error;
+    }
   }
 }

@@ -143,7 +143,7 @@ export class AuthGuard implements CanActivate {
   private getToken(request: Request) {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     if (!type || !token) {
-      this.throwException('Unauthorized', 'auth');
+      this.throwException('Unauthorized');
     }
     if (type.toLowerCase() !== 'bearer') {
       this.throwException('Error.AuthorizationTypeNotValid');
@@ -155,10 +155,9 @@ export class AuthGuard implements CanActivate {
     return token;
   }
 
-  throwException(message: string, path?: string) {
+  throwException(message: string) {
     throw new UnauthorizedException({
       message,
-      path: path ?? 'token',
     });
   }
 }
