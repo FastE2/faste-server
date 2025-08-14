@@ -7,9 +7,10 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CommonModule } from './common/common.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
-  imports: [PrismaModule, CommonModule, AuthModule],
+  imports: [PrismaModule, CommonModule, AuthModule, UserModule],
   controllers: [AppController],
   providers: [
     AppService,

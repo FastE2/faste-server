@@ -5,21 +5,27 @@ import {
   UnauthorizedException,
   Inject,
   forwardRef,
+  ForbiddenException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import {
   AUTH_NOT_REQUIRED,
+  REQUEST_ROLE_PERMISSIONS,
   REQUEST_USER_KEY,
 } from '../constants/auth.constant';
 import { Request } from 'express';
 import { CommonUserRepository } from '../repositories/common-user.repository';
 import { TokenService } from '../libs/token/token.service';
+import { AccessTokenPayload } from '../types/jwt.type';
+import { HTTPMethod } from '../constants/method.constant';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly tokenService: TokenService,
+    private readonly prismaService: PrismaService,
     @Inject(forwardRef(() => CommonUserRepository))
     private commonUserRepository: CommonUserRepository,
   ) {}
@@ -46,13 +52,17 @@ export class AuthGuard implements CanActivate {
       if (!payload) {
         this.throwException('Error.UnableToDecodeToken');
       }
-      const user = await this.validate(payload.userId);
+      const [user, _] = await Promise.all([
+        this.validate(payload.userId),
+        this.validateUserPermission(payload, request),
+      ]);
       if (!user) {
         this.throwException('Error.InvalidToken');
       }
       request[REQUEST_USER_KEY] = payload;
-    } catch (e) {
-      this.throwException('Error.InvalidToken');
+    } catch (error) {
+      console.log('authorize', error);
+      throw error;
     }
   }
 
@@ -60,10 +70,80 @@ export class AuthGuard implements CanActivate {
     return this.commonUserRepository.findUniqueUser({ id });
   }
 
+  private async validateUserPermission(
+    decodedAccessToken: AccessTokenPayload,
+    request: any,
+  ): Promise<void> {
+    const roleId: number = decodedAccessToken.roleId;
+    const path: string = request.route.path;
+    const method = request.method as keyof typeof HTTPMethod;
+    // const data = await this.prismaService.rolePermission
+    //   .findFirst({
+    //     where: {
+    //       roleId,
+    //       role: {
+    //         deletedAt: null,
+    //         isActive: true,
+    //       },
+    //       permission: {
+    //         deletedAt: null,
+    //         path,
+    //         method,
+    //       },
+    //     },
+    //     select: {
+    //       role: {
+    //         select: {
+    //           name: true,
+    //           id: true,
+    //         },
+    //       },
+    //       permission: {
+    //         select: {
+    //           id: true,
+    //           name: true,
+    //         },
+    //       },
+    //     },
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //     throw new ForbiddenException();
+    //   });
+    // console.log('OKOKOKK', data);
+
+    const role = await this.prismaService.role
+      .findUniqueOrThrow({
+        where: {
+          id: roleId,
+          deletedAt: null,
+          isActive: true,
+        },
+        include: {
+          permissions: {
+            where: {
+              deletedAt: null,
+              path,
+              method,
+            },
+          },
+        },
+      })
+      .catch(() => {
+        throw new ForbiddenException();
+      });
+    console.log('ROLE HEADER DATA', role);
+    const canAccess = role.permissions.length > 0;
+    if (!canAccess) {
+      throw new ForbiddenException();
+    }
+    request[REQUEST_ROLE_PERMISSIONS] = role;
+  }
+
   private getToken(request: Request) {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     if (!type || !token) {
-      this.throwException('Unauthorized', 'auth');
+      this.throwException('Unauthorized');
     }
     if (type.toLowerCase() !== 'bearer') {
       this.throwException('Error.AuthorizationTypeNotValid');
@@ -75,10 +155,9 @@ export class AuthGuard implements CanActivate {
     return token;
   }
 
-  throwException(message: string, path?: string) {
+  throwException(message: string) {
     throw new UnauthorizedException({
       message,
-      path: path ?? 'token',
     });
   }
 }

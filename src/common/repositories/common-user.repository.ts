@@ -17,6 +17,34 @@ export class CommonUserRepository {
     });
   }
 
+  findUniqueUserIncludeRole(
+    where: WhereUniqueUserType,
+  ): Promise<
+    | (Omit<UserType, 'password' | 'totpSecret'> & {
+        role: { id: number; name: string };
+      })
+    | null
+  > {
+    return this.prismaService.user.findFirst({
+      where: {
+        ...where,
+        deletedAt: null,
+      },
+      omit: {
+        password: true,
+        totpSecret: true,
+      },
+      include: {
+        role: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+  }
+
   update(
     where: { id: number },
     data: Partial<UserType>,

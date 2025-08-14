@@ -8,7 +8,6 @@ import {
 } from './auth.schema';
 import { CommonUserRepository } from 'src/common/repositories/common-user.repository';
 import {
-  EmailAlreadyExistsException,
   EmailNotExistsException,
   ExpiredOTPException,
   InvalidOTPException,
@@ -24,13 +23,14 @@ import { Response } from 'express';
 import { HashService } from 'src/common/libs/crypto/hash.service';
 import { TokenService } from 'src/common/libs/token/token.service';
 import { MailService } from 'src/common/libs/mail/mail.service';
-import { generateOTP } from 'src/utils/generate-otp';
 import { VerificationCodeTypeType } from 'src/common/constants/auth.constant';
 import envConfig from 'src/common/configs/validate-env';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { TwoFactorService } from './2fa.service';
 import { EncryptionService } from 'src/common/libs/crypto/encryption.service';
+import { generateOTP } from 'src/utils/generate-otp.util';
+import { EmailAlreadyExistsException } from 'src/common/errors';
 
 @Injectable()
 export class AuthService {

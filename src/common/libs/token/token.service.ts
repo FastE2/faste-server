@@ -40,7 +40,7 @@ export class TokenService {
 
   verifyAccessToken(
     token: string,
-  ): Promise<{ userId: number; roleId: number; exp: number }> {
+  ): Promise<{ userId: number; roleId: number; exp: number, iat: number }> {
     return this.jwtService.verifyAsync(token, {
       secret: envConfig.SERECT_KEY_ACCESSTOKEN,
     });
