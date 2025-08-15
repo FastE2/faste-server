@@ -10,6 +10,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { UserModule } from './modules/user/user.module';
 import { MediaModule } from './modules/media/media.module';
 import { RoleModule } from './modules/role/role.module';
+import { PermissionModule } from './modules/permission/permission.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { RoleModule } from './modules/role/role.module';
     UserModule,
     MediaModule,
     RoleModule,
+    PermissionModule,
   ],
   controllers: [AppController],
   providers: [
