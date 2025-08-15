@@ -8,9 +8,10 @@ import { AuthModule } from './modules/auth/auth.module';
 import { CommonModule } from './common/common.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { UserModule } from './modules/user/user.module';
+import { MediaModule } from './modules/media/media.module';
 
 @Module({
-  imports: [PrismaModule, CommonModule, AuthModule, UserModule],
+  imports: [PrismaModule, CommonModule, AuthModule, UserModule, MediaModule],
   controllers: [AppController],
   providers: [
     AppService,
