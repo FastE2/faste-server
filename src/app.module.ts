@@ -9,9 +9,17 @@ import { CommonModule } from './common/common.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { UserModule } from './modules/user/user.module';
 import { MediaModule } from './modules/media/media.module';
+import { RoleModule } from './modules/role/role.module';
 
 @Module({
-  imports: [PrismaModule, CommonModule, AuthModule, UserModule, MediaModule],
+  imports: [
+    PrismaModule,
+    CommonModule,
+    AuthModule,
+    UserModule,
+    MediaModule,
+    RoleModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,
