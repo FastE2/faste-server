@@ -92,6 +92,7 @@ model User {
   updatedBundles              Bundle[]              @relation("BundleUpdatedBy")
   deletedBundles              Bundle[]              @relation("BundleDeletedBy")
   deletedShops                Shop[]                @relation("ShopDeletedBy")
+  File                        File[]                @relation("FileCreatedBy")
 
   shop             Shop?
   ProductLikes     ProductLike[]
@@ -142,8 +143,21 @@ model UserFollow {
   @@id([followerId, followingId])
 }
 
+model File {
+  key         String   @unique() @db.VarChar(1000)
+  type        FileType @default(IMAGE)
+  size        Int
+  url         String
+  isPublic    Boolean
+  createdAt   DateTime @default(now())
+  createdById Int
+
+  // Nếu có quan hệ với bảng User
+  createdBy User @relation("FileCreatedBy", fields: [createdById], references: [id])
+}
+
 model RefreshToken {
-  token     String   @unique
+  token     String   @unique @db.VarChar(1000)
   userId    Int
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   deviceId  Int
@@ -955,4 +969,9 @@ enum ShopStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum FileType {
+  IMAGE
+  VIDEO
 }

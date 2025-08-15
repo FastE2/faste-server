@@ -132,7 +132,7 @@ export class AuthGuard implements CanActivate {
       .catch(() => {
         throw new ForbiddenException();
       });
-    console.log('ROLE HEADER DATA', role);
+    // console.log('ROLE HEADER DATA', role);
     const canAccess = role.permissions.length > 0;
     if (!canAccess) {
       throw new ForbiddenException();

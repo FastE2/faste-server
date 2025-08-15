@@ -28,6 +28,10 @@ const configSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string(),
   GOOGLE_REDIRECT_URI: z.string(),
   GOOGLE_CLIENT_REDIRECT_URI: z.string(),
+  AWS_S3_PUBLIC_BUCKET: z.string(),
+  AWS_S3_REGION: z.string(),
+  AWS_S3_ACCESS_KEY_ID: z.string(),
+  AWS_S3_SECRET_ACCESS_KEY: z.string(),
 });
 
 const configServer = configSchema.safeParse(process.env);
