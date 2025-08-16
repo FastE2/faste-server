@@ -44,6 +44,7 @@ export class RoleService {
       return role;
     } catch (error) {
       console.log('/role', error);
+      throw error;
     }
   }
 
