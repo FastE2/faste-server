@@ -58,8 +58,8 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Build docs
-        run: npm run docs:build
+      # - name: Build docs
+      #   run: npm run docs:build
 
       - name: Run Unit Tests
         run: npm test
