@@ -664,7 +664,7 @@ model Review {
 
 model Language {
   id                   Int                   @id @default(autoincrement())
-  name                 String                @unique @db.VarChar(500)
+  name                 String                @db.VarChar(500)
   categoryTranslations CategoryTranslation[]
   brandTranslations    BrandTranslation[]
   productTranslations  ProductTranslation[]
@@ -680,6 +680,7 @@ model Language {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
+  @@unique([name, deletedAt], map: "uq_language_name_deletedat")
   @@index([deletedAt])
 }
 
