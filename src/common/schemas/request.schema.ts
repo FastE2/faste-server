@@ -9,6 +9,10 @@ export const PaginationQuerySchema = z
   })
   .strict();
 
+export const GetParamsSchema = z.object({
+  id: z.coerce.number(),
+});
+
 export const DeleteBodySchema = z
   .object({
     isHard: z.boolean().optional(),
@@ -18,3 +22,4 @@ export const DeleteBodySchema = z
 export type EmptyBodyType = z.infer<typeof EmptyBodySchema>;
 export type DeleteBodyType = z.infer<typeof DeleteBodySchema>;
 export type PaginationQueryType = z.infer<typeof PaginationQuerySchema>;
+export type GetParamsType = z.infer<typeof GetParamsSchema>;

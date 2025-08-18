@@ -11,6 +11,7 @@ import { UserModule } from './modules/user/user.module';
 import { MediaModule } from './modules/media/media.module';
 import { RoleModule } from './modules/role/role.module';
 import { PermissionModule } from './modules/permission/permission.module';
+import { LanguageModule } from './modules/language/language.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { PermissionModule } from './modules/permission/permission.module';
     MediaModule,
     RoleModule,
     PermissionModule,
+    LanguageModule,
   ],
   controllers: [AppController],
   providers: [

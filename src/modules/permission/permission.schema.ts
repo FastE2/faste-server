@@ -2,7 +2,6 @@ import {
   PermissionSchema,
   RolePermissionsSchema,
 } from 'src/common/schemas/permission.schema';
-import { RoleSchema } from 'src/common/schemas/role.schema';
 import { z } from 'zod';
 
 export const GetPermissionParamsSchema = z.object({
