@@ -106,7 +106,6 @@ model User {
   reviewees        Review[]            @relation("Reviewee")
   salesReports     SellerSalesReport[]
   notifications    Notification[]
-  Category         Category[]
   Review           Review[]
   UserVoucher      UserVoucher[]
 
@@ -344,21 +343,19 @@ model Category {
   discounts    DiscountCategory[]
   translations CategoryTranslation[]
 
-  parent   Category?  @relation("ParentChild", fields: [parentCategoryId], references: [id])
+  parent   Category?  @relation("ParentChild", fields: [parentCategoryId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   children Category[] @relation("ParentChild")
 
   createdById Int
-  createdBy   User? @relation("CategoryCreatedBy", fields: [createdById], references: [id])
+  createdBy   User? @relation("CategoryCreatedBy", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
   updatedById Int?
-  updatedBy   User? @relation("CategoryUpdatedBy", fields: [updatedById], references: [id])
+  updatedBy   User? @relation("CategoryUpdatedBy", fields: [updatedById], references: [id], onDelete: NoAction, onUpdate: NoAction)
   deletedById Int?
-  deletedBy   User? @relation("CategoryDeletedBy", fields: [deletedById], references: [id])
+  deletedBy   User? @relation("CategoryDeletedBy", fields: [deletedById], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
-  User      User?     @relation(fields: [userId], references: [id])
-  userId    Int?
 
   @@index([deletedAt])
 }
