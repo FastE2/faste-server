@@ -18,7 +18,7 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { MediaService } from './media.service';
 import { GetMediasQueryDTO, PresignedUploadFileBodyDTO } from './media.dto';
 import { ZodSerializerDto } from 'nestjs-zod';
-import { MessageResDto } from 'src/common/dtos/response.dto';
+import { MessageResDTO } from 'src/common/dtos/response.dto';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 
 @Controller('media')
@@ -69,7 +69,7 @@ export class MediaController {
   // }
 
   @Delete(':filename')
-  @ZodSerializerDto(MessageResDto)
+  @ZodSerializerDto(MessageResDTO)
   delete(@Param('filename') filename: string) {
     return this.mediaService.delete(filename);
   }

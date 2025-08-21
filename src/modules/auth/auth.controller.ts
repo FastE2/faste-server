@@ -25,7 +25,7 @@ import { AuthService } from './auth.service';
 import { UserAgent } from 'src/common/decorators/user-agent.decorator';
 import { Request, Response } from 'express';
 import { EmptyBodyDTO } from 'src/common/dtos/request.dto';
-import { MessageResDto } from 'src/common/dtos/response.dto';
+import { MessageResDTO } from 'src/common/dtos/response.dto';
 import { Ispublic } from 'src/common/decorators/auth.decorator';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { GoogleService } from './google.service';
@@ -70,7 +70,7 @@ export class AuthController {
   }
 
   @Post('logout')
-  @ZodSerializerDto(MessageResDto)
+  @ZodSerializerDto(MessageResDTO)
   logout(
     @Body() _: EmptyBodyDTO,
     @Req() req: Request,
@@ -83,14 +83,14 @@ export class AuthController {
   @Post('otp')
   @Ispublic()
   @HttpCode(200)
-  @ZodSerializerDto(MessageResDto)
+  @ZodSerializerDto(MessageResDTO)
   sendOTP(@Body() body: SendOTPBodyDTO) {
     return this.authService.sendOTP(body);
   }
 
   @Post('forgot-password')
   @Ispublic()
-  @ZodSerializerDto(MessageResDto)
+  @ZodSerializerDto(MessageResDTO)
   @HttpCode(200)
   forgotPassowrd(@Body() body: ForgotPasswordBodyDTO) {
     return this.authService.forgotPassowrd(body);
@@ -106,7 +106,7 @@ export class AuthController {
   }
 
   @Post('2fa/disable')
-  @ZodSerializerDto(MessageResDto)
+  @ZodSerializerDto(MessageResDTO)
   @HttpCode(200)
   disableTwoFactorAuth(
     @Body() body: TwoFADisableBodyDTO,
