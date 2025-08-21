@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
-import { MessageResDto } from 'src/common/dtos/response.dto';
+import { MessageResDTO } from 'src/common/dtos/response.dto';
 import { RoleService } from './role.service';
 import {
   CreateRoleBodyDTO,
@@ -66,7 +66,7 @@ export class RoleController {
   }
 
   @Delete('/:id')
-  @ZodSerializerDto(MessageResDto)
+  @ZodSerializerDto(MessageResDTO)
   deleteUser(
     @Param() params: GetRoleParamsDTO,
     @ActiveUser('userId') userId: number,

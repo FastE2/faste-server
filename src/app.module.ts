@@ -12,18 +12,19 @@ import { MediaModule } from './modules/media/media.module';
 import { RoleModule } from './modules/role/role.module';
 import { PermissionModule } from './modules/permission/permission.module';
 import { LanguageModule } from './modules/language/language.module';
+import { ProfileModule } from './modules/profile/profile.module';
 
+const modules = [
+  AuthModule,
+  UserModule,
+  MediaModule,
+  RoleModule,
+  PermissionModule,
+  LanguageModule,
+  ProfileModule,
+];
 @Module({
-  imports: [
-    PrismaModule,
-    CommonModule,
-    AuthModule,
-    UserModule,
-    MediaModule,
-    RoleModule,
-    PermissionModule,
-    LanguageModule,
-  ],
+  imports: [PrismaModule, CommonModule, ...modules],
   controllers: [AppController],
   providers: [
     AppService,
