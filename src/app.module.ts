@@ -13,6 +13,7 @@ import { RoleModule } from './modules/role/role.module';
 import { PermissionModule } from './modules/permission/permission.module';
 import { LanguageModule } from './modules/language/language.module';
 import { ProfileModule } from './modules/profile/profile.module';
+import { BrandModule } from './modules/brand/brand.module';
 
 const modules = [
   AuthModule,
@@ -22,6 +23,7 @@ const modules = [
   PermissionModule,
   LanguageModule,
   ProfileModule,
+  BrandModule,
 ];
 @Module({
   imports: [PrismaModule, CommonModule, ...modules],
