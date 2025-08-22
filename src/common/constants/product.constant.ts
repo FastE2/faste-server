@@ -1,0 +1,5 @@
+export const PRODUCT_STATUS = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED',
+  ARCHIVED: 'ARCHIVED',
+} as const;

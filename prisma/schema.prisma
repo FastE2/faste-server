@@ -2,6 +2,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator json {
+  provider = "prisma-json-types-generator"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -267,16 +271,19 @@ model Brand {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(500)
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(500)
   description String
-  basePrice   Float    @map("base_price")
+  basePrice   Float         @map("base_price")
   brandId     Int
-  brand       Brand    @relation(fields: [brandId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  status      ProductStatus @default(DRAFT) // enum: DRAFT, PUBLISHED, ARCHIVED
+  publishedAt DateTime?
+  brand       Brand         @relation(fields: [brandId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   images      String[]
+  /// [Variants]
   variants    Json
-  totalViews  Int      @default(0)
-  slugId      String   @unique
+  totalViews  Int           @default(0)
+  slugId      String        @unique
 
   likes               ProductLike[]
   skus                SKU[]
@@ -972,4 +979,10 @@ enum ShopStatus {
 enum FileType {
   IMAGE
   VIDEO
+}
+
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
 }
