@@ -1,0 +1,417 @@
+import { Injectable } from '@nestjs/common';
+import { PaginationQueryType } from 'src/common/schemas/request.schema';
+import { PrismaService } from 'src/prisma/prisma.service';
+import {
+  CreateProductBodyType,
+  CreateProductInDBBodyType,
+  UpdateProductBodyType,
+} from './product.schema';
+import { ROLE_NAME } from 'src/common/constants/role-base.constant';
+import { Prisma } from '@prisma/client';
+import { PRODUCT_STATUS } from 'src/common/constants/product.constant';
+import { normalize } from 'src/common/helpers/normalize.helper';
+
+type ExtendedProductBodyType = Omit<CreateProductBodyType, 'skus'> & {
+  skus: (CreateProductBodyType['skus'][number] & {
+    attributes: Record<string, string>;
+    skuCode: string;
+  })[];
+};
+
+@Injectable()
+export class ProductRepository {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async findAllPublic(pagination: PaginationQueryType): Promise<any> {
+    const skip = (pagination.page - 1) * pagination.limit;
+    const take = pagination.limit;
+
+    const [data, totalItem] = await Promise.all([
+      this.prismaService.product.findMany({
+        where: {
+          status: 'PUBLISHED',
+          deletedAt: null,
+        },
+        take,
+        skip,
+      }),
+      this.prismaService.product.count({
+        where: {
+          status: 'PUBLISHED',
+          deletedAt: null,
+        },
+      }),
+    ]);
+
+    return {
+      data,
+      totalItem,
+      page: pagination.page,
+      limmit: pagination.limit,
+      totalPage: Math.ceil(totalItem / pagination.limit),
+    };
+  }
+
+  // public api
+  async findOneUniquePublic(
+    uniqueValue: { id: number } | { slugId: string },
+  ): Promise<any> {
+    return this.prismaService.product.findFirst({
+      where: {
+        ...uniqueValue,
+        status: 'PUBLISHED',
+        deletedAt: null,
+      },
+      include: {
+        productTranslations: {
+          where: {
+            deletedAt: null,
+          },
+        },
+        skus: {
+          where: { deletedAt: null },
+        },
+        categories: {
+          include: {
+            category: true,
+          },
+        },
+        brand: {
+          include: {
+            translations: {
+              where: {
+                deletedAt: null,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  // Seller/Admin
+  async findAll({
+    pagination,
+    where,
+  }: {
+    pagination: PaginationQueryType;
+    where: Prisma.ProductWhereInput;
+  }) {
+    const skip = (pagination.page - 1) * pagination.limit;
+    const take = pagination.limit;
+
+    const [data, totalItem] = await Promise.all([
+      this.prismaService.product.findMany({
+        where,
+        include: { brand: true, categories: true, skus: true, discounts: true },
+        take,
+        skip,
+      }),
+      this.prismaService.product.count({
+        where,
+      }),
+    ]);
+
+    return {
+      data,
+      totalItem,
+      page: pagination.page,
+      limmit: pagination.limit,
+      totalPage: Math.ceil(totalItem / pagination.limit),
+    };
+  }
+
+  // Seller/Admin
+  async findById(where: Prisma.ProductWhereInput) {
+    return this.prismaService.product.findFirst({
+      where,
+      include: {
+        productTranslations: {
+          where: {
+            deletedAt: null,
+          },
+        },
+        skus: {
+          where: { deletedAt: null },
+        },
+        categories: {
+          include: {
+            category: true,
+          },
+        },
+        brand: {
+          include: {
+            translations: {
+              where: {
+                deletedAt: null,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  create({
+    createdById,
+    data,
+  }: {
+    createdById: number;
+    data: CreateProductInDBBodyType;
+  }): Promise<any> {
+    const { skus, categories, ...productData } = data;
+    const now: Date | null =
+      productData.status === PRODUCT_STATUS.PUBLISHED ? new Date() : null;
+    return this.prismaService.product
+      .create({
+        data: {
+          ...productData,
+          publishedAt: now,
+          createdById,
+          categories: {
+            createMany: {
+              data: categories.map((id) => ({
+                categoryId: id,
+              })),
+            },
+          },
+          skus: {
+            createMany: {
+              data: skus.map((sku) => ({
+                ...sku,
+                createdById,
+              })),
+            },
+          },
+        },
+        include: {
+          productTranslations: {
+            where: {
+              deletedAt: null,
+            },
+          },
+          skus: {
+            where: { deletedAt: null },
+          },
+          categories: {
+            include: {
+              category: true,
+            },
+          },
+          brand: {
+            include: {
+              translations: {
+                where: {
+                  deletedAt: null,
+                },
+              },
+            },
+          },
+        },
+      })
+      .then((product) => {
+        return {
+          ...product,
+          categories: product.categories.filter(
+            (category) => category.category.deletedAt === null,
+          ),
+        };
+      });
+  }
+
+  async update({
+    id,
+    updatedById,
+    data,
+  }: {
+    id: number;
+    updatedById: number;
+    data: UpdateProductBodyType;
+  }): Promise<any> {
+    const { skus, categories, ...productData } = data;
+    const existingSkusInDB = await this.prismaService.sKU.findMany({
+      where: {
+        productId: id,
+        deletedAt: null,
+      },
+    });
+
+    // Bad performance
+    // const skusDeleteIds = existingSkusInDB
+    //   .filter((skuInDB) =>
+    //     skus.every(
+    //       (skuInPayload) => skuInDB.attributes !== skuInPayload.attributes,
+    //     ),
+    //   )
+    //   .map((skuDelete) => skuDelete.id);
+
+    // optimize performance
+    const payloadSetSku = new Set(skus.map((sku) => normalize(sku.attributes)));
+    const DBSetSku = new Set(
+      existingSkusInDB.map((sku) =>
+        normalize(sku.attributes as Record<string, string>),
+      ),
+    );
+
+    // TH 1: tìm sku không có trong payload nhưng kh có trong db (sẽ xóa sku) (lấy ra id)
+    const skusToDeleteIds = existingSkusInDB
+      .filter(
+        (skuInDB) =>
+          !payloadSetSku.has(
+            normalize(skuInDB.attributes as Record<string, string>),
+          ),
+      )
+      .map((skuDelete) => skuDelete.id);
+
+    // TH 2: tìm sku có trong payload nhưng kh có trong db (sẽ tạo mới sku)
+    const skusToCreate = skus.filter(
+      (skuInPayload) => !DBSetSku.has(normalize(skuInPayload.attributes)),
+    );
+
+    // TH 3: tìm sku có trong payload nhưng có trong db (sẽ cập nhật sku)
+    const skusToUpdate = existingSkusInDB.filter((skuInDB) =>
+      payloadSetSku.has(
+        normalize(skuInDB.attributes as Record<string, string>),
+      ),
+    );
+
+    await this.prismaService.$transaction([
+      // cập nhật product chưa tháo tác đến sku
+      this.prismaService.product.update({
+        where: {
+          id,
+          deletedAt: null,
+        },
+        data: {
+          ...productData,
+          updatedById,
+        },
+      }),
+
+      this.prismaService.$executeRaw`
+    DELETE FROM "ProductCategory"
+    WHERE "productId" = ${id}
+    AND "categoryId" NOT IN (SELECT unnest(${categories}::int[]));
+  `,
+      this.prismaService.$executeRaw`
+    INSERT INTO "ProductCategory" ("productId", "categoryId")
+    SELECT ${id}, unnest(${categories}::int[])
+    ON CONFLICT DO NOTHING;
+  `,
+      // xóa sku
+      this.prismaService.sKU.updateMany({
+        where: {
+          id: {
+            in: skusToDeleteIds,
+          },
+        },
+        data: {
+          deletedAt: new Date(),
+          deletedById: updatedById,
+        },
+      }),
+
+      this.prismaService.sKU.updateMany({
+        data: skusToUpdate.map((sku) => ({
+          ...sku,
+          updatedById,
+        })),
+      }),
+
+      // tạo mới sku
+      this.prismaService.sKU.createMany({
+        data: skusToCreate.map((sku) => ({
+          ...sku,
+          productId: id,
+          createdById: updatedById,
+        })),
+      }),
+    ]);
+
+    const productUpdate = this.prismaService.product.findFirst({
+      where: {
+        id,
+        deletedAt: null,
+      },
+      include: {
+        productTranslations: {
+          where: {
+            deletedAt: null,
+          },
+        },
+        skus: {
+          where: { deletedAt: null },
+        },
+        categories: {
+          include: {
+            category: true,
+          },
+        },
+        brand: {
+          include: {
+            translations: {
+              where: {
+                deletedAt: null,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return productUpdate;
+  }
+
+  async delete(
+    {
+      id,
+      deletedById,
+    }: {
+      id: number;
+      deletedById: number;
+    },
+    isHard?: boolean,
+  ): Promise<any> {
+    if (isHard) {
+      return this.prismaService.product.delete({
+        where: {
+          id,
+        },
+      });
+    }
+    const now = new Date();
+    const [product] = await Promise.all([
+      this.prismaService.product.update({
+        where: {
+          id,
+          deletedAt: null,
+        },
+        data: {
+          deletedAt: now,
+          deletedById,
+        },
+      }),
+      this.prismaService.productTranslation.updateMany({
+        where: {
+          productId: id,
+          deletedAt: null,
+        },
+        data: {
+          deletedAt: now,
+          deletedById,
+        },
+      }),
+      this.prismaService.sKU.updateMany({
+        where: {
+          productId: id,
+          deletedAt: null,
+        },
+        data: {
+          deletedAt: now,
+          deletedById,
+        },
+      }),
+    ]);
+    return product;
+  }
+}

@@ -285,6 +285,11 @@ model Product {
   totalViews  Int           @default(0)
   slugId      String        @unique
 
+  weightGram Int? @map("weight_gram")
+  lengthCm   Int? @map("length_cm")
+  widthCm    Int? @map("width_cm")
+  heightCm   Int? @map("height_cm")
+
   likes               ProductLike[]
   skus                SKU[]
   categories          ProductCategory[]
@@ -368,13 +373,13 @@ model Category {
 }
 
 model SKU {
-  id         Int     @id
-  name       String  @db.VarChar(500)
+  id         Int     @id @default(autoincrement())
   skuCode    String  @unique
   productId  Int
   product    Product @relation(fields: [productId], references: [id])
   image      String
   price      Int
+  /// [AttributesType]
   attributes Json
   quantity   Int     @default(0)
   sold       Int     @default(0)
