@@ -2,6 +2,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator json {
+  provider = "prisma-json-types-generator"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -267,16 +271,24 @@ model Brand {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(500)
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(500)
   description String
-  basePrice   Float    @map("base_price")
+  basePrice   Float         @map("base_price")
   brandId     Int
-  brand       Brand    @relation(fields: [brandId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  status      ProductStatus @default(DRAFT) // enum: DRAFT, PUBLISHED, ARCHIVED
+  publishedAt DateTime?
+  brand       Brand         @relation(fields: [brandId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   images      String[]
+  /// [Variants]
   variants    Json
-  totalViews  Int      @default(0)
-  slugId      String   @unique
+  totalViews  Int           @default(0)
+  slugId      String        @unique
+
+  weightGram Int? @map("weight_gram")
+  lengthCm   Int? @map("length_cm")
+  widthCm    Int? @map("width_cm")
+  heightCm   Int? @map("height_cm")
 
   likes               ProductLike[]
   skus                SKU[]
@@ -361,13 +373,13 @@ model Category {
 }
 
 model SKU {
-  id         Int     @id
-  name       String  @db.VarChar(500)
+  id         Int     @id @default(autoincrement())
   skuCode    String  @unique
   productId  Int
   product    Product @relation(fields: [productId], references: [id])
   image      String
   price      Int
+  /// [AttributesType]
   attributes Json
   quantity   Int     @default(0)
   sold       Int     @default(0)
@@ -972,4 +984,10 @@ enum ShopStatus {
 enum FileType {
   IMAGE
   VIDEO
+}
+
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
 }
