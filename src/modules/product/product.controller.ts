@@ -15,7 +15,9 @@ import { GetParamsDTO, PaginationQueryDTO } from 'src/common/dtos/request.dto';
 import { ProductService } from './product.service';
 import {
   CreateProductBodyDTO,
+  GetAllProductPublicResDTO,
   GetParamSlugIdDTO,
+  GetProductsQueryDTO,
   UpdateProductBodyDTO,
 } from './product.dto';
 import { Ispublic } from 'src/common/decorators/auth.decorator';
@@ -28,8 +30,8 @@ export class ProductController {
   // -- PUBLIC
   @Get('/public')
   @Ispublic()
-  // @ZodSerializerDto(GetCategoryResDTO)
-  getPublicProducts(@Query() query: PaginationQueryDTO) {
+  @ZodSerializerDto(GetAllProductPublicResDTO)
+  getPublicProducts(@Query() query: GetProductsQueryDTO) {
     return this.productService.findAllPublic(query);
   }
 
@@ -45,6 +47,16 @@ export class ProductController {
     return this.productService.findBySlugIdPublic(params.slugId);
   }
   // -- END PUBLIC
+
+  @Get('')
+  @Ispublic()
+  getProducts(
+    @Query() query: GetProductsQueryDTO,
+    @ActiveUser('userId') userId: number,
+    @ActiveRolePermissions('name') roleName: string,
+  ) {
+    return this.productService.findAll({ query, userId, roleName });
+  }
 
   @Post()
   createProduct(

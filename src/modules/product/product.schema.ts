@@ -1,5 +1,9 @@
 import { ProductStatus } from '@prisma/client';
-import { PRODUCT_STATUS } from 'src/common/constants/product.constant';
+import {
+  OrderBy,
+  PRODUCT_STATUS,
+  SortBy,
+} from 'src/common/constants/product.constant';
 import { generateSKUs } from 'src/common/helpers/generate-skus.helper';
 import { z } from 'zod';
 import { SKUSchema, UpsertSKUBodySchema } from './sku.schema';
@@ -64,11 +68,31 @@ export const ProductSchema = z.object({
   createdAt: z.string().datetime().optional(),
   updatedAt: z.string().datetime().optional(),
   likes: z.array(z.any()).optional(),
+
+  weightGram: z.coerce.number().int().min(0).optional().nullable(),
+  lengthCm: z.coerce.number().int().min(0).optional().nullable(),
+  widthCm: z.coerce.number().int().min(0).optional().nullable(),
+  heightCm: z.coerce.number().int().min(0).optional().nullable(),
+
   // skus: z.array(z.any()).optional(),
   // categories: z.array(z.any()).optional(),
   // discounts: z.array(z.any()).optional(),
   // productTranslations: z.array(z.any()).optional(),
 });
+
+// --- Response by product ---
+export const GetAllProductPublicResSchema = z.object({
+  data: ProductSchema.omit({
+    likes: true,
+  }).extend({
+    _count: z.object({ likes: z.number() }),
+  }),
+  totalItem: z.number(),
+  page: z.number(),
+  limit: z.number(),
+  totalPage: z.number(),
+});
+// *** Response by product ***
 
 export const GetParamSlugIdSchema = z.object({
   slugId: z.string(),
@@ -201,12 +225,40 @@ export const CreateProductInDBBodySchema = ProductSchema.pick({
     }
   });
 
+export const GetProductsQuerySchema = z.object({
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().default(10),
+  name: z.string().optional(),
+  brandIds: z
+    .preprocess((value) => {
+      if (typeof value === 'string') {
+        return [Number(value)];
+      }
+      return value;
+    }, z.array(z.coerce.number().int().positive()))
+    .optional(),
+  categories: z
+    .preprocess((value) => {
+      if (typeof value === 'string') {
+        return [Number(value)];
+      }
+      return value;
+    }, z.array(z.coerce.number().int().positive()))
+    .optional(),
+  minPrice: z.coerce.number().positive().optional(),
+  maxPrice: z.coerce.number().positive().optional(),
+  createdById: z.coerce.number().int().positive().optional(),
+  orderBy: z.enum([OrderBy.Asc, OrderBy.Desc]).default(OrderBy.Desc),
+  sortBy: z
+    .enum([SortBy.CreatedAt, SortBy.Price, SortBy.Sale])
+    .default(SortBy.CreatedAt),
+});
+
 export const UpdateProductBodySchema = CreateProductInDBBodySchema;
 
+export type GetProductsQueryType = z.infer<typeof GetProductsQuerySchema>;
 export type UpdateProductBodyType = z.infer<typeof UpdateProductBodySchema>;
-
 export type CreateProductBodyType = z.infer<typeof CreateProductBodySchema>;
-
 export const UpdateCategoryBodySchema = CreateProductBodySchema;
 export type CreateProductInDBBodyType = z.infer<
   typeof CreateProductInDBBodySchema

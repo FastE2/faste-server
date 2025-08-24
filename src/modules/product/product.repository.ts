@@ -4,11 +4,12 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import {
   CreateProductBodyType,
   CreateProductInDBBodyType,
+  GetProductsQueryType,
   UpdateProductBodyType,
 } from './product.schema';
 import { ROLE_NAME } from 'src/common/constants/role-base.constant';
 import { Prisma } from '@prisma/client';
-import { PRODUCT_STATUS } from 'src/common/constants/product.constant';
+import { PRODUCT_STATUS, SortBy } from 'src/common/constants/product.constant';
 import { normalize } from 'src/common/helpers/normalize.helper';
 
 type ExtendedProductBodyType = Omit<CreateProductBodyType, 'skus'> & {
@@ -22,15 +23,74 @@ type ExtendedProductBodyType = Omit<CreateProductBodyType, 'skus'> & {
 export class ProductRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findAllPublic(pagination: PaginationQueryType): Promise<any> {
-    const skip = (pagination.page - 1) * pagination.limit;
-    const take = pagination.limit;
+  async findAllPublic(query: GetProductsQueryType): Promise<any> {
+    const {
+      limit,
+      orderBy,
+      page,
+      sortBy,
+      brandIds,
+      categories,
+      createdById,
+      maxPrice,
+      minPrice,
+      name,
+    } = query;
+    console.log(query);
+    const skip = (page - 1) * limit;
+    const take = limit;
 
+    const where: Prisma.ProductWhereInput = {
+      status: 'PUBLISHED',
+      deletedAt: null,
+      createdById: createdById ? createdById : undefined,
+      publishedAt: {
+        lte: new Date(),
+        not: null,
+      },
+    };
+    if (name) {
+      where.name = {
+        contains: name,
+        mode: 'insensitive',
+      };
+    }
+    if (brandIds && brandIds.length > 0) {
+      where.brandId = {
+        in: brandIds,
+      };
+    }
+    if (categories && categories.length > 0) {
+      where.categories = {
+        some: {
+          category: {
+            id: {
+              in: categories,
+            },
+          },
+        },
+      };
+    }
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      where.basePrice = {
+        gte: minPrice,
+        lte: maxPrice,
+      };
+    }
+
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      where.basePrice = {
+        gte: minPrice,
+        lte: maxPrice,
+      };
+    }
     const [data, totalItem] = await Promise.all([
       this.prismaService.product.findMany({
-        where: {
-          status: 'PUBLISHED',
-          deletedAt: null,
+        where,
+        include: {
+          _count: {
+            select: { likes: true },
+          },
         },
         take,
         skip,
@@ -39,6 +99,10 @@ export class ProductRepository {
         where: {
           status: 'PUBLISHED',
           deletedAt: null,
+          publishedAt: {
+            lte: new Date(),
+            not: null,
+          },
         },
       }),
     ]);
@@ -46,9 +110,9 @@ export class ProductRepository {
     return {
       data,
       totalItem,
-      page: pagination.page,
-      limmit: pagination.limit,
-      totalPage: Math.ceil(totalItem / pagination.limit),
+      page,
+      limit,
+      totalPage: Math.ceil(totalItem / limit),
     };
   }
 
@@ -70,17 +134,40 @@ export class ProductRepository {
         },
         skus: {
           where: { deletedAt: null },
+          omit: {
+            id: true,
+            deletedAt: true,
+            deletedById: true,
+            skuCode: true,
+            updatedAt: true,
+            updatedById: true,
+          },
         },
         categories: {
           include: {
-            category: true,
+            category: {
+              select: {
+                name: true,
+                description: true,
+              },
+            },
           },
         },
         brand: {
+          omit: {
+            deletedAt: true,
+            deletedById: true,
+            id: true,
+            createdById: true,
+          },
           include: {
             translations: {
               where: {
                 deletedAt: null,
+              },
+              select: {
+                name: true,
+                description: true,
               },
             },
           },
@@ -274,7 +361,8 @@ export class ProductRepository {
         normalize(skuInDB.attributes as Record<string, string>),
       ),
     );
-
+    const now: Date | null =
+      productData.status === PRODUCT_STATUS.PUBLISHED ? new Date() : null;
     await this.prismaService.$transaction([
       // cập nhật product chưa tháo tác đến sku
       this.prismaService.product.update({
@@ -284,6 +372,7 @@ export class ProductRepository {
         },
         data: {
           ...productData,
+          publishedAt: now,
           updatedById,
         },
       }),

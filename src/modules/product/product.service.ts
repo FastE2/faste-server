@@ -1,25 +1,23 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { PaginationQueryType } from 'src/common/schemas/request.schema';
 import { NotFoundRecordException } from 'src/common/errors';
 import { Prisma } from '@prisma/client';
 import {
   CreateProductBodyType,
   CreateProductInDBBodyType,
+  GetProductsQueryType,
 } from './product.schema';
 import { ProductRepository } from './product.repository';
 import { ROLE_NAME } from 'src/common/constants/role-base.constant';
-import { v4 as uuidv4 } from 'uuid';
-import { generateAttributes } from 'src/common/helpers/generate-attributes.helper';
 import { buildSkuCode } from '../../common/helpers/generate-skus.helper';
 
 @Injectable()
 export class ProductService {
   constructor(private readonly productRepository: ProductRepository) {}
-  async findAllPublic(query: PaginationQueryType) {
+  async findAllPublic(query: GetProductsQueryType) {
     try {
       return await this.productRepository.findAllPublic(query);
     } catch (error) {
-      console.log('/product/public', error);
+      console.log('/products/public', error);
       throw error;
     }
   }
@@ -57,7 +55,7 @@ export class ProductService {
     userId,
     roleName,
   }: {
-    query: PaginationQueryType;
+    query: GetProductsQueryType;
     userId: number;
     roleName: string;
   }) {
@@ -73,7 +71,7 @@ export class ProductService {
       }
       return await this.productRepository.findAll({ pagination: query, where });
     } catch (error) {
-      console.log('/product/public', error);
+      console.log('/products', error);
       throw error;
     }
   }
@@ -104,7 +102,7 @@ export class ProductService {
       });
       return product;
     } catch (error) {
-      console.log('/product/:id', error);
+      console.log('/products/:id', error);
       throw error;
     }
   }
@@ -141,7 +139,7 @@ export class ProductService {
       });
       return product;
     } catch (error) {
-      console.log('/product', error);
+      console.log('/products', error);
       throw error;
     }
   }
@@ -189,7 +187,7 @@ export class ProductService {
 
       return updatedCategory;
     } catch (error) {
-      console.log('/product/:id', error);
+      console.log('/products/:id', error);
       throw error;
     }
   }
