@@ -8,7 +8,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 const SellerModule = [
   'AUTH',
   'MEDIA',
-  'MANAGE-PRODUCT',
+  'PRODUCT',
   'PRODUCT-TRANSLATION',
   'PROFILE',
   'CART',
