@@ -17,6 +17,7 @@ import { BrandModule } from './modules/brand/brand.module';
 import { CategoryModule } from './modules/category/category.module';
 import { ProductController } from './modules/product/product.controller';
 import { ProductModule } from './modules/product/product.module';
+import { CartModule } from './modules/cart/cart.module';
 
 const modules = [
   AuthModule,
@@ -29,6 +30,7 @@ const modules = [
   BrandModule,
   CategoryModule,
   ProductModule,
+  CartModule,
 ];
 @Module({
   imports: [PrismaModule, CommonModule, ...modules],

@@ -376,7 +376,7 @@ model SKU {
   id         Int     @id @default(autoincrement())
   skuCode    String  @unique
   productId  Int
-  product    Product @relation(fields: [productId], references: [id])
+  product    Product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   image      String
   price      Int
   /// [AttributesType]
@@ -405,6 +405,7 @@ model SKU {
   bundleItems    BundleItem[]
 
   @@index([deletedAt])
+  @@index([productId])
 }
 
 model Discount {
@@ -516,7 +517,7 @@ model CartItem {
   skuId     Int
   userId    Int
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
   sku       SKU      @relation(fields: [skuId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
 
@@ -562,7 +563,7 @@ model OrderItem {
   shop     User    @relation(fields: [shopId], references: [id])
   review   Review?
 
-  @@unique([orderId, skuId])
+  @@unique([orderId, skuId], name: "userId_skuId")
 }
 
 model Payment {
