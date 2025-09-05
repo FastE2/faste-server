@@ -1,0 +1,1 @@
+ts-node scripts/create-permissions.ts
