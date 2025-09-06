@@ -12,3 +12,7 @@ export const EmailAlreadyExistsException = new ConflictException({
   message: 'Error.EmailAlreadyExists',
   path: 'email',
 });
+
+export const NotFoundUserException = new NotFoundException({
+  message: 'Error.NotFoundUser',
+});

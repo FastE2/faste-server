@@ -15,9 +15,9 @@ import { LanguageModule } from './modules/language/language.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { BrandModule } from './modules/brand/brand.module';
 import { CategoryModule } from './modules/category/category.module';
-import { ProductController } from './modules/product/product.controller';
 import { ProductModule } from './modules/product/product.module';
 import { CartModule } from './modules/cart/cart.module';
+import { OrderModule } from './modules/order/order.module';
 
 const modules = [
   AuthModule,
@@ -31,6 +31,7 @@ const modules = [
   CategoryModule,
   ProductModule,
   CartModule,
+  OrderModule,
 ];
 @Module({
   imports: [PrismaModule, CommonModule, ...modules],

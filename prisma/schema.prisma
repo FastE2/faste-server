@@ -102,7 +102,6 @@ model User {
   ProductLikes     ProductLike[]
   cartItems        CartItem[]
   payments         Payment[]
-  OrderItem        OrderItem[]
   messagesSent     Message[]           @relation("FromUser")
   messagesReceived Message[]           @relation("ToUser")
   reviews          Review[]            @relation("Reviewer")
@@ -112,6 +111,7 @@ model User {
   notifications    Notification[]
   Review           Review[]
   UserVoucher      UserVoucher[]
+  Transaction      Transaction[]
 
   // unique (email) when deletedAt=null
   @@index([deletedAt])
@@ -132,6 +132,7 @@ model AddressShip {
   status            Int      @default(1)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  Order             Order[]
 
   @@index([userId])
 }
@@ -308,6 +309,7 @@ model Product {
   updatedAt DateTime  @updatedAt
 
   // unique (slugId) when deletedAt=null
+  ProductSKUSnapshot ProductSKUSnapshot[]
 
   @@index([deletedAt])
 }
@@ -399,13 +401,34 @@ model SKU {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  cartItems      CartItem[]
-  flashSaleItems FlashSaleItem[]
-  orderItems     OrderItem[]
-  bundleItems    BundleItem[]
+  cartItems          CartItem[]
+  flashSaleItems     FlashSaleItem[]
+  bundleItems        BundleItem[]
+  ProductSKUSnapshot ProductSKUSnapshot[]
 
   @@index([deletedAt])
   @@index([productId])
+}
+
+model ProductSKUSnapshot {
+  id            Int    @id @default(autoincrement())
+  productName   String @db.VarChar(500)
+  skuPrice      Float
+  image         String
+  /// [AttributesType]
+  skuAttributes Json
+  skuId         Int?
+  sku           SKU?   @relation(fields: [skuId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  orderId       Int?
+  order         Order? @relation(fields: [orderId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+
+  quantity            Int
+  productId           Int?
+  product             Product? @relation(fields: [productId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  /// [ProductTranslations]
+  productTranslations Json
+
+  createdAt DateTime @default(now())
 }
 
 model Discount {
@@ -525,17 +548,19 @@ model CartItem {
 }
 
 model Order {
-  id            Int          @id @default(autoincrement())
-  userId        Int          @unique
+  id            Int                  @id @default(autoincrement())
+  userId        Int
   status        OrderStatus
-  addressShip   Json
-  paymentMethod String
+  items         ProductSKUSnapshot[]
+  addressShipId Int
+  shopId        Int
   deliveryId    Int
   voucherId     Int?
-  voucher       Voucher?     @relation(fields: [voucherId], references: [id], onDelete: SetNull, onUpdate: NoAction)
-  delivery      DeliveryType @relation(fields: [deliveryId], references: [id])
-  items         OrderItem[]
-  paymentId     Payment?
+  Shop          Shop                 @relation(fields: [shopId], references: [ownerId], onDelete: NoAction, onUpdate: NoAction)
+  addressShip   AddressShip          @relation(fields: [addressShipId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  paymentMethod PaymentMethod        @default(COD)
+  voucher       Voucher?             @relation(fields: [voucherId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  delivery      DeliveryType         @relation(fields: [deliveryId], references: [id])
 
   createdById Int
   createdBy   User  @relation("OrderCreatedBy", fields: [createdById], references: [id])
@@ -547,60 +572,60 @@ model Order {
   deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  Payment   Payment?  @relation(fields: [paymentId], references: [id])
+  paymentId Int?      @unique
 
   @@index([deletedAt, createdById])
+  @@index([userId])
 }
 
-model OrderItem {
-  id       Int     @id @default(autoincrement())
-  orderId  Int
-  skuId    Int
-  price    Float
-  quantity Int
-  shopId   Int
-  order    Order   @relation(fields: [orderId], references: [id])
-  sku      SKU     @relation(fields: [skuId], references: [id])
-  shop     User    @relation(fields: [shopId], references: [id])
-  review   Review?
+model Transaction {
+  id        Int           @id @default(autoincrement())
+  userId    Int
+  total     Float
+  method    PaymentMethod
+  status    PaymentStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 
-  @@unique([orderId, skuId], name: "userId_skuId")
+  payments Payment[]
+  user     User      @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 model Payment {
-  id            Int                @id @default(autoincrement())
-  orderId       Int                @unique
-  userId        Int
-  method        PaymentMethod
-  status        PaymentStatus      @default(PENDING)
+  id            Int           @id @default(autoincrement())
+  transactionId Int
   amount        Float
-  transactionId Int                @unique
+  status        PaymentStatus @default(PENDING)
   paidAt        DateTime?
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime
-  order         Order              @relation(fields: [orderId], references: [id])
-  user          User               @relation(fields: [userId], references: [id])
-  transaction   PaymentTransaction @relation(fields: [transactionId], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 
-  @@index([orderId])
-  @@index([userId])
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+  orderId     Int
+  user        User?       @relation(fields: [userId], references: [id])
+  userId      Int?
+  order       Order?
+
   @@index([transactionId])
 }
 
 model PaymentTransaction {
-  id                 Int       @id @default(autoincrement())
+  id                 Int      @id @default(autoincrement())
   gateway            String
-  transactionDate    DateTime  @default(now())
+  transactionDate    DateTime @default(now())
   accountNumber      String
   subAccount         String
-  amountIn           Int       @default(0)
-  amountOut          Int       @default(0)
-  accumulated        Int       @default(0)
+  amountIn           Int      @default(0)
+  amountOut          Int      @default(0)
+  accumulated        Int      @default(0)
   code               String
   transactionContent String
   referenceNumber    String
   body               String
-  createdAt          DateTime  @default(now())
-  payments           Payment[]
+  createdAt          DateTime @default(now())
 }
 
 model Shop {
@@ -620,6 +645,7 @@ model Shop {
   deletedAt   DateTime?
   deletedById Int?
   deletedBy   User?     @relation("ShopDeletedBy", fields: [deletedById], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  Order       Order[]
 
   @@index([slug])
   @@index([deletedAt])
@@ -648,14 +674,13 @@ model BannerDesign {
 }
 
 model Review {
-  id          Int       @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   revieweeId  Int
-  orderItemId Int       @unique
+  orderItemId Int      @unique
   rating      Int
   content     String
   images      String[]
-  reviewee    User      @relation("Reviewee", fields: [revieweeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  orderItem   OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  reviewee    User     @relation("Reviewee", fields: [revieweeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   createdById Int
   createdBy   User  @relation("Reviewer", fields: [createdById], references: [id], onDelete: Cascade, onUpdate: NoAction)
@@ -946,6 +971,7 @@ enum PaymentStatus {
 enum PaymentMethod {
   COD
   SEPAY
+  WEB3
 }
 
 enum BannerType {
