@@ -1,0 +1,9 @@
+UPDATE "AddressShip"
+SET latitude = (geoinfo->'region'->>'latitude')::double precision,
+    longitude = (geoinfo->'region'->>'longitude')::double precision
+WHERE geoinfo IS NOT NULL;
+
+
+CREATE UNIQUE INDEX one_default_address_per_user
+ON "AddressShip" ("userId")
+WHERE "is_delivery_address" = true AND "isDefault" = true;

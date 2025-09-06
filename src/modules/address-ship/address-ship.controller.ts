@@ -12,7 +12,7 @@ import { ZodSerializerDto } from 'nestjs-zod';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { MessageResDTO } from 'src/common/dtos/response.dto';
 import { GetParamsDTO, PaginationQueryDTO } from 'src/common/dtos/request.dto';
-import { BrandService } from './brand.service';
+import { BrandService } from './address-ship.service';
 import {
   CreateBrandBodyDTO,
   CreateBrandResDTO,
@@ -20,7 +20,7 @@ import {
   GetBrandResDTO,
   UpdateBrandBodyDTO,
   UpdateBrandResDTO,
-} from './brand.dto';
+} from './address-ship.dto';
 
 @Controller('brand')
 export class BrandController {

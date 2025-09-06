@@ -112,29 +112,142 @@ model User {
   Review           Review[]
   UserVoucher      UserVoucher[]
   Transaction      Transaction[]
+  AddressLabel     AddressLabel[]
 
   // unique (email) when deletedAt=null
   @@index([deletedAt])
 }
 
 model AddressShip {
-  id                Int      @id @default(autoincrement())
-  userId            Int
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  name              String
-  phone             String
-  address           String
-  city              String
-  district          String
-  isDeliveryAddress Boolean  @default(true) @map("is_delivery_address")
-  state             String
-  country           String
-  status            Int      @default(1)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  Order             Order[]
+  id     Int  @id @default(autoincrement())
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  // Personal / contact
+  name  String
+  phone String
+
+  // Structured address components (nullable because different countries have different depth)  
+  countryId  Int
+  country    Country   @relation(fields: [countryId], references: [id])
+  stateId    Int?
+  state      State?    @relation(fields: [stateId], references: [id])
+  cityId     Int?
+  city       City?     @relation(fields: [cityId], references: [id])
+  districtId Int?
+  district   District? @relation(fields: [districtId], references: [id])
+  wardId     Int?
+  ward       Ward?     @relation(fields: [wardId], references: [id])
+
+  // Freeform / text parts
+  street             String? // e.g. "Nguyên Thị Trang Hiền" or "123 King St"
+  houseNumber        String? // optional separation
+  address            String // full address text (keeps original payload)
+  addressInstruction String? // note/instruction, e.g. "cửa sau"
+  zipcode            String?
+  town               String? // small town / ward
+
+  // Labels, flags
+  labelId           Int?
+  label             AddressLabel? @relation(fields: [labelId], references: [id])
+  isDeliveryAddress Boolean       @default(true) @map("is_delivery_address")
+  isDefault         Boolean       @default(false) // user default address
+  status            Int           @default(1)
+  deletedAt         DateTime? // soft delete if needed
+
+  // Geoinfo (keeps your JSON structure and coordinates)
+  geoinfo Json?
+
+  // Optionally store lat/lng for spatial index (use Decimal for precision)
+  latitude  Decimal? @db.Decimal(10, 7)
+  longitude Decimal? @db.Decimal(10, 7)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  wrder Order[] // existing relation if any
 
   @@index([userId])
+  @@index([countryId])
+  @@index([userId, isDefault])
+  @@index([stateId])
+  @@index([cityId])
+  @@index([districtId])
+  @@index([wardId])
+  @@index([zipcode])
+  @@index([status])
+}
+
+model Country {
+  id            Int      @id @default(autoincrement())
+  iso2          String   @unique // "VN", "US", "SG"
+  iso3          String?
+  name          String
+  phoneCode     String? // +84, +1
+  addressFormat Json? // optional: template / rules per country
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  states    State[]
+  addresses AddressShip[]
+}
+
+model State {
+  id        Int      @id @default(autoincrement())
+  countryId Int
+  country   Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  name      String
+  code      String? // optional code
+  createdAt DateTime @default(now())
+
+  cities      City[]
+  AddressShip AddressShip[]
+  District    District[]
+}
+
+model District {
+  id          Int           @id @default(autoincrement())
+  cityId      Int?
+  city        City?         @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  stateId     Int?
+  state       State?        @relation(fields: [stateId], references: [id], onDelete: Cascade)
+  name        String
+  createdAt   DateTime      @default(now())
+  AddressShip AddressShip[]
+  Ward        Ward[]
+}
+
+model Ward {
+  id          Int           @id @default(autoincrement())
+  districtId  Int?
+  district    District?     @relation(fields: [districtId], references: [id], onDelete: Cascade)
+  name        String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt()
+  AddressShip AddressShip[]
+
+  @@index([districtId])
+  @@map("wards")
+}
+model City {
+  id        Int      @id @default(autoincrement())
+  stateId   Int?
+  state     State?   @relation(fields: [stateId], references: [id], onDelete: Cascade)
+  name      String
+  createdAt DateTime @default(now())
+
+  districts   District[]
+  AddressShip AddressShip[]
+}
+
+
+model AddressLabel {
+  id          Int           @id @default(autoincrement())
+  name        String // e.g. "Home", "Work", "Parents"
+  icon        String? // optional icon name
+  userId      Int? // if user-specific labels (nullable) otherwise global
+  user        User?         @relation(fields: [userId], references: [id])
+  AddressShip AddressShip[]
 }
 
 model UserFollow {
