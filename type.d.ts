@@ -1,3 +1,4 @@
+import { DivisionRecord } from 'src/common/types/address-ship.type';
 import { ProductTranslationType } from './common/models/product-translation.model';
 import { VariantsType } from './common/models/product.model';
 
@@ -43,5 +44,7 @@ declare global {
       metadata?: Record<string, any>;
       [key: string]: JsonValue;
     };
+
+    type divisionPath = DivisionRecord;
   }
 }
