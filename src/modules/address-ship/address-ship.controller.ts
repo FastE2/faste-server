@@ -22,7 +22,7 @@ import {
   UpdateBrandResDTO,
 } from './address-ship.dto';
 
-@Controller('brand')
+@Controller('address-ship')
 export class BrandController {
   constructor(private readonly brandService: BrandService) {}
 
