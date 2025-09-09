@@ -413,11 +413,17 @@ model ProductLike {
 
   @@id([userId, productId])
 }
-
 model DeliveryType {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  price Float
+  id          Int    @id @default(autoincrement())
+  code        String @unique
+  name        String
+  description String
+
+  estimatedTime String?
+  countryCode   String  @default("VN")
+  basePrice     Int     @default(0)
+  pricePerKg    Int     @default(0)
+  isActive      Boolean @default(true)
 
   orders Order[]
 
