@@ -56,7 +56,7 @@ export class BrandController {
     @Param() params: GetParamsDTO,
     @ActiveUser('userId') userId: number,
   ) {
-    return this.brandService.updateRole({
+    return this.brandService.updateBrand({
       id: params.id,
       data: body,
       updatedById: userId,

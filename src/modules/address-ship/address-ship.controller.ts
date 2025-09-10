@@ -12,66 +12,72 @@ import { ZodSerializerDto } from 'nestjs-zod';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { MessageResDTO } from 'src/common/dtos/response.dto';
 import { GetParamsDTO, PaginationQueryDTO } from 'src/common/dtos/request.dto';
-import { BrandService } from './address-ship.service';
+import { AddressShipService } from './address-ship.service';
 import {
-  CreateBrandBodyDTO,
-  CreateBrandResDTO,
-  GetBrandByIdResDTO,
-  GetBrandResDTO,
-  UpdateBrandBodyDTO,
-  UpdateBrandResDTO,
+  CreateAddressShipBodyDTO,
+  CreateAddressShipResDTO,
+  GetAddressShipByIdResDTO,
+  GetAddressShipResDTO,
+  UpdateAddressShipBodyDTO,
+  UpdateAddressShipResDTO,
 } from './address-ship.dto';
 
 @Controller('address-ship')
-export class BrandController {
-  constructor(private readonly brandService: BrandService) {}
+export class AddressShipController {
+  constructor(private readonly addressShipService: AddressShipService) {}
 
   @Get()
-  @ZodSerializerDto(GetBrandResDTO)
-  getAllBrands(@Query() query: PaginationQueryDTO) {
-    return this.brandService.getAllBrands(query);
-  }
-  @Post()
-  @ZodSerializerDto(CreateBrandResDTO)
-  createBrand(
-    @Body() body: CreateBrandBodyDTO,
+  @ZodSerializerDto(GetAddressShipResDTO)
+  getAllAddressShips(
+    @Query() query: PaginationQueryDTO,
     @ActiveUser('userId') userId: number,
   ) {
-    return this.brandService.createBrand({
+    return this.addressShipService.getAllAddressShips(userId, query);
+  }
+  @Post()
+  @ZodSerializerDto(CreateAddressShipResDTO)
+  createAddressShip(
+    @Body() body: CreateAddressShipBodyDTO,
+    @ActiveUser('userId') userId: number,
+  ) {
+    return this.addressShipService.createAddressShip({
       data: body,
-      createdById: userId,
+      userId,
     });
   }
 
   @Get('/:id')
-  @ZodSerializerDto(GetBrandByIdResDTO)
-  getById(@Param() params: GetParamsDTO) {
-    return this.brandService.getBrandById(params.id);
-  }
-
-  @Patch('/:id')
-  @ZodSerializerDto(UpdateBrandResDTO)
-  updateBrand(
-    @Body() body: UpdateBrandBodyDTO,
+  @ZodSerializerDto(GetAddressShipByIdResDTO)
+  getAddressShipById(
     @Param() params: GetParamsDTO,
     @ActiveUser('userId') userId: number,
   ) {
-    return this.brandService.updateRole({
+    return this.addressShipService.getAddressShipById(userId, params.id);
+  }
+
+  @Patch('/:id')
+  @ZodSerializerDto(UpdateAddressShipResDTO)
+  updateAddressShip(
+    @Body() body: UpdateAddressShipBodyDTO,
+    @Param() params: GetParamsDTO,
+    @ActiveUser('userId') userId: number,
+  ) {
+    return this.addressShipService.updateAddressShip({
       id: params.id,
       data: body,
-      updatedById: userId,
+      userId,
     });
   }
 
   @Delete('/:id')
   @ZodSerializerDto(MessageResDTO)
-  deleteBrand(
+  deleteAddressShip(
     @Param() params: GetParamsDTO,
     @ActiveUser('userId') userId: number,
   ) {
-    return this.brandService.deleteBrand({
+    return this.addressShipService.deleteAddressShip({
       id: params.id,
-      deletedById: userId,
+      userId,
     });
   }
 }

@@ -1,90 +1,90 @@
 import { Injectable } from '@nestjs/common';
 import { PaginationQueryType } from 'src/common/schemas/request.schema';
 import { NotFoundRecordException } from 'src/common/errors';
-import { Prisma } from '@prisma/client';
-import { BrandRepository } from './address-ship.repository';
+import { AddressShipRepository } from './address-ship.repository';
 import {
-  CreateBrandBodyType,
-  UpdateBrandBodyType,
+  CreateAddressShipBodyType,
+  UpdateAddressShipBodyType,
 } from './address-ship.schema';
+import { isPrismaRecordNotFound } from 'src/common/errors/prisma';
 
 @Injectable()
-export class BrandService {
-  constructor(private readonly brandRepository: BrandRepository) {}
-  async getAllBrands(query: PaginationQueryType) {
+export class AddressShipService {
+  constructor(private readonly addressShipRepository: AddressShipRepository) {}
+  async getAllAddressShips(userId: number, query: PaginationQueryType) {
     try {
-      return await this.brandRepository.list(query);
+      return await this.addressShipRepository.list(userId, query);
     } catch (error) {
-      console.log('/brand', error);
+      console.log('/address-ship', error);
       throw error;
     }
   }
 
-  async getBrandById(id: number) {
+  async getAddressShipById(userId: number, id: number) {
     try {
-      const brand = await this.brandRepository.findById(id);
-      if (!brand) {
+      const addressShip = await this.addressShipRepository.findById(userId, id);
+      if (!addressShip) {
         throw NotFoundRecordException;
       }
-      return brand;
+      return addressShip;
     } catch (error) {
-      console.log('/brand/:id', error);
+      console.log('/address-ship/:id', error);
       throw error;
     }
   }
 
-  async createBrand({
+  async createAddressShip({
     data,
-    createdById,
+    userId,
   }: {
-    data: CreateBrandBodyType;
-    createdById: number;
+    data: CreateAddressShipBodyType;
+    userId: number;
   }) {
     try {
-      const brand = await this.brandRepository.create({ createdById, data });
-      return brand;
+      const addressShip = await this.addressShipRepository.create({
+        userId,
+        data,
+      });
+      return addressShip;
     } catch (error) {
-      console.log('/brand', error);
+      console.log('/address-ship', error);
       throw error;
     }
   }
 
-  async updateRole({
+  async updateAddressShip({
     id,
     data,
-    updatedById,
+    userId,
   }: {
     id: number;
-    data: UpdateBrandBodyType;
-    updatedById: number;
+    data: UpdateAddressShipBodyType;
+    userId: number;
   }) {
     try {
       // update user
-      const updatedBrand = await this.brandRepository.update({
+      const updatedAddressShip = await this.addressShipRepository.update({
         id,
-        updatedById,
+        userId,
         data,
       });
 
-      return updatedBrand;
+      return updatedAddressShip;
     } catch (error) {
-      console.log('/brand/:id', error);
+      console.log('/address-ship/:id', error);
       throw error;
     }
   }
 
-  async deleteBrand({ id, deletedById }: { id: number; deletedById: number }) {
+  async deleteAddressShip({ id, userId }: { id: number; userId: number }) {
     try {
-      //  delete brand (xóa mềm)
-      await this.brandRepository.delete({ id, deletedById });
+      //  delete addressShip (xóa mềm)
+      await this.addressShipRepository.delete({ id, userId });
 
-      return { message: 'Delete brand successfully' };
+      return { message: 'Delete addressShip successfully' };
     } catch (error) {
-      console.log('/brand/:id', error);
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      console.log('/address-ship/:id', error);
+      if (isPrismaRecordNotFound(error)) {
         throw NotFoundRecordException;
       }
       throw error;

@@ -47,7 +47,7 @@ export class BrandService {
     }
   }
 
-  async updateRole({
+  async updateBrand({
     id,
     data,
     updatedById,

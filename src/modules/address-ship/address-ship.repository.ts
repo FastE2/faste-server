@@ -3,19 +3,21 @@ import { PaginationQueryType } from 'src/common/schemas/request.schema';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { zodToPrismaSelect } from 'src/utils/zod-prisma-select.util';
 import {
-  BrandType,
-  CreateBrandBodyType,
-  UpdateBrandBodyType,
+  AddressShipType,
+  CreateAddressShipBodyType,
+  UpdateAddressShipBodyType,
 } from './address-ship.schema';
-import { RoleType } from 'src/common/schemas/role.schema';
-import { RolePermissionsType } from 'src/common/schemas/permission.schema';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
-export class BrandRepository {
+export class AddressShipRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async list(pagination: PaginationQueryType): Promise<{
-    data: BrandType[];
+  async list(
+    userId: number,
+    pagination: PaginationQueryType,
+  ): Promise<{
+    data: any[];
     totalItem: number;
     page: number;
     limmit: number;
@@ -25,15 +27,17 @@ export class BrandRepository {
     const take = pagination.limit;
     // console.log(zodToPrismaSelect(GetUsersInclueRoleSchema));
     const [data, totalItem] = await Promise.all([
-      this.prismaService.brand.findMany({
+      this.prismaService.addressShip.findMany({
         where: {
+          userId,
           deletedAt: null,
         },
         take,
         skip,
       }),
-      this.prismaService.brand.count({
+      this.prismaService.addressShip.count({
         where: {
+          userId,
           deletedAt: null,
         },
       }),
@@ -48,47 +52,50 @@ export class BrandRepository {
     };
   }
 
-  findById(id: number): Promise<BrandType | null> {
-    return this.prismaService.brand.findUnique({
+  findById(userId: number, id: number): Promise<AddressShipType | null> {
+    return this.prismaService.addressShip.findUnique({
       where: {
         id,
+        userId,
         deletedAt: null,
       },
     });
   }
 
   create({
-    createdById,
+    userId,
     data,
   }: {
-    createdById: number;
-    data: CreateBrandBodyType;
-  }): Promise<BrandType> {
-    return this.prismaService.brand.create({
+    userId: number;
+    data: CreateAddressShipBodyType;
+  }): Promise<AddressShipType> {
+    return this.prismaService.addressShip.create({
       data: {
         ...data,
-        createdById,
+        userId,
+        geoinfo: data.geoinfo ?? Prisma.JsonNull,
       },
     });
   }
 
   async update({
     id,
-    updatedById,
+    userId,
     data,
   }: {
     id: number;
-    updatedById: number;
-    data: UpdateBrandBodyType;
-  }): Promise<BrandType> {
-    return this.prismaService.brand.update({
+    userId: number;
+    data: UpdateAddressShipBodyType;
+  }): Promise<AddressShipType> {
+    return this.prismaService.addressShip.update({
       where: {
         id,
+        userId,
         deletedAt: null,
       },
       data: {
         ...data,
-        updatedById,
+        geoinfo: data.geoinfo ?? Prisma.JsonNull,
       },
     });
   }
@@ -96,27 +103,28 @@ export class BrandRepository {
   delete(
     {
       id,
-      deletedById,
+      userId,
     }: {
       id: number;
-      deletedById: number;
+      userId: number;
     },
     isHard?: boolean,
   ): Promise<any> {
     return isHard
-      ? this.prismaService.brand.delete({
+      ? this.prismaService.addressShip.delete({
           where: {
             id,
+            userId,
           },
         })
-      : this.prismaService.brand.update({
+      : this.prismaService.addressShip.update({
           where: {
             id,
+            userId,
             deletedAt: null,
           },
           data: {
             deletedAt: new Date(),
-            deletedById,
           },
         });
   }

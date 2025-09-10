@@ -1,16 +1,28 @@
 import { createZodDto } from 'nestjs-zod';
 import {
-  CreateBrandBodySchema,
-  CreateBrandResSchema,
-  GetBrandByIdResSchema,
-  GetBrandResSchema,
-  UpdateBrandBodySchema,
-  UpdateBrandResSchema,
+  CreateAddressShipBodySchema,
+  CreateAddressShipResSchema,
+  GetAddressShipByIdResSchema,
+  GetAddressShipResSchema,
+  UpdateAddressShipBodySchema,
+  UpdateAddressShipResSchema,
 } from './address-ship.schema';
 
-export class CreateBrandBodyDTO extends createZodDto(CreateBrandBodySchema) {}
-export class UpdateBrandBodyDTO extends createZodDto(UpdateBrandBodySchema) {}
-export class GetBrandResDTO extends createZodDto(GetBrandResSchema) {}
-export class GetBrandByIdResDTO extends createZodDto(GetBrandByIdResSchema) {}
-export class CreateBrandResDTO extends createZodDto(CreateBrandResSchema) {}
-export class UpdateBrandResDTO extends createZodDto(UpdateBrandResSchema) {}
+export class CreateAddressShipBodyDTO extends createZodDto(
+  CreateAddressShipBodySchema,
+) {}
+export class UpdateAddressShipBodyDTO extends createZodDto(
+  UpdateAddressShipBodySchema,
+) {}
+export class GetAddressShipResDTO extends createZodDto(
+  GetAddressShipResSchema,
+) {}
+export class GetAddressShipByIdResDTO extends createZodDto(
+  GetAddressShipByIdResSchema,
+) {}
+export class CreateAddressShipResDTO extends createZodDto(
+  CreateAddressShipResSchema,
+) {}
+export class UpdateAddressShipResDTO extends createZodDto(
+  UpdateAddressShipResSchema,
+) {}

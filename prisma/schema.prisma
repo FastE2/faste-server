@@ -151,19 +151,18 @@ model AddressShip {
   label             AddressLabel? @relation(fields: [labelId], references: [id])
   isDeliveryAddress Boolean       @default(true) @map("is_delivery_address")
   isDefault         Boolean       @default(false) // user default address
-  status            Int           @default(1)
-  deletedAt         DateTime? // soft delete if needed
 
   // Geoinfo (keeps your JSON structure and coordinates)
   /// [Geoinfo]
   geoinfo Json?
 
   // Optionally store lat/lng for spatial index (use Decimal for precision)
-  latitude  Decimal? @db.Decimal(10, 7)
-  longitude Decimal? @db.Decimal(10, 7)
+  latitude  Int?
+  longitude Int?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  deletedAt DateTime? // soft delete if needed
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   wrder Order[] // existing relation if any
 
@@ -172,7 +171,6 @@ model AddressShip {
   @@index([userId, isDefault])
   @@index([divisionId])
   @@index([zipcode])
-  @@index([status])
 }
 
 model AdministrativeDivision {
@@ -413,6 +411,7 @@ model ProductLike {
 
   @@id([userId, productId])
 }
+
 model DeliveryType {
   id          Int    @id @default(autoincrement())
   code        String @unique

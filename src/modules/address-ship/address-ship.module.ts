@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { BrandController } from './address-ship.controller';
-import { BrandService } from './address-ship.service';
-import { BrandRepository } from './address-ship.repository';
+import { AddressShipController } from './address-ship.controller';
+import { AddressShipService } from './address-ship.service';
+import { AddressShipRepository } from './address-ship.repository';
 
 @Module({
   imports: [],
-  controllers: [BrandController],
-  providers: [BrandService, BrandRepository],
+  controllers: [AddressShipController],
+  providers: [AddressShipService, AddressShipRepository],
 })
 export class AddressShipModule {}
