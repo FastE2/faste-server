@@ -45,6 +45,12 @@ export class AuthController {
     return this.authService.register(body);
   }
 
+  @Post('seller/register')
+  @ZodSerializerDto(RegisterResDTO)
+  registerSeller(@Body() body: RegisterBodyDTO) {
+    return this.authService.register(body);
+  }
+
   @Post('login')
   @Ispublic()
   @ZodSerializerDto(LoginResDTO)

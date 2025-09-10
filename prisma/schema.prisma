@@ -165,6 +165,7 @@ model AddressShip {
   updatedAt DateTime  @updatedAt
 
   wrder Order[] // existing relation if any
+  Shop  Shop[]
 
   @@index([userId])
   @@index([countryId])
@@ -385,6 +386,7 @@ model Product {
 
   createdById Int
   createdBy   User  @relation("ProductCreatedBy", fields: [createdById], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  // shop        Shop  @relation("ProductCreatedByShop", fields: [createdById], references: [shopid], map: "FK_ProductByShop_createdById")
   updatedById Int?
   updatedBy   User? @relation("ProductUpdatedBy", fields: [updatedById], references: [id], onDelete: Cascade, onUpdate: NoAction)
   deletedById Int?
@@ -433,9 +435,11 @@ model DeliveryType {
   deletedById Int?
   deletedBy   User? @relation("DeliveryTypeDeletedBy", fields: [deletedById], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  deletedAt DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  deletedAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  Shop       Shop?     @relation(fields: [shopShopid], references: [shopid])
+  shopShopid Int?
 
   @@index([deletedAt])
 }
@@ -649,7 +653,7 @@ model Order {
   shopId        Int
   deliveryId    Int
   voucherId     Int?
-  Shop          Shop                 @relation(fields: [shopId], references: [ownerId], onDelete: NoAction, onUpdate: NoAction)
+  Shop          Shop                 @relation(fields: [shopId], references: [shopid], onDelete: NoAction, onUpdate: NoAction)
   addressShip   AddressShip          @relation(fields: [addressShipId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   paymentMethod PaymentMethod        @default(COD)
   voucher       Voucher?             @relation(fields: [voucherId], references: [id], onDelete: SetNull, onUpdate: NoAction)
@@ -722,16 +726,29 @@ model PaymentTransaction {
 }
 
 model Shop {
-  ownerId     Int            @id
-  owner       User           @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  name        String         @unique @db.VarChar(200)
-  slug        String         @unique @db.VarChar(1000)
-  logo        String         @default("") @db.VarChar(1000)
-  banner      String[]
-  description String         @default("")
-  status      ShopStatus     @default(PENDING)
-  isActive    Boolean        @default(true)
-  banners     BannerDesign[]
+  shopid        Int          @id
+  account       User         @relation(fields: [shopid], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  name          String       @unique @db.VarChar(200)
+  logo          String?      @default("") @db.VarChar(1000)
+  cover         String?
+  banner        String?
+  description   String       @default("")
+  followerCount Int?
+  ratingStar    Float?       @default(0)
+  responseRate  Int?         @default(100)
+  responseTime  Int?         @default(0)
+  addressShip   AddressShip? @relation(fields: [addressShipId], references: [id])
+  addressShipId Int?
+
+  businessType BusinessType
+  taxCode      String       @db.VarChar(14)
+
+  status         ShopStatus      @default(PENDING)
+  isActive       Boolean         @default(true)
+  itemCount      Int?            @default(0)
+  shopShipping   DeliveryType[]
+  paymentMethods PaymentMethod[]
+  banners        BannerDesign[]
 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -739,17 +756,17 @@ model Shop {
   deletedById Int?
   deletedBy   User?     @relation("ShopDeletedBy", fields: [deletedById], references: [id], onDelete: Cascade, onUpdate: NoAction)
   Order       Order[]
+  // Product     Product[] @relation("ProductCreatedByShop")
 
-  @@index([slug])
   @@index([deletedAt])
-  @@index([ownerId])
+  @@index([shopid])
 }
 
 model BannerDesign {
   id           Int        @id @default(autoincrement())
   name         String     @db.VarChar(500)
   shopId       Int
-  shop         Shop       @relation(fields: [shopId], references: [ownerId], onDelete: Cascade, onUpdate: NoAction)
+  shop         Shop       @relation(fields: [shopId], references: [shopid], onDelete: Cascade, onUpdate: NoAction)
   priority     Int        @default(0)
   type         BannerType @default(MAIN)
   jsonDesign   Json
@@ -1117,4 +1134,10 @@ enum DivisionLevel {
   CITY
   DISTRICT
   WARD
+}
+
+enum BusinessType {
+  INDIVIDUAL
+  BUSINESS_HOUSEHOLD
+  COMPANY
 }
