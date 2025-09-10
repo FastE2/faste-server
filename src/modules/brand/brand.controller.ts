@@ -33,7 +33,7 @@ export class BrandController {
   }
   @Post()
   @ZodSerializerDto(CreateBrandResDTO)
-  createUser(
+  createBrand(
     @Body() body: CreateBrandBodyDTO,
     @ActiveUser('userId') userId: number,
   ) {
@@ -51,12 +51,12 @@ export class BrandController {
 
   @Patch('/:id')
   @ZodSerializerDto(UpdateBrandResDTO)
-  updateUser(
+  updateBrand(
     @Body() body: UpdateBrandBodyDTO,
     @Param() params: GetParamsDTO,
     @ActiveUser('userId') userId: number,
   ) {
-    return this.brandService.updateRole({
+    return this.brandService.updateBrand({
       id: params.id,
       data: body,
       updatedById: userId,
@@ -65,7 +65,7 @@ export class BrandController {
 
   @Delete('/:id')
   @ZodSerializerDto(MessageResDTO)
-  deleteUser(
+  deleteBrand(
     @Param() params: GetParamsDTO,
     @ActiveUser('userId') userId: number,
   ) {

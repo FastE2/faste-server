@@ -112,29 +112,115 @@ model User {
   Review           Review[]
   UserVoucher      UserVoucher[]
   Transaction      Transaction[]
+  AddressLabel     AddressLabel[]
 
   // unique (email) when deletedAt=null
   @@index([deletedAt])
 }
 
 model AddressShip {
-  id                Int      @id @default(autoincrement())
-  userId            Int
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  name              String
-  phone             String
-  address           String
-  city              String
-  district          String
-  isDeliveryAddress Boolean  @default(true) @map("is_delivery_address")
-  state             String
-  country           String
-  status            Int      @default(1)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  Order             Order[]
+  id     Int  @id @default(autoincrement())
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  // Personal / contact
+  name  String
+  phone String
+
+  // Structured address components (nullable because different countries have different depth)  
+  countryId Int
+  country   Country @relation(fields: [countryId], references: [id])
+
+  divisionId Int
+  division   AdministrativeDivision @relation(fields: [divisionId], references: [id])
+
+  // Ex: { "country": "Việt Nam", "city": "Hồ Chí Minh", "district": "Gò Vấp", "ward": "Phường 1" }
+  /// [divisionPath]
+  divisionPath Json
+
+  // Freeform / text parts
+  street             String?
+  houseNumber        String?
+  address            String
+  addressInstruction String? // note/instruction, e.g. "cửa sau"
+  zipcode            String?
+  town               String? // small town / ward
+
+  // Labels, flags
+  labelId           Int?
+  label             AddressLabel? @relation(fields: [labelId], references: [id])
+  isDeliveryAddress Boolean       @default(true) @map("is_delivery_address")
+  isDefault         Boolean       @default(false) // user default address
+
+  // Geoinfo (keeps your JSON structure and coordinates)
+  /// [Geoinfo]
+  geoinfo Json?
+
+  // Optionally store lat/lng for spatial index (use Decimal for precision)
+  latitude  Int?
+  longitude Int?
+
+  deletedAt DateTime? // soft delete if needed
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  wrder Order[] // existing relation if any
 
   @@index([userId])
+  @@index([countryId])
+  @@index([userId, isDefault])
+  @@index([divisionId])
+  @@index([zipcode])
+}
+
+model AdministrativeDivision {
+  id    Int           @id @default(autoincrement())
+  code  String?       @unique
+  name  String
+  level DivisionLevel
+
+  parentId Int?
+  parent   AdministrativeDivision?  @relation("DivisionHierarchy", fields: [parentId], references: [id])
+  children AdministrativeDivision[] @relation("DivisionHierarchy")
+
+  countryId Int?
+  country   Country? @relation(fields: [countryId], references: [id])
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  shippingAddresses AddressShip[]
+
+  @@unique([parentId, code])
+  @@index([parentId, level])
+  @@index([countryId])
+  @@index([level])
+  @@index([level, id])
+  @@index([parentId])
+}
+
+model Country {
+  id        Int     @id @default(autoincrement())
+  iso2      String  @unique // "VN", "US", "SG"
+  iso3      String?
+  name      String
+  phoneCode String? // +84, +1
+
+  /// [AddressFormat]
+  addressFormat Json? // optional: template / rules per country
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  addresses AddressShip[]
+  divisions AdministrativeDivision[]
+}
+
+model AddressLabel {
+  id          Int           @id @default(autoincrement())
+  name        String // e.g. "Home", "Work", "Parents"
+  icon        String? // optional icon name
+  userId      Int? // if user-specific labels (nullable) otherwise global
+  user        User?         @relation(fields: [userId], references: [id])
+  AddressShip AddressShip[]
 }
 
 model UserFollow {
@@ -327,9 +413,16 @@ model ProductLike {
 }
 
 model DeliveryType {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  price Float
+  id          Int    @id @default(autoincrement())
+  code        String @unique
+  name        String
+  description String
+
+  estimatedTime String?
+  countryCode   String  @default("VN")
+  basePrice     Int     @default(0)
+  pricePerKg    Int     @default(0)
+  isActive      Boolean @default(true)
 
   orders Order[]
 
@@ -1017,4 +1110,11 @@ enum ProductStatus {
   DRAFT
   PUBLISHED
   ARCHIVED
+}
+
+enum DivisionLevel {
+  STATE
+  CITY
+  DISTRICT
+  WARD
 }

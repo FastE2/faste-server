@@ -16,6 +16,7 @@ import { ROLE_NAME } from 'src/common/constants/role-base.constant';
 import { CommonRoleRepository } from 'src/common/repositories/common-role.repository';
 import { HashService } from 'src/common/libs/crypto/hash.service';
 import { Prisma } from '@prisma/client';
+import { isPrismaRecordNotFound } from 'src/common/errors/prisma';
 
 @Injectable()
 export class UserService {
@@ -192,10 +193,7 @@ export class UserService {
       return { message: 'Delete user successfully' };
     } catch (error) {
       console.log('/user/:id', error);
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (isPrismaRecordNotFound(error)) {
         throw NotFoundRecordException;
       }
       throw error;

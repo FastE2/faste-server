@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { APP_FILTER, APP_GUARD, APP_PIPE, Reflector } from '@nestjs/core';
+import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { CustomZodValidationPipe } from './common/pipes/custom-zod-validation.pipe';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -18,6 +18,9 @@ import { CategoryModule } from './modules/category/category.module';
 import { ProductModule } from './modules/product/product.module';
 import { CartModule } from './modules/cart/cart.module';
 import { OrderModule } from './modules/order/order.module';
+import { ProvincesModule } from './modules/provinces/provinces.module';
+import { DeliveryTypeModule } from './modules/delivery-type/delivery-type.module';
+import { AddressShipModule } from './modules/address-ship/address-ship.module';
 
 const modules = [
   AuthModule,
@@ -32,6 +35,9 @@ const modules = [
   ProductModule,
   CartModule,
   OrderModule,
+  ProvincesModule,
+  DeliveryTypeModule,
+  AddressShipModule,
 ];
 @Module({
   imports: [PrismaModule, CommonModule, ...modules],

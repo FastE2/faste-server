@@ -17,6 +17,7 @@ import {
   OrderStatusType,
 } from 'src/common/constants/order.constant';
 import { CommonUserRepository } from 'src/common/repositories/common-user.repository';
+import { isPrismaRecordNotFound } from 'src/common/errors/prisma';
 
 @Injectable()
 export class OrderService {
@@ -188,10 +189,7 @@ export class OrderService {
       return { message: 'Delete order successfully' };
     } catch (error) {
       console.log('/order/:id', error);
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (isPrismaRecordNotFound(error)) {
         throw NotFoundRecordException;
       }
       throw error;

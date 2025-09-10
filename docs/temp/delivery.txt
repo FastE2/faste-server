@@ -1,0 +1,107 @@
+// Model cho đơn vị vận chuyển
+model ShippingProvider {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Quan hệ
+  shippingZones      ShippingZone[]
+  shippingRateTables ShippingRateTable[]
+  orders             Order[]
+}
+
+// Model cho vùng vận chuyển
+model ShippingZone {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  providerId  Int
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Quan hệ
+  provider      ShippingProvider @relation(fields: [providerId], references: [id])
+  rateZones     ShippingRateZone[]
+  shippingRates ShippingRate[]
+}
+
+// Model cho bảng giá
+model ShippingRateTable {
+  id          Int      @id @default(autoincrement())
+  name        String
+  type        RateTableType // SPECIAL hoặc STANDARD
+  description String?
+  providerId  Int
+  isActive    Boolean  @default(true)
+  effectiveFrom DateTime
+  effectiveTo   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Quan hệ
+  provider   ShippingProvider @relation(fields: [providerId], references: [id])
+  rateZones ShippingRateZone[]
+}
+
+// Model cho vùng trong bảng giá
+model ShippingRateZone {
+  id          Int      @id @default(autoincrement())
+  name        String   // Nội tỉnh, Nội miền, Liên miền
+  rateTableId Int
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Quan hệ
+  rateTable    ShippingRateTable @relation(fields: [rateTableId], references: [id])
+  shippingRates ShippingRate[]
+}
+
+// Model cho biểu phí
+model ShippingRate {
+  id         Int     @id @default(autoincrement())
+  zoneId     Int
+  rateZoneId Int
+  minWeight  Float   // Khối lượng tối thiểu (kg)
+  maxWeight  Float   // Khối lượng tối đa (kg)
+  price      Int     // Giá tiền (VND)
+  additionalPrice Int? // Giá cho mỗi 0.5kg tiếp theo
+  estimatedDays String? // Thời gian ước tính (ví dụ: "1-2 ngày")
+  isActive   Boolean @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  // Quan hệ
+  zone     ShippingZone @relation(fields: [zoneId], references: [id])
+  rateZone ShippingRateZone @relation(fields: [rateZoneId], references: [id])
+}
+
+// Model cho đơn hàng
+model Order {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique
+  sellerId  Int
+  customerId Int
+  shippingProviderId Int
+  status    OrderStatus
+  totalAmount Int
+  shippingFee Int
+  weight     Float
+  length     Float?  // Chiều dài (cm)
+  width      Float?  // Chiều rộng (cm)
+  height     Float?  // Chiều cao (cm)
+  calculatedWeight Float? // Khối lượng tính cuộc
+  pickupAddress  Json
+  deliveryAddress Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Quan hệ
+  seller            Seller   @relation(fields: [sellerId], references: [id])
+  customer          Customer @relation(fields: [customerId], references: [id])
+  shippingProvider  ShippingProvider @relation(fields: [shippingProviderId], references: [id])
+}

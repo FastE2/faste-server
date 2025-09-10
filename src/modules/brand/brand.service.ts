@@ -4,6 +4,7 @@ import { NotFoundRecordException } from 'src/common/errors';
 import { Prisma } from '@prisma/client';
 import { BrandRepository } from './brand.repository';
 import { CreateBrandBodyType, UpdateBrandBodyType } from './brand.schema';
+import { isPrismaRecordNotFound } from 'src/common/errors/prisma';
 
 @Injectable()
 export class BrandService {
@@ -46,7 +47,7 @@ export class BrandService {
     }
   }
 
-  async updateRole({
+  async updateBrand({
     id,
     data,
     updatedById,
@@ -78,10 +79,7 @@ export class BrandService {
       return { message: 'Delete brand successfully' };
     } catch (error) {
       console.log('/brand/:id', error);
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (isPrismaRecordNotFound(error)) {
         throw NotFoundRecordException;
       }
       throw error;

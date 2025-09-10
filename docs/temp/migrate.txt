@@ -1,0 +1,46 @@
+UPDATE "AddressShip"
+SET latitude = (geoinfo->'region'->>'latitude')::double precision,
+    longitude = (geoinfo->'region'->>'longitude')::double precision
+WHERE geoinfo IS NOT NULL;
+
+
+CREATE UNIQUE INDEX one_default_address_per_user
+ON "AddressShip" ("userId")
+WHERE "is_delivery_address" = true AND "isDefault" = true;
+
+
+*** REFACTOR model 
+
+// Cấp hành chính nhỏ nhất mà user chọn (thường là ward)
+  divisionId Int
+  division   AdministrativeDivision @relation(fields: [divisionId], references: [id])
+
+  // Cache full path (dùng để hiển thị nhanh)
+  // Ví dụ: { "country": "Việt Nam", "city": "Hồ Chí Minh", "district": "Gò Vấp", "ward": "Phường 1" }
+  divisionPath Json
+==> add in addressShip
+enum DivisionLevel {
+  country
+  state
+  city
+  district
+  ward
+}
+
+model AdministrativeDivision {
+  id        Int     @id @default(autoincrement())
+  code      String? @unique // mã hành chính (nếu có)
+  name      String
+  level     DivisionLevel
+
+  parentId  Int?
+  parent    AdministrativeDivision? @relation("DivisionHierarchy", fields: [parentId], references: [id])
+  children  AdministrativeDivision[] @relation("DivisionHierarchy")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([level])
+  @@index([level, id])
+  @@index([parentId])
+}
