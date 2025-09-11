@@ -21,6 +21,7 @@ import { OrderModule } from './modules/order/order.module';
 import { ProvincesModule } from './modules/provinces/provinces.module';
 import { DeliveryTypeModule } from './modules/delivery-type/delivery-type.module';
 import { AddressShipModule } from './modules/address-ship/address-ship.module';
+import { ShopModule } from './modules/shop/shop.module';
 
 const modules = [
   AuthModule,
@@ -38,6 +39,7 @@ const modules = [
   ProvincesModule,
   DeliveryTypeModule,
   AddressShipModule,
+  ShopModule,
 ];
 @Module({
   imports: [PrismaModule, CommonModule, ...modules],

@@ -726,19 +726,19 @@ model PaymentTransaction {
 }
 
 model Shop {
-  shopid        Int          @id
-  account       User         @relation(fields: [shopid], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  name          String       @unique @db.VarChar(200)
-  logo          String?      @default("") @db.VarChar(1000)
+  shopid        Int         @id
+  account       User        @relation(fields: [shopid], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  name          String      @unique @db.VarChar(200)
+  logo          String?     @default("") @db.VarChar(1000)
   cover         String?
   banner        String?
-  description   String       @default("")
+  description   String      @default("")
   followerCount Int?
-  ratingStar    Float?       @default(0)
-  responseRate  Int?         @default(100)
-  responseTime  Int?         @default(0)
-  addressShip   AddressShip? @relation(fields: [addressShipId], references: [id])
-  addressShipId Int?
+  ratingStar    Float?      @default(0)
+  responseRate  Int?        @default(100)
+  responseTime  Int?        @default(0)
+  addressShip   AddressShip @relation(fields: [addressShipId], references: [id])
+  addressShipId Int
 
   businessType BusinessType
   taxCode      String       @db.VarChar(14)

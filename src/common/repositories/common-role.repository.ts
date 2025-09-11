@@ -8,6 +8,7 @@ export type WhereUniqueUserType = { id: number } | { email: string };
 export class CommonRoleRepository {
   private clientRoleId: number | null = null;
   private adminRoleId: number | null = null;
+  private sellerRoleId: number | null = null;
   constructor(private readonly prismaService: PrismaService) {}
 
   private async getRole(roleName: string) {
@@ -40,5 +41,15 @@ export class CommonRoleRepository {
     const role = await this.getRole(ROLE_NAME.ADMIN);
     this.adminRoleId = role.id;
     return this.adminRoleId;
+  }
+
+  async getSellerRoleId() {
+    if (this.sellerRoleId) {
+      return this.sellerRoleId;
+    }
+
+    const role = await this.getRole(ROLE_NAME.SELLER);
+    this.sellerRoleId = role.id;
+    return this.sellerRoleId;
   }
 }
