@@ -17,6 +17,7 @@ import {
 import { PAYMENT_STATUS } from 'src/common/constants/payment.constant';
 import { ORDER_STATUS } from 'src/common/constants/order.constant';
 import { CommonUserRepository } from 'src/common/repositories/common-user.repository';
+import { OrderProducer } from './order.producer';
 
 type WhereUniqueOrderType =
   | { id: number }
@@ -27,7 +28,10 @@ type WhereListOrderType = { userId: number } | { shopId: number };
 
 @Injectable()
 export class OrderRepository {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly orderProducer: OrderProducer,
+  ) {}
 
   async list({
     _where,
@@ -301,7 +305,15 @@ export class OrderRepository {
             }),
           ),
         );
-        const [_] = await Promise.all([cartItem$, sku$, updatePaymentOrder$]);
+        const scheduleCancelPaymentJob$ = this.orderProducer.scheduleCancelJob(
+          transaction.id,
+        );
+        const [_] = await Promise.all([
+          cartItem$,
+          sku$,
+          updatePaymentOrder$,
+          scheduleCancelPaymentJob$,
+        ]);
         return [transaction, orders];
       },
     );

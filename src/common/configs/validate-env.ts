@@ -32,6 +32,8 @@ const configSchema = z.object({
   AWS_S3_REGION: z.string(),
   AWS_S3_ACCESS_KEY_ID: z.string(),
   AWS_S3_SECRET_ACCESS_KEY: z.string(),
+  PAYMENT_API_KEY: z.string(),
+  REDIS_URL: z.string(),
 });
 
 const configServer = configSchema.safeParse(process.env);

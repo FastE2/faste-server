@@ -22,6 +22,7 @@ import { ProvincesModule } from './modules/provinces/provinces.module';
 import { DeliveryTypeModule } from './modules/delivery-type/delivery-type.module';
 import { AddressShipModule } from './modules/address-ship/address-ship.module';
 import { ShopModule } from './modules/shop/shop.module';
+import { QueueModule } from './queues/queue.module';
 
 const modules = [
   AuthModule,
@@ -42,7 +43,7 @@ const modules = [
   ShopModule,
 ];
 @Module({
-  imports: [PrismaModule, CommonModule, ...modules],
+  imports: [QueueModule, PrismaModule, CommonModule, ...modules],
   controllers: [AppController],
   providers: [
     AppService,
