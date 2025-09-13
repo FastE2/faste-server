@@ -12,7 +12,7 @@ import { PaymentRepository } from './payment.repository';
       name: PAYMENT_QUEUE_NAME,
     }),
   ],
-  controllers: [PaymentController, PaymentProducer, PaymentRepository],
-  providers: [PaymentService],
+  controllers: [PaymentController],
+  providers: [PaymentService, PaymentProducer, PaymentRepository],
 })
 export class PaymentModule {}

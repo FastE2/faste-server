@@ -8,6 +8,7 @@ import { TokenService } from './libs/token/token.service';
 import { HashService } from './libs/crypto/hash.service';
 import { MailModule } from './libs/mail/mail.module';
 import { EncryptionService } from './libs/crypto/encryption.service';
+import { WebsocketModule } from './websockets/websocket.module';
 
 @Global()
 @Module({
@@ -19,6 +20,7 @@ import { EncryptionService } from './libs/crypto/encryption.service';
     TokenService,
     EncryptionService,
     HashService,
+    WebsocketModule,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
@@ -31,6 +33,7 @@ import { EncryptionService } from './libs/crypto/encryption.service';
     HashService,
     EncryptionService,
     MailModule,
+    WebsocketModule,
   ],
 })
 export class CommonModule {}

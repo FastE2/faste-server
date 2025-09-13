@@ -5,6 +5,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import cookieParser from 'cookie-parser';
 import { AuthGuard } from './common/guards/auth.guard';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { WebsocketAdapter } from './common/websockets/websocket.adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -25,6 +26,11 @@ async function bootstrap() {
 
   // -- filter
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  // websocket
+  const websocketAdapter = new WebsocketAdapter(app);
+  await websocketAdapter.connectToRedis();
+  app.useWebSocketAdapter(websocketAdapter);
 
   await app.listen(process.env.PORT ?? 3000);
 }
