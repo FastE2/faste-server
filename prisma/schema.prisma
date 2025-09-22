@@ -631,6 +631,7 @@ model FlashSaleItem {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
+  @@unique([flashSaleId, skuId])
   @@index([deletedAt])
 }
 
@@ -1086,7 +1087,6 @@ enum PaymentStatus {
   SUCCESS
   FAILED
 }
-
 
 enum PaymentMethod {
   COD

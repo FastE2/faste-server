@@ -11,8 +11,13 @@ import {
 } from '@nestjs/common';
 import { FlashsaleAdminService } from './flashsale-admin.service';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
-import { GetParamsDTO, PaginationQueryDTO } from 'src/common/dtos/request.dto';
-import { UpdateFlashSaleStatusBodyDTO } from '../flashsale.dto';
+import { GetParamsDTO } from 'src/common/dtos/request.dto';
+import {
+  FlashSaleListQueryDTO,
+  UpdateFlashSaleStatusBodyDTO,
+} from '../flashsale.dto';
+import { MessageResDTO } from 'src/common/dtos/response.dto';
+import { ZodSerializerDto } from 'nestjs-zod';
 
 @Controller('admin/flashsales')
 export class FlashsaleAdminController {
@@ -27,7 +32,7 @@ export class FlashsaleAdminController {
   }
 
   @Get()
-  findAll(@Query() query: PaginationQueryDTO) {
+  findAll(@Query() query: FlashSaleListQueryDTO) {
     return this.flashsaleAdminService.getAllFlashSales(query);
   }
 
@@ -50,6 +55,7 @@ export class FlashsaleAdminController {
   }
 
   @Delete(':id')
+  @ZodSerializerDto(MessageResDTO)
   remove(@Param() params: GetParamsDTO, @ActiveUser('userId') userId: number) {
     return this.flashsaleAdminService.deleteFlashSale({
       deletedById: userId,

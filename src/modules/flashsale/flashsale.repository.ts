@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { PaginationQueryType } from 'src/common/schemas/request.schema';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { FlashSaleStatus } from 'src/common/constants/flash-sale.constant';
 import {
@@ -52,6 +51,22 @@ export class FlashSaleRepository {
       where: {
         id,
         deletedAt: null,
+      },
+    });
+  }
+
+  findBySellerById({
+    id,
+    createdById,
+  }: {
+    id: number;
+    createdById: number;
+  }): Promise<any> {
+    return this.prismaService.flashSale.findUnique({
+      where: {
+        id,
+        deletedAt: null,
+        createdById,
       },
     });
   }

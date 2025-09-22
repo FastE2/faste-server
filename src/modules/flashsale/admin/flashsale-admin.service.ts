@@ -8,6 +8,7 @@ import { NotFoundRecordException } from 'src/common/errors';
 import { isPrismaRecordNotFound } from 'src/common/errors/prisma';
 import {
   CreateFlashSaleBodyType,
+  FlashSaleListQueryType,
   UpdateFlashSaleBodyType,
 } from '../flashsale.schema';
 import { FlashSaleRepository } from '../flashsale.repository';
@@ -15,11 +16,15 @@ import {
   FLASH_SALE_STATUS,
   UpdatableFlashSaleStatus,
 } from 'src/common/constants/flash-sale.constant';
+import { FlashSaleService } from '../flashsale.service';
 
 @Injectable()
 export class FlashsaleAdminService {
-  constructor(private readonly flashSaleRepository: FlashSaleRepository) {}
-  async getAllFlashSales(query: PaginationQueryType) {
+  constructor(
+    private readonly flashSaleRepository: FlashSaleRepository,
+    private readonly flashSaleService: FlashSaleService,
+  ) {}
+  async getAllFlashSales(query: FlashSaleListQueryType) {
     try {
       return await this.flashSaleRepository.list(query);
     } catch (error) {
@@ -41,24 +46,6 @@ export class FlashsaleAdminService {
     }
   }
 
-  validateFlashSaleTime(startAt: Date, endAt: Date) {
-    const now = Date.now();
-
-    if (startAt.getTime() < now) {
-      throw new BadRequestException('Start time must be in the future');
-    }
-
-    if (endAt.getTime() < startAt.getTime()) {
-      throw new BadRequestException('End time must be after start time');
-    }
-  }
-  determineInitialStatus(startAt: Date, endAt: Date) {
-    const now = new Date();
-    if (endAt <= now) return FLASH_SALE_STATUS.ENDED;
-    if (startAt > now) return FLASH_SALE_STATUS.SCHEDULED;
-    return FLASH_SALE_STATUS.LIVE;
-  }
-
   async createFlashsale({
     data,
     createdById,
@@ -68,10 +55,13 @@ export class FlashsaleAdminService {
   }) {
     try {
       const { isDraft, ...newData } = data;
-      this.validateFlashSaleTime(data.startAt, data.endAt);
+      this.flashSaleService.validateFlashSaleTime(data.startAt, data.endAt);
       const status = isDraft
         ? FLASH_SALE_STATUS.DRAFT
-        : this.determineInitialStatus(data.startAt, data.endAt);
+        : this.flashSaleService.determineInitialStatus(
+            data.startAt,
+            data.endAt,
+          );
       const flashSale = await this.flashSaleRepository.create({
         createdById,
         data: {
@@ -103,7 +93,7 @@ export class FlashsaleAdminService {
         case FLASH_SALE_STATUS.SCHEDULED: {
           // validate thời gian nếu startAt/endAt thay đổi
           if (data.startAt || data.endAt) {
-            this.validateFlashSaleTime(
+            this.flashSaleService.validateFlashSaleTime(
               data.startAt || flashSale.startAt,
               data.endAt || flashSale.endAt,
             );
@@ -112,7 +102,7 @@ export class FlashsaleAdminService {
           const status =
             flashSale.status === FLASH_SALE_STATUS.DRAFT && !data.startAt
               ? FLASH_SALE_STATUS.DRAFT
-              : this.determineInitialStatus(
+              : this.flashSaleService.determineInitialStatus(
                   data.startAt || flashSale.startAt,
                   data.endAt || flashSale.endAt,
                 );
@@ -173,7 +163,10 @@ export class FlashsaleAdminService {
             status === FLASH_SALE_STATUS.DRAFT ||
             status === FLASH_SALE_STATUS.SCHEDULED
           ) {
-            this.validateFlashSaleTime(flashSale.startAt, flashSale.endAt);
+            this.flashSaleService.validateFlashSaleTime(
+              flashSale.startAt,
+              flashSale.endAt,
+            );
           }
           break;
 
