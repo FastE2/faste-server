@@ -1,27 +1,34 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { FlashsaleClientService } from './flashsale-client.service';
+import { GetParamsDTO, PaginationQueryDTO } from 'src/common/dtos/request.dto';
+import { Ispublic } from 'src/common/decorators/auth.decorator';
 
 @Controller('flashsales')
 export class FlashsaleClientController {
-  constructor(private readonly clientService: FlashsaleClientService) {}
+  constructor(
+    private readonly flashSaleClientService: FlashsaleClientService,
+  ) {}
 
   @Get('')
-  getActive() {
-    return this.clientService.findActive();
+  @Ispublic()
+  getActive(@Query() query: PaginationQueryDTO) {
+    return this.flashSaleClientService.findActive(query);
   }
 
   @Get('upcoming')
-  getUpcoming() {
-    return this.clientService.findUpcoming();
+  getUpcoming(@Query() query: PaginationQueryDTO) {
+    return this.flashSaleClientService.findUpcoming(query);
   }
 
   @Get(':id')
-  getOne(@Param('id') id: number) {
-    return this.clientService.findOne(+id);
+  @Ispublic()
+  getOne(@Param() params: GetParamsDTO) {
+    return this.flashSaleClientService.findOne(params.id);
   }
 
   @Get(':id/items')
-  getItems(@Param('id') id: number) {
-    return this.clientService.findItems(+id);
+  @Ispublic()
+  getItems(@Param() params: GetParamsDTO, @Query() query: PaginationQueryDTO) {
+    return this.flashSaleClientService.findItems({ query, id: params.id });
   }
 }

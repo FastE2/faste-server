@@ -26,13 +26,13 @@ export class FlashSaleRepository {
     if (query.createdById) where.createdById = query.createdById;
 
     const [data, totalItem] = await Promise.all([
-      this.prismaService.brand.findMany({
+      this.prismaService.flashSale.findMany({
         where,
         take,
         skip,
         orderBy: { createdAt: 'desc' },
       }),
-      this.prismaService.brand.count({
+      this.prismaService.flashSale.count({
         where,
       }),
     ]);

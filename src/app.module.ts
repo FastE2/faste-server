@@ -24,6 +24,7 @@ import { AddressShipModule } from './modules/address-ship/address-ship.module';
 import { ShopModule } from './modules/shop/shop.module';
 import { QueueModule } from './queues/queue.module';
 import { PaymentModule } from './modules/payment/payment.module';
+import { FlashsaleModule } from './modules/flashsale/flashsale.module';
 
 const modules = [
   AuthModule,
@@ -43,6 +44,7 @@ const modules = [
   AddressShipModule,
   ShopModule,
   PaymentModule,
+  FlashsaleModule,
 ];
 @Module({
   imports: [QueueModule, PrismaModule, CommonModule, ...modules],

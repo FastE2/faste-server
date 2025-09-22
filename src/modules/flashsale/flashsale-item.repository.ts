@@ -10,45 +10,81 @@ import {
   CreateFlashSaleItemBodyType,
   UpdateFlashSaleItemBodyType,
 } from './flashsale-item.schema';
+import { PaginationQueryType } from 'src/common/schemas/request.schema';
 
 @Injectable()
 export class FlashSaleItemRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  // async list(query: FlashSaleListQueryType): Promise<{
-  //   data: any[];
-  //   totalItem: number;
-  //   page: number;
-  //   limmit: number;
-  //   totalPage: number;
-  // }> {
-  //   const skip = (query.page - 1) * query.limit;
-  //   const take = query.limit;
-  //   const where: any = { deletedAt: null };
-  //   if (query.type) where.type = query.type;
-  //   if (query.status) where.status = query.status;
-  //   if (query.createdById) where.createdById = query.createdById;
+  async list(
+    query: PaginationQueryType,
+    flashSaleId: number,
+  ): Promise<{
+    data: any[];
+    totalItem: number;
+    page: number;
+    limmit: number;
+    totalPage: number;
+  }> {
+    const skip = (query.page - 1) * query.limit;
+    const take = query.limit;
+    const where: any = { deletedAt: null };
+    where.flashSaleId = flashSaleId;
 
-  //   const [data, totalItem] = await Promise.all([
-  //     this.prismaService.brand.findMany({
-  //       where,
-  //       take,
-  //       skip,
-  //       orderBy: { createdAt: 'desc' },
-  //     }),
-  //     this.prismaService.brand.count({
-  //       where,
-  //     }),
-  //   ]);
+    const [items, totalItem] = await Promise.all([
+      this.prismaService.flashSaleItem.findMany({
+        where,
+        take,
+        skip,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          sku: {
+            include: {
+              product: true,
+            },
+          },
+        },
+      }),
+      this.prismaService.flashSaleItem.count({
+        where,
+      }),
+    ]);
 
-  //   return {
-  //     data,
-  //     totalItem,
-  //     page: query.page,
-  //     limmit: query.limit,
-  //     totalPage: Math.ceil(totalItem / query.limit),
-  //   };
-  // }
+    const productMap = new Map<number, any>();
+
+    for (const item of items) {
+      const product = item.sku.product;
+
+      if (!productMap.has(product.id)) {
+        productMap.set(product.id, {
+          ...product,
+          skus: [],
+        });
+      }
+
+      productMap.get(product.id).skus.push({
+        id: item.sku.id,
+        price: item.sku.price,
+        quantity: item.sku.quantity,
+        image: item.sku.image,
+        flashSaleItem: {
+          id: item.id,
+          flashSaleId: item.flashSaleId,
+          flashPrice: item.flashPrice,
+          stock: item.flashPrice,
+          sold: item.sold,
+        },
+      });
+    }
+
+    return {
+      data: Array.from(productMap.values()),
+      totalItem,
+      page: query.page,
+      limmit: query.limit,
+      totalPage: Math.ceil(totalItem / query.limit),
+    };
+  }
 
   findBySellerById({
     id,

@@ -1,11 +1,27 @@
 import { Module } from '@nestjs/common';
-import { BrandController } from './flashsale.controller';
-import { BrandService } from './flashsale.service';
-import { BrandRepository } from './flashsale.repository';
+import { FlashsaleAdminController } from './admin/flashsale-admin.controller';
+import { FlashsaleSellerController } from './seller/flashsale-seller.controller';
+import { FlashsaleClientController } from './client/flashsale-client.controller';
+import { FlashSaleService } from './flashsale.service';
+import { FlashsaleAdminService } from './admin/flashsale-admin.service';
+import { FlashsaleSellerService } from './seller/flashsale-seller.service';
+import { FlashsaleClientService } from './client/flashsale-client.service';
+import { FlashSaleRepository } from './flashsale.repository';
+import { FlashSaleItemRepository } from './flashsale-item.repository';
 
 @Module({
-  imports: [],
-  controllers: [BrandController],
-  providers: [BrandService, BrandRepository],
+  controllers: [
+    FlashsaleAdminController,
+    FlashsaleSellerController,
+    FlashsaleClientController,
+  ],
+  providers: [
+    FlashSaleService,
+    FlashsaleAdminService,
+    FlashsaleSellerService,
+    FlashsaleClientService,
+    FlashSaleRepository,
+    FlashSaleItemRepository,
+  ],
 })
-export class BrandModule {}
+export class FlashsaleModule {}

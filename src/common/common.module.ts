@@ -9,6 +9,7 @@ import { HashService } from './libs/crypto/hash.service';
 import { MailModule } from './libs/mail/mail.module';
 import { EncryptionService } from './libs/crypto/encryption.service';
 import { WebsocketModule } from './websockets/websocket.module';
+import { CommonSKURepository } from './repositories/common-sku.repository';
 
 @Global()
 @Module({
@@ -16,6 +17,7 @@ import { WebsocketModule } from './websockets/websocket.module';
   providers: [
     CommonUserRepository,
     CommonRoleRepository,
+    CommonSKURepository,
     Reflector,
     TokenService,
     EncryptionService,
@@ -29,6 +31,7 @@ import { WebsocketModule } from './websockets/websocket.module';
   exports: [
     CommonUserRepository,
     CommonRoleRepository,
+    CommonSKURepository,
     TokenService,
     HashService,
     EncryptionService,
