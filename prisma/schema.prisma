@@ -586,11 +586,14 @@ model Voucher {
 }
 
 model FlashSale {
-  id       Int             @id @default(autoincrement())
-  name     String
-  status   FlashSaleStatus @default(DRAFT)
-  isActive Boolean
-  items    FlashSaleItem[]
+  id          Int             @id @default(autoincrement())
+  name        String
+  description String
+  image       String
+  status      FlashSaleStatus @default(DRAFT)
+  type        FlashSaleType   @default(SELLER)
+  isActive    Boolean
+  items       FlashSaleItem[]
 
   createdById Int
   createdBy   User  @relation("FlashSaleCreatedBy", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -609,6 +612,7 @@ model FlashSale {
 }
 
 model FlashSaleItem {
+  id          Int       @id @default(autoincrement())
   flashSaleId Int       @map("flashsale_id")
   flashSale   FlashSale @relation(fields: [flashSaleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   skuId       Int       @map("sku_id")
@@ -628,7 +632,7 @@ model FlashSaleItem {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  @@id([flashSaleId, skuId])
+  @@index([deletedAt])
 }
 
 model CartItem {
@@ -1076,6 +1080,11 @@ enum PaymentStatus {
   PENDING
   SUCCESS
   FAILED
+}
+
+enum FlashSaleType {
+  SELLER
+  PLATFORM
 }
 
 enum PaymentMethod {
