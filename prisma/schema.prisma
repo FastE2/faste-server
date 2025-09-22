@@ -592,7 +592,6 @@ model FlashSale {
   image       String
   status      FlashSaleStatus @default(DRAFT)
   type        FlashSaleType   @default(SELLER)
-  isActive    Boolean
   items       FlashSaleItem[]
 
   createdById Int
@@ -1057,6 +1056,12 @@ enum FlashSaleStatus {
   SCHEDULED
   LIVE
   ENDED
+  CANCELLED
+}
+
+enum FlashSaleType {
+  SELLER // for seller
+  PLATFORM // for admin
 }
 
 enum OrderStatus {
@@ -1082,10 +1087,6 @@ enum PaymentStatus {
   FAILED
 }
 
-enum FlashSaleType {
-  SELLER
-  PLATFORM
-}
 
 enum PaymentMethod {
   COD
