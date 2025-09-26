@@ -30,7 +30,7 @@ export class CommonSKURepository {
     return this.prismaService.sKU.findMany({
       where: {
         id: { in: ids },
-        createdById,
+        shopId: createdById,
       },
       include: {
         product: true,

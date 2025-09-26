@@ -43,7 +43,7 @@ export class ProductRepository {
     const where: Prisma.ProductWhereInput = {
       status: 'PUBLISHED',
       deletedAt: null,
-      createdById: createdById ? createdById : undefined,
+      shopId: createdById ? createdById : undefined,
       publishedAt: {
         lte: new Date(),
         not: null,
@@ -135,12 +135,21 @@ export class ProductRepository {
         skus: {
           where: { deletedAt: null },
           omit: {
-            id: true,
             deletedAt: true,
             deletedById: true,
             skuCode: true,
             updatedAt: true,
             updatedById: true,
+          },
+        },
+        shop: {
+          select: {
+            shopid: true,
+            name: true,
+            logo: true,
+            createdAt: true,
+            description: true,
+            addressShip: true,
           },
         },
         categories: {
@@ -254,7 +263,7 @@ export class ProductRepository {
         data: {
           ...productData,
           publishedAt: now,
-          createdById,
+          shopId: createdById,
           categories: {
             createMany: {
               data: categories.map((id) => ({
@@ -266,7 +275,7 @@ export class ProductRepository {
             createMany: {
               data: skus.map((sku) => ({
                 ...sku,
-                createdById,
+                shopId: createdById,
               })),
             },
           },
@@ -412,7 +421,7 @@ export class ProductRepository {
         data: skusToCreate.map((sku) => ({
           ...sku,
           productId: id,
-          createdById: updatedById,
+          shopId: updatedById,
         })),
       }),
     ]);

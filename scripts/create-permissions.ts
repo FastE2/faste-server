@@ -17,6 +17,8 @@ const SellerModule = [
   'PROVINCES',
   'ADDRESS-SHIP',
   'SHOP',
+  'SELLER',
+  'FLASHSALES',
 ];
 const ClientModule = [
   'AUTH',
@@ -28,6 +30,7 @@ const ClientModule = [
   'PROVINCES',
   'ADDRESS-SHIP',
   'SHOP',
+  'FLASHSALES',
 ];
 const prisma = new PrismaService();
 

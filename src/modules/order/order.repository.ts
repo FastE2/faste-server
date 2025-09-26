@@ -196,7 +196,7 @@ export class OrderRepository {
       const bodyCartItemIds = item.cartItemIds;
       return bodyCartItemIds.every((cartItemId: number) => {
         const cartItem = mapCartItem.get(cartItemId);
-        return item.shopId === cartItem?.sku.product.createdById;
+        return item.shopId === cartItem?.sku.product.shopId;
       });
     });
     if (!isValidBodyData) {
@@ -258,7 +258,7 @@ export class OrderRepository {
         const payments = await Promise.all(
           orders.map((order) => {
             const orderCartItems = cartItems.filter(
-              (i) => i.sku.product.createdById === order.shopId,
+              (i) => i.sku.product.shopId === order.shopId,
             );
             const amount = orderCartItems.reduce(
               (sum, i) => sum + i.sku.price * i.quantity,

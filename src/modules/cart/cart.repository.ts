@@ -59,7 +59,7 @@ export class CartRepository {
               price: true,
               quantity: true,
               attributes: true,
-              createdById: true,
+              shopId: true,
               image: true,
               sold: true,
               product: {
@@ -80,11 +80,11 @@ export class CartRepository {
                       languageId: true,
                     },
                   },
-                  createdBy: {
+                  shop: {
                     select: {
-                      id: true,
+                      shopid: true,
                       name: true,
-                      avatar: true,
+                      logo: true,
                     },
                   },
                 },
@@ -137,7 +137,7 @@ export class CartRepository {
 
     const gropMapCartItem = new Map<number, (typeof cartItems)[0][]>();
     for (const cartItem of cartItems) {
-      const shopId = cartItem.sku.createdById;
+      const shopId = cartItem.sku.shopId;
       if (!gropMapCartItem.has(shopId)) {
         gropMapCartItem.set(shopId, []);
       }
@@ -145,9 +145,9 @@ export class CartRepository {
     }
 
     const cartGroupedByShop = Array.from(gropMapCartItem, ([shopId, items]) => {
-      const shop = items[0].sku.product.createdBy;
+      const shop = items[0].sku.product.shop;
       const cartItemsWithoutCreatedBy = items.map((item) => {
-        const { createdBy, ...productWithoutCreatedBy } = item.sku.product;
+        const { shop, ...productWithoutCreatedBy } = item.sku.product;
         return {
           ...item,
           sku: {

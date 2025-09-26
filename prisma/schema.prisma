@@ -50,7 +50,6 @@ model User {
   createdPermissions          Permission[]          @relation("PermissionCreatedBy")
   updatedPermission           Permission[]          @relation("PermissionUpdatedBy")
   deletedPermission           Permission[]          @relation("PermissionDeletedBy")
-  createdProducts             Product[]             @relation("ProductCreatedBy")
   updatedProducts             Product[]             @relation("ProductUpdatedBy")
   deletedProducts             Product[]             @relation("ProductDeletedBy")
   createdBrands               Brand[]               @relation("BrandCreatedBy")
@@ -59,7 +58,6 @@ model User {
   createdDeliveryTypes        DeliveryType[]        @relation("DeliveryTypeCreatedBy")
   updatedDeliveryTypes        DeliveryType[]        @relation("DeliveryTypeUpdatedBy")
   deletedDeliveryTypes        DeliveryType[]        @relation("DeliveryTypeDeletedBy")
-  createdSKUs                 SKU[]                 @relation("SKUCreatedBy")
   updatedSKUs                 SKU[]                 @relation("SKUUpdatedBy")
   deletedSKUs                 SKU[]                 @relation("SKUDeletedBy")
   createdCategorys            Category[]            @relation("CategoryCreatedBy")
@@ -384,9 +382,8 @@ model Product {
   discounts           DiscountProduct[]
   productTranslations ProductTranslation[]
 
-  createdById Int
-  createdBy   User  @relation("ProductCreatedBy", fields: [createdById], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  // shop        Shop  @relation("ProductCreatedByShop", fields: [createdById], references: [shopid], map: "FK_ProductByShop_createdById")
+  shopId      Int
+  shop        Shop  @relation("ProductCreatedByShop", fields: [shopId], references: [shopid], onDelete: Cascade, onUpdate: NoAction)
   updatedById Int?
   updatedBy   User? @relation("ProductUpdatedBy", fields: [updatedById], references: [id], onDelete: Cascade, onUpdate: NoAction)
   deletedById Int?
@@ -487,8 +484,9 @@ model SKU {
   widthCm    Int?    @map("width_cm")
   heightCm   Int?    @map("height_cm")
 
-  createdById Int
-  createdBy   User  @relation("SKUCreatedBy", fields: [createdById], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  shopId Int
+  shop   Shop @relation("SKUCreatedByShop", fields: [shopId], references: [shopid], onDelete: Cascade, onUpdate: NoAction)
+
   updatedById Int?
   updatedBy   User? @relation("SKUUpdatedBy", fields: [updatedById], references: [id], onDelete: Cascade, onUpdate: NoAction)
   deletedById Int?
@@ -502,6 +500,7 @@ model SKU {
   flashSaleItems     FlashSaleItem[]
   bundleItems        BundleItem[]
   ProductSKUSnapshot ProductSKUSnapshot[]
+  userId             Int?
 
   @@index([deletedAt])
   @@index([productId])
@@ -760,7 +759,8 @@ model Shop {
   deletedById Int?
   deletedBy   User?     @relation("ShopDeletedBy", fields: [deletedById], references: [id], onDelete: Cascade, onUpdate: NoAction)
   Order       Order[]
-  // Product     Product[] @relation("ProductCreatedByShop")
+  Product     Product[] @relation("ProductCreatedByShop")
+  SKU         SKU[]     @relation("SKUCreatedByShop")
 
   @@index([deletedAt])
   @@index([shopid])

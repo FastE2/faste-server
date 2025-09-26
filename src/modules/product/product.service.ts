@@ -62,7 +62,7 @@ export class ProductService {
     try {
       const where: Prisma.ProductWhereInput = { deletedAt: null };
       if (roleName === ROLE_NAME.SELLER) {
-        where.createdById = userId;
+        where.shopId = userId;
       } else if (
         roleName !== ROLE_NAME.ADMIN &&
         roleName !== ROLE_NAME.SELLER
@@ -88,7 +88,7 @@ export class ProductService {
     try {
       const where: Prisma.ProductWhereInput = { id, deletedAt: null };
       if (roleName === ROLE_NAME.SELLER) {
-        where.createdById = userId;
+        where.shopId = userId;
       }
 
       const product = await this.productRepository.findById(where);
@@ -98,7 +98,7 @@ export class ProductService {
       this.validatePrivilege({
         userIdRequest: userId,
         roleNameRequest: roleName,
-        createdById: product.createdById,
+        createdById: product.shopId,
       });
       return product;
     } catch (error) {
@@ -164,7 +164,7 @@ export class ProductService {
     }
     this.validatePrivilege({
       userIdRequest: updatedById,
-      createdById: product.createdById,
+      createdById: product.shopId,
       roleNameRequest: roleName,
     });
     try {
@@ -210,7 +210,7 @@ export class ProductService {
     }
     this.validatePrivilege({
       userIdRequest: deletedById,
-      createdById: product.createdById,
+      createdById: product.shopId,
       roleNameRequest: roleName,
     });
     try {

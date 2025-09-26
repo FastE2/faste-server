@@ -21,6 +21,7 @@ import {
   UpdateCategoryBodyDTO,
   UpdateCategoryResDTO,
 } from './category.dto';
+import { Ispublic } from 'src/common/decorators/auth.decorator';
 
 @Controller('category')
 export class CategoryController {
@@ -28,6 +29,7 @@ export class CategoryController {
 
   @Get()
   @ZodSerializerDto(GetCategoryResDTO)
+  @Ispublic()
   getAllCategorys(@Query() query: PaginationQueryDTO) {
     return this.categoryService.getAllCategorys(query);
   }
