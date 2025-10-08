@@ -14,7 +14,7 @@ export class ProfileService {
   ) {}
   async getProfile(id: number) {
     try {
-      return await this.commonUserRepository.findUniqueUser({ id });
+      return await this.commonUserRepository.findUniqueUserProfile({ id });
     } catch (error) {
       console.log('/profile', error);
       throw error;

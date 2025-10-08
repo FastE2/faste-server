@@ -52,18 +52,18 @@ export class UserRepository {
       totalPage: Math.ceil(totalItem / pagination.limit),
     };
   }
-  update(
-    where: { id: number },
-    data: Partial<UserType>,
-  ): Promise<UserType | null> {
-    return this.prismaService.user.update({
-      where: {
-        ...where,
-        deletedAt: null,
-      },
-      data,
-    });
-  }
+  // update(
+  //   where: { id: number },
+  //   data: Partial<UserType>,
+  // ): Promise<UserType | null> {
+  //   return this.prismaService.user.update({
+  //     where: {
+  //       ...where,
+  //       deletedAt: null,
+  //     },
+  //     data,
+  //   });
+  // }
   create({
     createdById,
     data,

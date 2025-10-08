@@ -61,7 +61,7 @@ export class ProductService {
   }) {
     try {
       const where: Prisma.ProductWhereInput = { deletedAt: null };
-      if (roleName === ROLE_NAME.SELLER) {
+      if (roleName === ROLE_NAME.SELLER || roleName === ROLE_NAME.ADMIN) {
         where.shopId = userId;
       } else if (
         roleName !== ROLE_NAME.ADMIN &&

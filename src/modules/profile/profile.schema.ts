@@ -5,8 +5,8 @@ export const UpdateProfileBodySchema = UserSchema.pick({
   name: true,
   avatar: true,
   phoneNumber: true,
+  gender: true,
   dateOfBirth: true,
-  updatedAt: true,
 }).partial();
 
 export const ChangePasswordProfileBodySchema = z

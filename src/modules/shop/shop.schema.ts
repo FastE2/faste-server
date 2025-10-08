@@ -4,6 +4,7 @@ import { z } from 'zod';
 const ShopSchema = z.object({
   shopid: z.number(),
   name: z.string().max(200),
+  slug: z.string().max(200),
   logo: z.string().max(1000).optional().default(''),
   cover: z.string().nullable().optional(),
   banner: z.string().nullable().optional(),
@@ -27,6 +28,7 @@ const ShopSchema = z.object({
 
 export const RegisterShopBodySchema = ShopSchema.pick({
   name: true,
+  slug: true,
   description: true,
   logo: true,
   addressShipId: true,

@@ -93,6 +93,7 @@ export class AuthRepository {
               name: true,
               phoneNumber: true,
               avatar: true,
+              gender: true,
               dateOfBirth: true,
               roleId: true,
               totpSecret: true,

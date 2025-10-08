@@ -19,6 +19,7 @@ model User {
   password    String    @db.VarChar(500)
   phoneNumber String    @db.VarChar(50)
   avatar      String?   @db.VarChar(1000)
+  gender      Gender?
   dateOfBirth DateTime?
   roleId      Int
   role        Role      @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -730,6 +731,7 @@ model PaymentTransaction {
 
 model Shop {
   shopid        Int         @id
+  slug          String      @unique @db.VarChar(200)
   account       User        @relation(fields: [shopid], references: [id], onDelete: Cascade, onUpdate: NoAction)
   name          String      @unique @db.VarChar(200)
   logo          String?     @default("") @db.VarChar(1000)
@@ -753,14 +755,15 @@ model Shop {
   paymentMethods PaymentMethod[]
   banners        BannerDesign[]
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   deletedAt   DateTime?
   deletedById Int?
-  deletedBy   User?     @relation("ShopDeletedBy", fields: [deletedById], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  deletedBy   User?      @relation("ShopDeletedBy", fields: [deletedById], references: [id], onDelete: Cascade, onUpdate: NoAction)
   Order       Order[]
-  Product     Product[] @relation("ProductCreatedByShop")
-  SKU         SKU[]     @relation("SKUCreatedByShop")
+  Product     Product[]  @relation("ProductCreatedByShop")
+  SKU         SKU[]      @relation("SKUCreatedByShop")
+  Template    Template[]
 
   @@index([deletedAt])
   @@index([shopid])
@@ -908,6 +911,32 @@ model BundleItem {
   sku           SKU    @relation(fields: [skuId], references: [id])
 
   @@id([bundleId, skuId])
+}
+
+model Widget {
+  id          Int        @id @default(autoincrement())
+  templateId  Int
+  refViewId   Int
+  name        String? // nullable
+  type        WidgetType
+  isVisible   Boolean    @default(true)
+  widgetIndex Int
+  viewConfig  Json // Prisma hỗ trợ kiểu Json
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Quan hệ (nếu cần)
+  template Template @relation(fields: [templateId], references: [id])
+}
+
+model Template {
+  id       Int          @id @default(autoincrement())
+  widgets  Widget[]
+  sellerId Int
+  platform platformType
+  seller   Shop         @relation(fields: [sellerId], references: [shopid])
+
+  createdAt DateTime @default(now())
 }
 
 model AuditLog {
@@ -1150,4 +1179,31 @@ enum BusinessType {
   INDIVIDUAL
   BUSINESS_HOUSEHOLD
   COMPANY
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum WidgetType {
+  TITLE
+  BANNER_CAROUSEL
+  BANNER_GRID4
+  CATEGORIES_GRID
+  CATEGORIES_CAROUSEL
+  PRODUCTS_ALL
+  PRODUCTS_RATING
+  PRODUCTS_GRID
+  STORIES_CAROUSEL
+  FLASH_SALE
+  DISCOUNT
+  COLLECTIONS_CAROUSEL
+  COLLECTIONS_VERTICAL
+}
+
+enum platformType {
+  MOBILE
+  DESKTOP
 }

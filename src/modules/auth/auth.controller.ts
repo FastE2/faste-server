@@ -59,6 +59,7 @@ export class AuthController {
   }
 
   @Post('refresh-token')
+  @Ispublic()
   @ZodSerializerDto(RefreshTokenResDTO)
   refreshToken(
     @Body() _: EmptyBodyDTO,

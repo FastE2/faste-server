@@ -49,7 +49,6 @@ export class ProductController {
   // -- END PUBLIC
 
   @Get('')
-  @Ispublic()
   getProducts(
     @Query() query: GetProductsQueryDTO,
     @ActiveUser('userId') userId: number,
