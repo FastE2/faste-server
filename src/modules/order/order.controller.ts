@@ -65,6 +65,17 @@ export class OrderController {
     return this.orderService.getOrderDetailByUser({ userId, id: params.id });
   }
 
+  @Get('tx/:id')
+  getTXById(
+    @Param() params: GetParamsDTO,
+    @ActiveUser('userId') userId: number,
+  ) {
+    return this.orderService.getTransactionDetailByUser({
+      userId,
+      id: params.id,
+    });
+  }
+
   @Patch('/status/:id') // Seller: PENDING_PICKUP, PENDING_DELIVERY, CANCELLED; admin thì tất cả; client: chỉ có thể CANCELLED
   updateOrderStatus(
     @Body() body: UpdateOrderStatusBodyDTO,

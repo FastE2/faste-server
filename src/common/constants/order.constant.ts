@@ -1,6 +1,8 @@
 import { OrderStatus } from '@prisma/client';
 
 export const ORDER_STATUS = {
+  PENDING_CONFIRMATION: 'PENDING_CONFIRMATION', // chờ shop xác nhận đơn
+  PROCESSING: 'PROCESSING',
   PENDING_PAYMENT: 'PENDING_PAYMENT',
   PENDING_PICKUP: 'PENDING_PICKUP',
   PENDING_DELIVERY: 'PENDING_DELIVERY',
@@ -13,6 +15,8 @@ export type OrderStatusType = (typeof ORDER_STATUS)[keyof typeof ORDER_STATUS];
 
 export const ALLOWED_STATUS_BY_ROLE: Record<string, readonly OrderStatus[]> = {
   ADMIN: [
+    ORDER_STATUS.PENDING_CONFIRMATION,
+    ORDER_STATUS.PROCESSING,
     ORDER_STATUS.PENDING_PAYMENT,
     ORDER_STATUS.PENDING_PICKUP,
     ORDER_STATUS.PENDING_DELIVERY,
@@ -22,6 +26,8 @@ export const ALLOWED_STATUS_BY_ROLE: Record<string, readonly OrderStatus[]> = {
   ],
   CLIENT: [ORDER_STATUS.CANCELLED, ORDER_STATUS.DELIVERED],
   SELLER: [
+    ORDER_STATUS.PENDING_CONFIRMATION,
+    ORDER_STATUS.PROCESSING,
     ORDER_STATUS.PENDING_PICKUP,
     ORDER_STATUS.PENDING_DELIVERY,
     ORDER_STATUS.CANCELLED,
@@ -34,7 +40,24 @@ export const ALLOWED_STATUS_TRANSITIONS: Record<
 > = {
   // Đơn hàng đang chờ thanh toán có thể chuyển sang trạng thái chờ lấy hàng hoặc bị hủy
   [ORDER_STATUS.PENDING_PAYMENT]: [
+    ORDER_STATUS.PENDING_CONFIRMATION,
     ORDER_STATUS.PENDING_PICKUP,
+    ORDER_STATUS.PENDING_DELIVERY,
+    ORDER_STATUS.CANCELLED,
+  ],
+
+  // Shop xác nhận đơn → bắt đầu xử lý
+  [ORDER_STATUS.PENDING_CONFIRMATION]: [
+    ORDER_STATUS.PROCESSING,
+    ORDER_STATUS.PENDING_PICKUP,
+    ORDER_STATUS.PENDING_DELIVERY,
+    ORDER_STATUS.CANCELLED,
+  ],
+
+  // Shop đang xử lý → đóng gói xong → chờ đơn vị vận chuyển lấy hàng
+  [ORDER_STATUS.PROCESSING]: [
+    ORDER_STATUS.PENDING_PICKUP,
+    ORDER_STATUS.PENDING_DELIVERY,
     ORDER_STATUS.CANCELLED,
   ],
 
@@ -52,8 +75,8 @@ export const ALLOWED_STATUS_TRANSITIONS: Record<
     ORDER_STATUS.RETURNED,
   ],
 
-  // Đơn hàng đã giao thành công. Không thể chuyển sang trạng thái khác.
-  [ORDER_STATUS.DELIVERED]: [],
+  // Đơn hàng đã giao thành công. Có thể trả hàng
+  [ORDER_STATUS.DELIVERED]: [ORDER_STATUS.RETURNED],
 
   // Đơn hàng bị hủy. Không thể chuyển sang trạng thái khác.
   [ORDER_STATUS.CANCELLED]: [],

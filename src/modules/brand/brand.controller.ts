@@ -21,12 +21,14 @@ import {
   UpdateBrandBodyDTO,
   UpdateBrandResDTO,
 } from './brand.dto';
+import { Ispublic } from 'src/common/decorators/auth.decorator';
 
 @Controller('brand')
 export class BrandController {
   constructor(private readonly brandService: BrandService) {}
 
   @Get()
+  @Ispublic()
   @ZodSerializerDto(GetBrandResDTO)
   getAllBrands(@Query() query: PaginationQueryDTO) {
     return this.brandService.getAllBrands(query);

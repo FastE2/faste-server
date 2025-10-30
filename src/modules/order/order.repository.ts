@@ -56,6 +56,13 @@ export class OrderRepository {
         where,
         include: {
           items: true,
+          Payment: true,
+          Shop: {
+            select: {
+              name: true,
+              slug: true,
+            },
+          },
         },
         skip,
         take,
@@ -104,6 +111,12 @@ export class OrderRepository {
       },
       include: {
         items: true,
+        voucher: true,
+        Payment: {
+          select: {
+            amount: true,
+          },
+        },
       },
     });
     if (!order) {
@@ -212,7 +225,11 @@ export class OrderRepository {
             tx.order.create({
               data: {
                 userId,
-                status: ORDER_STATUS.PENDING_PAYMENT,
+                status:
+                  item.paymentMethod === 'COD'
+                    ? ORDER_STATUS.PENDING_CONFIRMATION
+                    : ORDER_STATUS.PENDING_PAYMENT,
+                paymentMethod: item.paymentMethod,
                 addressShipId: item.addressShipId,
                 deliveryId: item.deliveryId,
                 shopId: item.shopId,
@@ -305,9 +322,14 @@ export class OrderRepository {
             }),
           ),
         );
-        const scheduleCancelPaymentJob$ = this.orderProducer.scheduleCancelJob(
-          transaction.id,
-        );
+
+        let scheduleCancelPaymentJob$: Promise<any> | null = null;
+
+        if (body[0].paymentMethod !== 'COD') {
+          scheduleCancelPaymentJob$ = this.orderProducer.scheduleCancelJob(
+            transaction.id,
+          );
+        }
         const [_] = await Promise.all([
           cartItem$,
           sku$,

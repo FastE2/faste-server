@@ -2,6 +2,8 @@ import { OrderStatus } from '@prisma/client';
 import { z } from 'zod';
 
 export const OrderStatusSchema = z.enum([
+  OrderStatus.PENDING_CONFIRMATION,
+  OrderStatus.PROCESSING,
   OrderStatus.PENDING_PAYMENT,
   OrderStatus.PENDING_PICKUP,
   OrderStatus.PENDING_DELIVERY,

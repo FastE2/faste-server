@@ -18,11 +18,13 @@ import {
 } from 'src/common/constants/order.constant';
 import { CommonUserRepository } from 'src/common/repositories/common-user.repository';
 import { isPrismaRecordNotFound } from 'src/common/errors/prisma';
+import { TransactionRepository } from './transaction.repository';
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepository,
+    private readonly transactionRepository: TransactionRepository,
     private readonly commonUserRepository: CommonUserRepository,
   ) {}
   async getOrdersByUser({
@@ -72,16 +74,40 @@ export class OrderService {
 
   async getOrderDetailByUser({ userId, id }: { userId: number; id: number }) {
     try {
-      const brand = await this.orderRepository.findUniqueClientById({
+      const order = await this.orderRepository.findUniqueClientById({
         orderId: id,
         userId,
       });
-      if (!brand) {
+      if (!order) {
         throw NotFoundRecordException;
       }
-      return brand;
+      return order;
     } catch (error) {
-      console.log('/brand/:id', error);
+      console.log('/order/:id', error);
+      throw error;
+    }
+  }
+
+  async getTransactionDetailByUser({
+    userId,
+    id,
+  }: {
+    userId: number;
+    id: number;
+  }) {
+    try {
+      const transaction = await this.transactionRepository.findUniqueClientById(
+        {
+          transactionId: id,
+          userId,
+        },
+      );
+      if (!transaction) {
+        throw NotFoundRecordException;
+      }
+      return transaction;
+    } catch (error) {
+      console.log('/tx/:id', error);
       throw error;
     }
   }

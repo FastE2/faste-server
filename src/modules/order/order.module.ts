@@ -5,6 +5,7 @@ import { OrderRepository } from './order.repository';
 import { OrderProducer } from './order.producer';
 import { BullModule } from '@nestjs/bullmq';
 import { PAYMENT_QUEUE_NAME } from 'src/common/constants/queue.constant';
+import { TransactionRepository } from './transaction.repository';
 
 @Module({
   imports: [
@@ -13,6 +14,11 @@ import { PAYMENT_QUEUE_NAME } from 'src/common/constants/queue.constant';
     }),
   ],
   controllers: [OrderController],
-  providers: [OrderService, OrderRepository, OrderProducer],
+  providers: [
+    OrderService,
+    OrderRepository,
+    TransactionRepository,
+    OrderProducer,
+  ],
 })
 export class OrderModule {}

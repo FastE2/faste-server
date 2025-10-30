@@ -69,6 +69,7 @@ export class CartRepository {
                   basePrice: true,
                   variants: true,
                   images: true,
+                  slugId: true,
                   productTranslations: {
                     where: languageId
                       ? { deletedAt: null }
