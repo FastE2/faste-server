@@ -3,7 +3,7 @@ import { PaginationQueryType } from 'src/common/schemas/request.schema';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RegisterShopBodyType, UpdateShopBodyType } from './shop.schema';
 import { CommonRoleRepository } from 'src/common/repositories/common-role.repository';
-
+export type WhereUniqueShopType = { id: number } | { slug: string };
 @Injectable()
 export class ShopRepository {
   constructor(
@@ -44,11 +44,18 @@ export class ShopRepository {
     };
   }
 
-  findOne(id: number): Promise<any> {
-    return this.prismaService.shop.findUnique({
+  findOne(where: WhereUniqueShopType): Promise<any> {
+    return this.prismaService.shop.findFirst({
       where: {
-        shopid: id,
+        ...where,
         deletedAt: null,
+      },
+      include: {
+        Template: {
+          include: {
+            widgets: true,
+          },
+        },
       },
     });
   }

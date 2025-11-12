@@ -147,6 +147,7 @@ export class ProductRepository {
             shopid: true,
             name: true,
             logo: true,
+            slug: true,
             createdAt: true,
             description: true,
             addressShip: true,

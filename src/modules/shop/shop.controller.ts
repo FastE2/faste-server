@@ -13,6 +13,7 @@ import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { MessageResDTO } from 'src/common/dtos/response.dto';
 import { GetParamsDTO, PaginationQueryDTO } from 'src/common/dtos/request.dto';
 import {
+  GetParamSlugDTO,
   GetShopByIdResDTO,
   GetShopResDTO,
   RegisterShopBodyDTO,
@@ -20,6 +21,7 @@ import {
   UpdateShopResDTO,
 } from './shop.dto';
 import { ShopService } from './shop.service';
+import { Ispublic } from 'src/common/decorators/auth.decorator';
 
 @Controller('shop')
 export class ShopController {
@@ -38,6 +40,20 @@ export class ShopController {
   ) {
     return this.shopService.registerShop(userId, body);
   }
+
+  @Get('slug/:slug')
+  @Ispublic()
+  @ZodSerializerDto(GetShopByIdResDTO)
+  getBySlug(@Param() params: GetParamSlugDTO) {
+    return this.shopService.getShopBySlug(params.slug);
+  }
+
+  // @Get('/:slug')
+  // @Ispublic()
+  // @ZodSerializerDto(GetShopByIdResDTO)
+  // getBySlugPublic(@Param() params: GetParamSlugDTO) {
+  //   return this.shopService.getShopBySlug(params.slug);
+  // }
 
   @Get('/:id')
   @ZodSerializerDto(GetShopByIdResDTO)

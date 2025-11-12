@@ -149,10 +149,10 @@ export class AuthService {
       });
 
       // Save refreshToken on http-only cookie
-      res.cookie('refreshToken', refreshToken, {
+      res.cookie('refresh-token', refreshToken, {
         httpOnly: true,
-        secure: true,
-        sameSite: 'strict',
+        secure: false,
+        sameSite: 'lax',
         path: '/auth',
         maxAge: 1 * 24 * 3600 * 1000,
       });
@@ -171,11 +171,11 @@ export class AuthService {
         await this.tokenService.verifyRefreshToken(token);
 
       if (!verifyRefreshToken) {
-        res.clearCookie('refreshToken', {
+        res.clearCookie('refresh-token', {
           httpOnly: true,
-          secure: true,
-          sameSite: 'strict',
-          path: '/',
+          secure: false,
+          sameSite: 'lax',
+          path: '/auth',
         });
         throw InvalidTokenException;
       }
@@ -203,11 +203,11 @@ export class AuthService {
 
   async logout(token: string, res: Response) {
     try {
-      res.clearCookie('refreshToken', {
+      res.clearCookie('refresh-token', {
         httpOnly: true,
-        secure: true,
-        sameSite: 'strict',
-        path: '/',
+        secure: false,
+        sameSite: 'lax',
+        path: '/auth',
       });
 
       await this.authRepository.deleteRefreshToken(token);

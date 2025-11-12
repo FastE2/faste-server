@@ -28,6 +28,11 @@ export class CommonUserRepository {
         email: true,
         name: true,
         phoneNumber: true,
+        role: {
+          select: {
+            name: true,
+          },
+        },
         gender: true,
         addresses: true,
         avatar: true,

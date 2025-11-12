@@ -38,7 +38,7 @@ export class ShopService {
         throw NotFoundUserException;
       }
 
-      const shop = await this.shopRepository.findOne(userId);
+      const shop = await this.shopRepository.findOne({ id: userId });
       if (shop) {
         throw ExistedShopException;
       }
@@ -52,13 +52,26 @@ export class ShopService {
 
   async getShopById(id: number) {
     try {
-      const shop = await this.shopRepository.findOne(id);
+      const shop = await this.shopRepository.findOne({ id });
       if (!shop) {
         throw NotFoundRecordException;
       }
       return shop;
     } catch (error) {
       console.log('/shop/:id', error);
+      throw error;
+    }
+  }
+
+  async getShopBySlug(slug: string) {
+    try {
+      const shop = await this.shopRepository.findOne({ slug });
+      if (!shop) {
+        throw NotFoundRecordException;
+      }
+      return shop;
+    } catch (error) {
+      console.log('/shop/:slug', error);
       throw error;
     }
   }

@@ -66,7 +66,7 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const token = req.cookies['refreshToken'];
+    const token = req.cookies['refresh-token'];
     return this.authService.refreshToken(token, res);
   }
 
@@ -77,7 +77,8 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const token = req.cookies['refreshToken'];
+    const token = req.cookies['refresh-token'];
+
     return this.authService.logout(token, res);
   }
 
@@ -135,7 +136,7 @@ export class AuthController {
   ) {
     const { accessToken, refreshToken } =
       await this.googleService.googleCallback({ code, state });
-    res.cookie('refreshToken', refreshToken, {
+    res.cookie('refresh-token', refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',

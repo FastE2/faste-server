@@ -917,11 +917,11 @@ model Widget {
   id          Int        @id @default(autoincrement())
   templateId  Int
   refViewId   Int
-  name        String? // nullable
+  name        String?
   type        WidgetType
   isVisible   Boolean    @default(true)
   widgetIndex Int
-  viewConfig  Json // Prisma hỗ trợ kiểu Json
+  viewConfig  Json?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 
@@ -930,13 +930,14 @@ model Widget {
 }
 
 model Template {
-  id       Int          @id @default(autoincrement())
-  widgets  Widget[]
-  sellerId Int
-  platform platformType
-  seller   Shop         @relation(fields: [sellerId], references: [shopid])
-
-  createdAt DateTime @default(now())
+  id        Int          @id @default(autoincrement())
+  widgets   Widget[]
+  sellerId  Int
+  platform  platformType
+  isActive  Boolean      @default(false)
+  seller    Shop         @relation(fields: [sellerId], references: [shopid])
+  theme     String?
+  createdAt DateTime     @default(now())
 }
 
 model AuditLog {

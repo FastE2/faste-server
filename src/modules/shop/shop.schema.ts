@@ -1,6 +1,10 @@
 import { BusinessType, PaymentMethod, ShopStatus } from '@prisma/client';
 import { z } from 'zod';
 
+export const GetParamSlugSchema = z.object({
+  slug: z.string(),
+});
+
 const ShopSchema = z.object({
   shopid: z.number(),
   name: z.string().max(200),
