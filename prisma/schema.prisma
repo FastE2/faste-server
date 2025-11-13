@@ -930,14 +930,16 @@ model Widget {
 }
 
 model Template {
-  id        Int          @id @default(autoincrement())
-  widgets   Widget[]
-  sellerId  Int
-  platform  platformType
-  isActive  Boolean      @default(false)
-  seller    Shop         @relation(fields: [sellerId], references: [shopid])
-  theme     String?
-  createdAt DateTime     @default(now())
+  id             Int          @id @default(autoincrement())
+  widgets        Widget[]
+  categoriesView Int[]
+  WidgetIds      Int[]        @default([])
+  sellerId       Int
+  platform       platformType @default(DESKTOP)
+  isActive       Boolean      @default(false)
+  seller         Shop         @relation(fields: [sellerId], references: [shopid])
+  theme          String?
+  createdAt      DateTime     @default(now())
 }
 
 model AuditLog {

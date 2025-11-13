@@ -52,6 +52,9 @@ export class ShopRepository {
       },
       include: {
         Template: {
+          where: {
+            isActive: true,
+          },
           include: {
             widgets: true,
           },

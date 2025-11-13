@@ -116,6 +116,101 @@ export class ProductRepository {
     };
   }
 
+  async findAllPublicByShop(
+    query: GetProductsQueryType,
+    id: number,
+  ): Promise<any> {
+    const {
+      limit,
+      orderBy,
+      page,
+      sortBy,
+      brandIds,
+      categories,
+      maxPrice,
+      minPrice,
+      name,
+    } = query;
+    console.log(query);
+    const skip = (page - 1) * limit;
+    const take = limit;
+
+    const where: Prisma.ProductWhereInput = {
+      status: 'PUBLISHED',
+      deletedAt: null,
+      shopId: id,
+      publishedAt: {
+        lte: new Date(),
+        not: null,
+      },
+    };
+    if (name) {
+      where.name = {
+        contains: name,
+        mode: 'insensitive',
+      };
+    }
+    if (brandIds && brandIds.length > 0) {
+      where.brandId = {
+        in: brandIds,
+      };
+    }
+    if (categories && categories.length > 0) {
+      where.categories = {
+        some: {
+          category: {
+            id: {
+              in: categories,
+            },
+          },
+        },
+      };
+    }
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      where.basePrice = {
+        gte: minPrice,
+        lte: maxPrice,
+      };
+    }
+
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      where.basePrice = {
+        gte: minPrice,
+        lte: maxPrice,
+      };
+    }
+    const [data, totalItem] = await Promise.all([
+      this.prismaService.product.findMany({
+        where,
+        include: {
+          _count: {
+            select: { likes: true },
+          },
+        },
+        take,
+        skip,
+      }),
+      this.prismaService.product.count({
+        where: {
+          status: 'PUBLISHED',
+          deletedAt: null,
+          publishedAt: {
+            lte: new Date(),
+            not: null,
+          },
+        },
+      }),
+    ]);
+
+    return {
+      data,
+      totalItem,
+      page,
+      limit,
+      totalPage: Math.ceil(totalItem / limit),
+    };
+  }
+
   // public api
   async findOneUniquePublic(
     uniqueValue: { id: number } | { slugId: string },

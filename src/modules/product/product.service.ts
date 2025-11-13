@@ -22,6 +22,15 @@ export class ProductService {
     }
   }
 
+  async findAllPublicByShop(query: GetProductsQueryType, id: number) {
+    try {
+      return await this.productRepository.findAllPublicByShop(query, id);
+    } catch (error) {
+      console.log('/products/public/shop/:id', error);
+      throw error;
+    }
+  }
+
   async findByIdPublic(id: number) {
     try {
       const product = await this.productRepository.findOneUniquePublic({ id });

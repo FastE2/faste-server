@@ -35,6 +35,17 @@ export class ProductController {
     return this.productService.findAllPublic(query);
   }
 
+  // -- PUBLIC
+  @Get('/public/shop/:id')
+  @Ispublic()
+  @ZodSerializerDto(GetAllProductPublicResDTO)
+  getPublicProductsByShop(
+    @Query() query: GetProductsQueryDTO,
+    @Param() params: GetParamsDTO,
+  ) {
+    return this.productService.findAllPublicByShop(query, params.id);
+  }
+
   @Get('/public/:id')
   @Ispublic()
   getById(@Param() params: GetParamsDTO) {
