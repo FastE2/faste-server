@@ -1,25 +1,31 @@
+import { WidgetType } from '@prisma/client';
+import { WIDGET_TYPE } from 'src/common/constants/widget.constant';
 import { z } from 'zod';
 
-export const TemplateSchema = z.object({
+export const WidgetSchema = z.object({
   id: z.number(),
-  name: z.string().min(1).max(200),
-  categoriesView: z.array(z.number()).max(8),
-  WidgetIds: z.array(z.number()).max(10),
-  sellerId: z.number(),
-  theme: z.string().min(1).max(100).nullable(),
-  isActive: z.boolean().default(false),
-  createdAt: z.date(),
+  templateId: z.number(),
+  refViewId: z.number(),
+  name: z.string().nullable().optional(),
+  type: z.nativeEnum(WidgetType),
+  isVisible: z.boolean().default(true),
+  widgetIndex: z.number(),
+  viewConfig: z.any().nullable().optional(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
 });
 
-export const CreateTemplateBodySchema = TemplateSchema.pick({
+export const CreateWidgetBodySchema = WidgetSchema.pick({
+  templateId: true,
+  refViewId: true,
   name: true,
-  WidgetIds: true,
-  categoriesView: true,
-  isActive: true,
-  theme: true,
+  type: true,
+  isVisible: true,
+  widgetIndex: true,
+  viewConfig: true,
 }).strict();
 
-export const UpdateTemplateBodySchema = CreateTemplateBodySchema;
+export const UpdateWidgetBodySchema = CreateWidgetBodySchema.partial();
 
-export type CreateTemplateBodyType = z.infer<typeof CreateTemplateBodySchema>;
-export type UpdateTemplateBodyType = z.infer<typeof UpdateTemplateBodySchema>;
+export type CreateWidgetBodyType = z.infer<typeof CreateWidgetBodySchema>;
+export type UpdateWidgetBodyType = z.infer<typeof UpdateWidgetBodySchema>;

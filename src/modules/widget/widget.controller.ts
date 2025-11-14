@@ -14,35 +14,36 @@ import { MessageResDTO } from 'src/common/dtos/response.dto';
 import { GetParamsDTO, PaginationQueryDTO } from 'src/common/dtos/request.dto';
 
 import { Ispublic } from 'src/common/decorators/auth.decorator';
-import { CreateTemplateBodyDTO, UpdateTemplateBodyDTO } from './widget.dto';
-import { TemplateService } from './widget.service';
+import { WidgetService } from './widget.service';
+import { CreateWidgetBodyDTO, UpdateWidgetBodyDTO } from './widget.dto';
 
-@Controller('template')
-export class BrandController {
-  constructor(private readonly templateService: TemplateService) {}
+@Controller('widget')
+export class WidgetController {
+  constructor(private readonly widgetService: WidgetService) {}
 
-  @Get()
+  @Get('/template/:templateId')
   // @ZodSerializerDto(GetBrandResDTO)
-  getAllTemplates(@Query() query: PaginationQueryDTO) {
-    return this.templateService.getAllTemplates(query);
-  }
-
-  @Get()
-  // @ZodSerializerDto(GetBrandResDTO)
-  getAllTemplatesByShop(
-    @Query() query: PaginationQueryDTO,
+  getAllWidgets(
+    @Param('templateId') templateId: number,
     @ActiveUser('userId') userId: number,
   ) {
-    return this.templateService.getAllTemplatesByShop(query, userId);
+    return this.widgetService.getAllWidgetsByTemplate(templateId, userId);
+  }
+
+  @Get('/template/:templateId/public')
+  // @ZodSerializerDto(GetBrandResDTO)
+  @Ispublic()
+  getAllWidgetsByTemplateIsPublic(@Param('templateId') templateId: number) {
+    return this.widgetService.getAllWidgetsByTemplateIsPublic(templateId);
   }
 
   @Post()
   // @ZodSerializerDto(CreateBrandResDTO)
-  createBrand(
-    @Body() body: CreateTemplateBodyDTO,
+  createWidget(
+    @Body() body: CreateWidgetBodyDTO,
     @ActiveUser('userId') userId: number,
   ) {
-    return this.templateService.createTemplate({
+    return this.widgetService.createWidget({
       data: body,
       createdById: userId,
     });
@@ -50,19 +51,18 @@ export class BrandController {
 
   @Get('/:id')
   // @ZodSerializerDto(GetBrandByIdResDTO)
-  @Ispublic()
-  getTemplateIdIsPublic(@Param() params: GetParamsDTO) {
-    return this.templateService.getTemplateIdIsPublic(params.id);
+  getWidgetId(@Param() params: GetParamsDTO) {
+    return this.widgetService.getWidgetId(params.id);
   }
 
   @Patch('/:id')
   // @ZodSerializerDto(UpdateBrandResDTO)
-  updateBrand(
-    @Body() body: UpdateTemplateBodyDTO,
+  updateWidget(
+    @Body() body: UpdateWidgetBodyDTO,
     @Param() params: GetParamsDTO,
     @ActiveUser('userId') userId: number,
   ) {
-    return this.templateService.updateTemplate({
+    return this.widgetService.updateWidget({
       id: params.id,
       data: body,
       updatedById: userId,
@@ -71,11 +71,11 @@ export class BrandController {
 
   @Delete('/:id')
   @ZodSerializerDto(MessageResDTO)
-  deleteBrand(
+  deleteWidget(
     @Param() params: GetParamsDTO,
     @ActiveUser('userId') userId: number,
   ) {
-    return this.templateService.deleteTemplate({
+    return this.widgetService.deleteWidget({
       id: params.id,
       deletedById: userId,
     });

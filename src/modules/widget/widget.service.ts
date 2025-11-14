@@ -2,55 +2,54 @@ import { Injectable } from '@nestjs/common';
 import { PaginationQueryType } from 'src/common/schemas/request.schema';
 import { NotFoundRecordException } from 'src/common/errors';
 import { isPrismaRecordNotFound } from 'src/common/errors/prisma';
-import {
-  CreateTemplateBodyType,
-  UpdateTemplateBodyType,
-} from './widget.schema';
-import { TemplateRepository } from './widget.repository';
+import { CreateWidgetBodyType, UpdateWidgetBodyType } from './widget.schema';
+import { WidgetRepository } from './widget.repository';
 
 @Injectable()
-export class TemplateService {
-  constructor(private readonly templateRepository: TemplateRepository) {}
-  async getAllTemplates(query: PaginationQueryType) {
+export class WidgetService {
+  constructor(private readonly widgetRepository: WidgetRepository) {}
+  async getAllWidgetsByTemplate(templateId: number, userId: number) {
     try {
-      return await this.templateRepository.list(query);
+      return await this.widgetRepository.listByShopInTemplate(templateId);
     } catch (error) {
-      console.log('/template', error);
+      console.log('/widget', error);
       throw error;
     }
   }
 
-  async getAllTemplatesByShop(query: PaginationQueryType, sellerId: number) {
+  async getAllWidgetsByTemplateIsPublic(templateId: number) {
     try {
-      return await this.templateRepository.listByShop(query, sellerId);
+      return await this.widgetRepository.listByShopInTemplateIsPublic(
+        templateId,
+      );
     } catch (error) {
-      console.log('/template', error);
+      console.log('/widget', error);
       throw error;
     }
   }
 
-  async getTemplateIdIsPublic(id: number) {
+  async getWidgetId(id: number) {
     try {
-      const template = await this.templateRepository.findByIdIsPublic(id);
+      const template = await this.widgetRepository.findById(id);
       if (!template) {
         throw NotFoundRecordException;
       }
       return template;
     } catch (error) {
-      console.log('/template/:id', error);
+      console.log('/widget/:id', error);
       throw error;
     }
   }
 
-  async createTemplate({
+  async createWidget({
     data,
     createdById,
   }: {
-    data: CreateTemplateBodyType;
+    data: CreateWidgetBodyType;
     createdById: number;
   }) {
     try {
-      const brand = await this.templateRepository.create({
+      const brand = await this.widgetRepository.create({
         sellerId: createdById,
         data,
       });
@@ -61,42 +60,35 @@ export class TemplateService {
     }
   }
 
-  async updateTemplate({
+  async updateWidget({
     id,
     data,
     updatedById,
   }: {
     id: number;
-    data: UpdateTemplateBodyType;
+    data: UpdateWidgetBodyType;
     updatedById: number;
   }) {
     try {
-      const updatedTemplate = await this.templateRepository.update({
+      const updatedWidget = await this.widgetRepository.update({
         id,
         data,
       });
 
-      return updatedTemplate;
+      return updatedWidget;
     } catch (error) {
-      console.log('/template/:id', error);
+      console.log('/widget/:id', error);
       throw error;
     }
   }
 
-  async deleteTemplate({
-    id,
-    deletedById,
-  }: {
-    id: number;
-    deletedById: number;
-  }) {
+  async deleteWidget({ id, deletedById }: { id: number; deletedById: number }) {
     try {
-      //  delete brand (xóa mềm)
-      await this.templateRepository.delete({ id });
+      await this.widgetRepository.delete({ id });
 
-      return { message: 'Delete template successfully' };
+      return { message: 'Delete widget successfully' };
     } catch (error) {
-      console.log('/template/:id', error);
+      console.log('/widget/:id', error);
       if (isPrismaRecordNotFound(error)) {
         throw NotFoundRecordException;
       }

@@ -1,12 +1,8 @@
 import { createZodDto } from 'nestjs-zod';
 import {
-  CreateTemplateBodySchema,
-  UpdateTemplateBodySchema,
+  CreateWidgetBodySchema,
+  UpdateWidgetBodySchema,
 } from './widget.schema';
 
-export class CreateTemplateBodyDTO extends createZodDto(
-  CreateTemplateBodySchema,
-) {}
-export class UpdateTemplateBodyDTO extends createZodDto(
-  UpdateTemplateBodySchema,
-) {}
+export class CreateWidgetBodyDTO extends createZodDto(CreateWidgetBodySchema) {}
+export class UpdateWidgetBodyDTO extends createZodDto(UpdateWidgetBodySchema) {}

@@ -26,6 +26,7 @@ import { QueueModule } from './queues/queue.module';
 import { PaymentModule } from './modules/payment/payment.module';
 import { FlashsaleModule } from './modules/flashsale/flashsale.module';
 import { TemplateModule } from './modules/template/template.module';
+import { WidgetModule } from './modules/widget/widget.module';
 
 const modules = [
   AuthModule,
@@ -47,6 +48,7 @@ const modules = [
   PaymentModule,
   FlashsaleModule,
   TemplateModule,
+  WidgetModule,
 ];
 @Module({
   imports: [QueueModule, PrismaModule, CommonModule, ...modules],
