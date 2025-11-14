@@ -446,6 +446,7 @@ model Category {
   id               Int    @id @default(autoincrement())
   name             String @db.VarChar(500)
   description      String @default("")
+  image            String? @db.VarChar(250)
   parentCategoryId Int?
 
   products     ProductCategory[]
@@ -932,8 +933,9 @@ model Widget {
 model Template {
   id             Int          @id @default(autoincrement())
   widgets        Widget[]
+  name           String     
   categoriesView Int[]
-  WidgetIds      Int[]        @default([])
+  WidgetIds      Int[]
   sellerId       Int
   platform       platformType @default(DESKTOP)
   isActive       Boolean      @default(false)
