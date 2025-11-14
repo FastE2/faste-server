@@ -23,7 +23,16 @@ export class ShopService {
     try {
       return await this.shopRepository.findAll(query);
     } catch (error) {
-      console.log('/brand', error);
+      console.log('/shop', error);
+      throw error;
+    }
+  }
+
+  async getAllShopsIsPublic(query: PaginationQueryType) {
+    try {
+      return await this.shopRepository.findAllIsPublic(query);
+    } catch (error) {
+      console.log('/shop/public', error);
       throw error;
     }
   }

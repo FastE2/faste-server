@@ -4,6 +4,7 @@ export const CategorySchema = z.object({
   id: z.number(),
   name: z.string().min(1).max(500),
   description: z.string().default(''),
+  image: z.string().nullable(),
   parentCategoryId: z.number().nullable(),
 
   createdById: z.number().nullable(),

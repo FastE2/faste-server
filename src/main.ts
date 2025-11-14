@@ -6,6 +6,8 @@ import cookieParser from 'cookie-parser';
 import { AuthGuard } from './common/guards/auth.guard';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { WebsocketAdapter } from './common/websockets/websocket.adapter';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { patchNestJsSwagger } from 'nestjs-zod';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -27,11 +29,40 @@ async function bootstrap() {
   // -- filter
   app.useGlobalFilters(new HttpExceptionFilter());
 
+  patchNestJsSwagger();
+  const config = new DocumentBuilder()
+    .setTitle('FastE API')
+    .setDescription('The API for the ecommerce application')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .addApiKey(
+      {
+        name: 'authorization',
+        type: 'apiKey',
+      },
+      'payment-api-key',
+    )
+    .build();
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, documentFactory, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
+
   // websocket
   const websocketAdapter = new WebsocketAdapter(app);
   await websocketAdapter.connectToRedis();
   app.useWebSocketAdapter(websocketAdapter);
-
-  await app.listen(process.env.PORT ?? 8080);
+  const port = process.env.PORT || 8080;
+  await app.listen(port);
+  console.log(`
+  ╔═══════════════════════════════════════════╗
+  ║ FastE API Server is running!              ║
+  ║                                           ║
+  ║ URL: http://localhost:${port}                ║
+  ║ Docs: http://localhost:${port}/api/docs      ║
+  ╚═══════════════════════════════════════════╝
+  `);
 }
 bootstrap();

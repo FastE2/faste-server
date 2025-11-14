@@ -32,6 +32,14 @@ export class ShopController {
   getAllShops(@Query() query: PaginationQueryDTO) {
     return this.shopService.getAllShops(query);
   }
+
+  @Get('/public')
+  @Ispublic()
+  @ZodSerializerDto(GetShopResDTO)
+  getAllShopsIsPublic(@Query() query: PaginationQueryDTO) {
+    return this.shopService.getAllShopsIsPublic(query);
+  }
+
   @Post('register')
   // @ZodSerializerDto(RegisterResDTO)
   registerShop(

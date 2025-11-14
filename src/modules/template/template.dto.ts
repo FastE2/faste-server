@@ -1,0 +1,12 @@
+import { createZodDto } from 'nestjs-zod';
+import {
+  CreateTemplateBodySchema,
+  UpdateTemplateBodySchema,
+} from './template.schema';
+
+export class CreateTemplateBodyDTO extends createZodDto(
+  CreateTemplateBodySchema,
+) {}
+export class UpdateTemplateBodyDTO extends createZodDto(
+  UpdateTemplateBodySchema,
+) {}
