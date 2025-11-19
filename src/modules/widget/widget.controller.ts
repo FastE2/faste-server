@@ -15,7 +15,11 @@ import { GetParamsDTO, PaginationQueryDTO } from 'src/common/dtos/request.dto';
 
 import { Ispublic } from 'src/common/decorators/auth.decorator';
 import { WidgetService } from './widget.service';
-import { CreateWidgetBodyDTO, UpdateWidgetBodyDTO } from './widget.dto';
+import {
+  CreateWidgetBodyDTO,
+  UpdateManyWidgetsDTO,
+  UpdateWidgetBodyDTO,
+} from './widget.dto';
 
 @Controller('widget')
 export class WidgetController {
@@ -24,10 +28,13 @@ export class WidgetController {
   @Get('/template/:templateId')
   // @ZodSerializerDto(GetBrandResDTO)
   getAllWidgets(
-    @Param('templateId') templateId: number,
+    @Param('templateId') templateId: string,
     @ActiveUser('userId') userId: number,
   ) {
-    return this.widgetService.getAllWidgetsByTemplate(templateId, userId);
+    return this.widgetService.getAllWidgetsByTemplate(
+      Number(templateId),
+      userId,
+    );
   }
 
   @Get('/template/:templateId/public')
@@ -67,6 +74,16 @@ export class WidgetController {
       data: body,
       updatedById: userId,
     });
+  }
+
+  @Patch('template/:templateId')
+  // @ZodSerializerDto(UpdateBrandResDTO)
+  updateManyWidgets(
+    @Param('templateId') templateId: string,
+    @Body() body: UpdateManyWidgetsDTO,
+    @ActiveUser('userId') userId: number,
+  ) {
+    return this.widgetService.updateWidgets(Number(templateId), body);
   }
 
   @Delete('/:id')

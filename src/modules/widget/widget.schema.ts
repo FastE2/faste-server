@@ -27,5 +27,20 @@ export const CreateWidgetBodySchema = WidgetSchema.pick({
 
 export const UpdateWidgetBodySchema = CreateWidgetBodySchema.partial();
 
+export const UpdateManyWidgetsSchema = z
+  .object({
+    widgets: z.array(
+      z.object({
+        id: z.number(),
+        widgetIndex: z.number().optional(),
+        name: z.string().nullable().optional(),
+        isVisible: z.boolean().optional(),
+        viewConfig: z.any().optional(),
+      }),
+    ),
+  })
+  .strict();
+
 export type CreateWidgetBodyType = z.infer<typeof CreateWidgetBodySchema>;
 export type UpdateWidgetBodyType = z.infer<typeof UpdateWidgetBodySchema>;
+export type UpdateManyWidgetsType = z.infer<typeof UpdateManyWidgetsSchema>;

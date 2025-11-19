@@ -10,7 +10,7 @@ export class WidgetRepository {
   async listByShopInTemplate(templateId: number): Promise<any[]> {
     return this.prismaService.widget.findMany({
       where: {
-        templateId,
+        templateId: templateId,
       },
     });
   }
