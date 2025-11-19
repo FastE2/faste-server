@@ -88,6 +88,22 @@ export class OrderService {
     }
   }
 
+  async getOrderDetailByShop({ userId, id }: { userId: number; id: number }) {
+    try {
+      const order = await this.orderRepository.findUniqueShopById({
+        orderId: id,
+        userId,
+      });
+      if (!order) {
+        throw NotFoundRecordException;
+      }
+      return order;
+    } catch (error) {
+      console.log('/order/shop/:id', error);
+      throw error;
+    }
+  }
+
   async getTransactionDetailByUser({
     userId,
     id,
@@ -162,6 +178,12 @@ export class OrderService {
     const allowedNextStatuses = ALLOWED_STATUS_TRANSITIONS[currentStatus];
 
     if (!allowedNextStatuses || !allowedNextStatuses.includes(nextStatus)) {
+      console.log('allowedNextStatuses', allowedNextStatuses);
+      console.log(
+        'allowedNextStatuses',
+        !allowedNextStatuses.includes(nextStatus),
+        nextStatus,
+      );
       throw new BadRequestException(
         `Invalid status transition from ${currentStatus} to ${nextStatus}.`,
       );

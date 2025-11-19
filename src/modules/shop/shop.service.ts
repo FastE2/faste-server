@@ -47,7 +47,7 @@ export class ShopService {
         throw NotFoundUserException;
       }
 
-      const shop = await this.shopRepository.findOne({ id: userId });
+      const shop = await this.shopRepository.findOne({ shopid: userId });
       if (shop) {
         throw ExistedShopException;
       }
@@ -61,7 +61,7 @@ export class ShopService {
 
   async getShopById(id: number) {
     try {
-      const shop = await this.shopRepository.findOne({ id });
+      const shop = await this.shopRepository.findOne({ shopid: id });
       if (!shop) {
         throw NotFoundRecordException;
       }

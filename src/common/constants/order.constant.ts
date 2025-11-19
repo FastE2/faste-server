@@ -41,6 +41,7 @@ export const ALLOWED_STATUS_TRANSITIONS: Record<
   // Đơn hàng đang chờ thanh toán có thể chuyển sang trạng thái chờ lấy hàng hoặc bị hủy
   [ORDER_STATUS.PENDING_PAYMENT]: [
     ORDER_STATUS.PENDING_CONFIRMATION,
+    ORDER_STATUS.PROCESSING,
     ORDER_STATUS.PENDING_PICKUP,
     ORDER_STATUS.PENDING_DELIVERY,
     ORDER_STATUS.CANCELLED,

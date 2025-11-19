@@ -40,6 +40,14 @@ export class OrderController {
     return this.orderService.getOrdersBySeller({ userId, query });
   }
 
+  @Get('shop/:id')
+  getByIdByShop(
+    @Param() params: GetParamsDTO,
+    @ActiveUser('userId') userId: number,
+  ) {
+    return this.orderService.getOrderDetailByShop({ userId, id: params.id });
+  }
+
   @Post()
   createOrder(
     @Body() body: CreateOrderBodyDTO,

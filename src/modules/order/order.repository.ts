@@ -140,6 +140,7 @@ export class OrderRepository {
       },
       include: {
         items: true,
+        Payment: true,
       },
     });
     if (!order) {

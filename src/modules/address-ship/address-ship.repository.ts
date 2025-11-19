@@ -62,6 +62,16 @@ export class AddressShipRepository {
     });
   }
 
+  findByIdIsDefault(id: number): Promise<AddressShipType | null> {
+    return this.prismaService.addressShip.findUnique({
+      where: {
+        id,
+        isDefault: true,
+        deletedAt: null,
+      },
+    });
+  }
+
   create({
     userId,
     data,

@@ -55,6 +55,12 @@ export class AddressShipController {
     return this.addressShipService.getAddressShipById(userId, params.id);
   }
 
+  @Get('/default/:id')
+  @ZodSerializerDto(GetAddressShipByIdResDTO)
+  getAddressShipByIdIsDefault(@Param() params: GetParamsDTO) {
+    return this.addressShipService.getAddressShipByIdIsDefault(params.id);
+  }
+
   @Patch('/:id')
   @ZodSerializerDto(UpdateAddressShipResDTO)
   updateAddressShip(

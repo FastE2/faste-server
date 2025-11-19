@@ -33,6 +33,20 @@ export class AddressShipService {
     }
   }
 
+  async getAddressShipByIdIsDefault(id: number) {
+    try {
+      const addressShip =
+        await this.addressShipRepository.findByIdIsDefault(id);
+      if (!addressShip) {
+        throw NotFoundRecordException;
+      }
+      return addressShip;
+    } catch (error) {
+      console.log('/address-ship/:id', error);
+      throw error;
+    }
+  }
+
   async createAddressShip({
     data,
     userId,
