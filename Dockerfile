@@ -1,67 +1,37 @@
 ##################
-# BUILD BASE IMAGE
+# BASE IMAGE
 ##################
-
 FROM node:20-alpine AS base
 
-#############################
-# BUILD FOR LOCAL DEVELOPMENT
-#############################
-
+##############################
+# DEVELOPMENT STAGE
+##############################
 FROM base AS development
 WORKDIR /app
+
+# Copy only the package files first to leverage Docker cache
+COPY package*.json ./
+
+# Install dependencies (including devDependencies)
+RUN npm ci --only=development
+
+# Copy prisma folder into the container
+COPY prisma ./prisma
+
+# Generate Prisma client
+RUN npx prisma generate
+
+# Copy the rest of the app source code
+COPY . .
+
+# Ensure the node user has the correct permissions
 RUN chown -R node:node /app
 
-COPY --chown=node:node package*.json ./
-
-# Install all dependencies (including devDependencies)
-RUN npm install
-
-# Bundle app source
-COPY --chown=node:node . .
-
-# Use the node user from the image (instead of the root user)
+# Switch to node user for better security
 USER node
 
-#####################
-# BUILD BUILDER IMAGE
-#####################
+# Expose the port for the development server
+EXPOSE 8080
 
-FROM base AS builder
-WORKDIR /app
-
-COPY --chown=node:node package*.json ./
-COPY --chown=node:node --from=development /app/node_modules ./node_modules
-COPY --chown=node:node --from=development /app/src ./src
-COPY --chown=node:node --from=development /app/tsconfig.json ./tsconfig.json
-COPY --chown=node:node --from=development /app/tsconfig.build.json ./tsconfig.build.json
-COPY --chown=node:node --from=development /app/nest-cli.json ./nest-cli.json
-
-# Build NestJS (output dist/)
-RUN npm run build
-
-# Re-install only production dependencies
-ENV NODE_ENV production
-RUN rm -rf node_modules && npm ci --omit=dev
-
-USER node
-
-######################
-# BUILD FOR PRODUCTION
-######################
-
-FROM node:20-alpine AS production
-WORKDIR /app
-
-RUN mkdir -p src/generated && chown -R node:node src
-
-# Copy the bundled code and production deps
-COPY --chown=node:node --from=builder /app/src/generated/i18n.generated.ts ./src/generated/i18n.generated.ts
-COPY --chown=node:node --from=builder /app/node_modules ./node_modules
-COPY --chown=node:node --from=builder /app/dist ./dist
-COPY --chown=node:node --from=builder /app/package.json ./
-
-USER node
-
-# Start the server using the production build
-CMD [ "node", "dist/main.js" ]
+# Start the server with an increased memory limit
+CMD ["node", "dist/main.js"]
