@@ -102,6 +102,7 @@ export class WidgetService {
           id: true,
           widgetIndex: true,
           viewConfig: true,
+          type: true,
           name: true,
           isVisible: true,
         },
@@ -117,6 +118,7 @@ export class WidgetService {
         const isChanged =
           oldW.widgetIndex !== newW.widgetIndex ||
           oldW.name !== newW.name ||
+          oldW.type !== newW.type ||
           oldW.isVisible !== newW.isVisible ||
           JSON.stringify(oldW.viewConfig) !== JSON.stringify(newW.viewConfig);
 
@@ -127,6 +129,7 @@ export class WidgetService {
               data: {
                 widgetIndex: newW.widgetIndex,
                 name: newW.name,
+                type: newW.type,
                 viewConfig: newW.viewConfig,
                 isVisible: newW.isVisible,
               },

@@ -369,6 +369,8 @@ model Product {
   images      String[]
   /// [Variants]
   variants    Json
+  rating      Float?        @default(0.0)
+  ratingCount Int           @default(0)
   totalViews  Int           @default(0)
   slugId      String        @unique
 
@@ -443,9 +445,9 @@ model DeliveryType {
 }
 
 model Category {
-  id               Int    @id @default(autoincrement())
-  name             String @db.VarChar(500)
-  description      String @default("")
+  id               Int     @id @default(autoincrement())
+  name             String  @db.VarChar(500)
+  description      String  @default("")
   image            String? @db.VarChar(250)
   parentCategoryId Int?
 
@@ -933,7 +935,7 @@ model Widget {
 model Template {
   id             Int          @id @default(autoincrement())
   widgets        Widget[]
-  name           String     
+  name           String
   categoriesView Int[]
   WidgetIds      Int[]
   sellerId       Int

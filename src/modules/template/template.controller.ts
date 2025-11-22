@@ -27,7 +27,7 @@ export class TemplateController {
     return this.templateService.getAllTemplates(query);
   }
 
-  @Get()
+  @Get('/seller')
   // @ZodSerializerDto(GetBrandResDTO)
   getAllTemplatesByShop(
     @Query() query: PaginationQueryDTO,

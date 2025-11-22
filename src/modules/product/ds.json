@@ -1,0 +1,269 @@
+[
+
+
+
+  {
+    "id": 12,
+    "name": "iPhone 17",
+    "description": "iPhone 17 với chip A17 Pro mạnh mẽ, camera cải tiến, và thiết kế khung titan nhẹ nhưng bền bỉ. Trải nghiệm màn hình Super Retina XDR sắc nét và tính năng Face ID an toàn.",
+    "basePrice": 32000000,
+    "brandId": 3,
+    "status": "PUBLISHED",
+    "publishedAt": "2025-11-14T07:52:13.533Z",
+    "images": [
+      "https://hugotech.vn/wp-content/uploads/iPhone-17-Pro-Max-Cam-vu%CC%83-tru%CC%A3-3.jpg",
+      "https://cdn2.cellphones.com.vn/358x/media/catalog/product/i/p/iphone_17_256gb_2.jpg"
+    ],
+    "variants": [
+      {
+        "value": "Màu sắc",
+        "options": [
+          "Titan Xanh",
+          "Titan Đen",
+          "Titan Trắng"
+        ]
+      },
+      {
+        "value": "Dung lượng",
+        "options": [
+          "128GB",
+          "256GB",
+          "512GB"
+        ]
+      }
+    ],
+    "totalViews": 0,
+    "slugId": "iphone-17",
+    "weightGram": null,
+    "lengthCm": null,
+    "widthCm": null,
+    "heightCm": null,
+    "shopId": 1,
+    "updatedById": null,
+    "deletedById": null,
+    "deletedAt": null,
+    "createdAt": "2025-11-14T07:52:13.536Z",
+    "updatedAt": "2025-11-14T07:52:13.536Z",
+    "skus": [
+      {
+        "id": 29,
+        "skuCode": "2B46-TITAN XANH-128GB",
+        "productId": 12,
+        "image": "",
+        "price": 32000000,
+        "attributes": {
+          "Màu sắc": "Titan Xanh",
+          "Dung lượng": "128GB"
+        },
+        "quantity": 30,
+        "sold": 0,
+        "weightGram": null,
+        "lengthCm": null,
+        "widthCm": null,
+        "heightCm": null,
+        "shopId": 1,
+        "updatedById": null,
+        "deletedById": null,
+        "deletedAt": null,
+        "createdAt": "2025-11-14T07:52:13.536Z",
+        "updatedAt": "2025-11-14T07:52:13.536Z",
+        "userId": null
+      },
+      {
+        "id": 30,
+        "skuCode": "FD05-TITAN XANH-256GB",
+        "productId": 12,
+        "image": "",
+        "price": 35000000,
+        "attributes": {
+          "Màu sắc": "Titan Xanh",
+          "Dung lượng": "256GB"
+        },
+        "quantity": 25,
+        "sold": 0,
+        "weightGram": null,
+        "lengthCm": null,
+        "widthCm": null,
+        "heightCm": null,
+        "shopId": 1,
+        "updatedById": null,
+        "deletedById": null,
+        "deletedAt": null,
+        "createdAt": "2025-11-14T07:52:13.536Z",
+        "updatedAt": "2025-11-14T07:52:13.536Z",
+        "userId": null
+      },
+      {
+        "id": 31,
+        "skuCode": "1B6F-TITAN XANH-512GB",
+        "productId": 12,
+        "image": "",
+        "price": 38000000,
+        "attributes": {
+          "Màu sắc": "Titan Xanh",
+          "Dung lượng": "512GB"
+        },
+        "quantity": 20,
+        "sold": 0,
+        "weightGram": null,
+        "lengthCm": null,
+        "widthCm": null,
+        "heightCm": null,
+        "shopId": 1,
+        "updatedById": null,
+        "deletedById": null,
+        "deletedAt": null,
+        "createdAt": "2025-11-14T07:52:13.536Z",
+        "updatedAt": "2025-11-14T07:52:13.536Z",
+        "userId": null
+      },
+      {
+        "id": 32,
+        "skuCode": "AA02-TITAN DEN-128GB",
+        "productId": 12,
+        "image": "",
+        "price": 32000000,
+        "attributes": {
+          "Màu sắc": "Titan Đen",
+          "Dung lượng": "128GB"
+        },
+        "quantity": 30,
+        "sold": 0,
+        "weightGram": null,
+        "lengthCm": null,
+        "widthCm": null,
+        "heightCm": null,
+        "shopId": 1,
+        "updatedById": null,
+        "deletedById": null,
+        "deletedAt": null,
+        "createdAt": "2025-11-14T07:52:13.536Z",
+        "updatedAt": "2025-11-14T07:52:13.536Z",
+        "userId": null
+      },
+      {
+        "id": 33,
+        "skuCode": "9A82-TITAN DEN-256GB",
+        "productId": 12,
+        "image": "",
+        "price": 35000000,
+        "attributes": {
+          "Màu sắc": "Titan Đen",
+          "Dung lượng": "256GB"
+        },
+        "quantity": 25,
+        "sold": 0,
+        "weightGram": null,
+        "lengthCm": null,
+        "widthCm": null,
+        "heightCm": null,
+        "shopId": 1,
+        "updatedById": null,
+        "deletedById": null,
+        "deletedAt": null,
+        "createdAt": "2025-11-14T07:52:13.536Z",
+        "updatedAt": "2025-11-14T07:52:13.536Z",
+        "userId": null
+      },
+      {
+        "id": 34,
+        "skuCode": "2937-TITAN DEN-512GB",
+        "productId": 12,
+        "image": "",
+        "price": 38000000,
+        "attributes": {
+          "Màu sắc": "Titan Đen",
+          "Dung lượng": "512GB"
+        },
+        "quantity": 20,
+        "sold": 0,
+        "weightGram": null,
+        "lengthCm": null,
+        "widthCm": null,
+        "heightCm": null,
+        "shopId": 1,
+        "updatedById": null,
+        "deletedById": null,
+        "deletedAt": null,
+        "createdAt": "2025-11-14T07:52:13.536Z",
+        "updatedAt": "2025-11-14T07:52:13.536Z",
+        "userId": null
+      },
+      {
+        "id": 35,
+        "skuCode": "A2C2-TITAN TRANG-128GB",
+        "productId": 12,
+        "image": "",
+        "price": 32000000,
+        "attributes": {
+          "Màu sắc": "Titan Trắng",
+          "Dung lượng": "128GB"
+        },
+        "quantity": 30,
+        "sold": 0,
+        "weightGram": null,
+        "lengthCm": null,
+        "widthCm": null,
+        "heightCm": null,
+        "shopId": 1,
+        "updatedById": null,
+        "deletedById": null,
+        "deletedAt": null,
+        "createdAt": "2025-11-14T07:52:13.536Z",
+        "updatedAt": "2025-11-14T07:52:13.536Z",
+        "userId": null
+      },
+      {
+        "id": 36,
+        "skuCode": "4A40-TITAN TRANG-256GB",
+        "productId": 12,
+        "image": "",
+        "price": 35000000,
+        "attributes": {
+          "Màu sắc": "Titan Trắng",
+          "Dung lượng": "256GB"
+        },
+        "quantity": 25,
+        "sold": 0,
+        "weightGram": null,
+        "lengthCm": null,
+        "widthCm": null,
+        "heightCm": null,
+        "shopId": 1,
+        "updatedById": null,
+        "deletedById": null,
+        "deletedAt": null,
+        "createdAt": "2025-11-14T07:52:13.536Z",
+        "updatedAt": "2025-11-14T07:52:13.536Z",
+        "userId": null
+      },
+      {
+        "id": 37,
+        "skuCode": "3CDB-TITAN TRANG-512GB",
+        "productId": 12,
+        "image": "",
+        "price": 38000000,
+        "attributes": {
+          "Màu sắc": "Titan Trắng",
+          "Dung lượng": "512GB"
+        },
+        "quantity": 20,
+        "sold": 0,
+        "weightGram": null,
+        "lengthCm": null,
+        "widthCm": null,
+        "heightCm": null,
+        "shopId": 1,
+        "updatedById": null,
+        "deletedById": null,
+        "deletedAt": null,
+        "createdAt": "2025-11-14T07:52:13.536Z",
+        "updatedAt": "2025-11-14T07:52:13.536Z",
+        "userId": null
+      }
+    ],
+    "_count": {
+      "likes": 0
+    }
+  }
+]

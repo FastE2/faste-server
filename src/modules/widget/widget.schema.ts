@@ -34,6 +34,7 @@ export const UpdateManyWidgetsSchema = z
         id: z.number(),
         widgetIndex: z.number().optional(),
         name: z.string().nullable().optional(),
+        type: z.nativeEnum(WidgetType),
         isVisible: z.boolean().optional(),
         viewConfig: z.any().optional(),
       }),

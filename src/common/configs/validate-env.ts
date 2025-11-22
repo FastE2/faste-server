@@ -34,6 +34,9 @@ const configSchema = z.object({
   AWS_S3_SECRET_ACCESS_KEY: z.string(),
   PAYMENT_API_KEY: z.string(),
   REDIS_URL: z.string(),
+  AMQP_URL: z.string(),
+  ELASTICSEARCH_NODE: z.string(),
+  ELASTICSEARCH_APIKEY: z.string(),
 });
 
 const configServer = configSchema.safeParse(process.env);
