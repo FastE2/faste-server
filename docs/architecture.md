@@ -65,6 +65,7 @@ Where we keep all our constants.
 ### `database`
 
 Folder to store files which are connected only to database.
+https://dbdiagram.io/d/FastE-db-6926b83ba0c4ebcc2bc50395
 
 #### `config` (for database)
 

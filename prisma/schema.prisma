@@ -745,6 +745,7 @@ model Shop {
   ratingStar    Float?      @default(0)
   responseRate  Int?        @default(100)
   responseTime  Int?        @default(0)
+  addressWallet String?     @default("")
   addressShip   AddressShip @relation(fields: [addressShipId], references: [id])
   addressShipId Int
 

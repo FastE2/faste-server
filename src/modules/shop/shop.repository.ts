@@ -11,7 +11,10 @@ export class ShopRepository {
     private readonly commonRoleRepository: CommonRoleRepository,
   ) {}
 
-  async findAll(pagination: PaginationQueryType): Promise<{
+  async findAll(
+    pagination: PaginationQueryType,
+    isPublic?: boolean,
+  ): Promise<{
     data: any[];
     totalItem: number;
     page: number;
@@ -20,11 +23,15 @@ export class ShopRepository {
   }> {
     const skip = (pagination.page - 1) * pagination.limit;
     const take = pagination.limit;
+    const where: any = { deletedAt: null };
+
+    if (isPublic) {
+      where.status = 'APPROVED';
+      where.isActive = true;
+    }
     const [data, totalItem] = await Promise.all([
       this.prismaService.shop.findMany({
-        where: {
-          deletedAt: null,
-        },
+        where,
         take,
         skip,
       }),
@@ -44,46 +51,15 @@ export class ShopRepository {
     };
   }
 
-  async findAllIsPublic(pagination: PaginationQueryType): Promise<{
-    data: any[];
-    totalItem: number;
-    page: number;
-    limmit: number;
-    totalPage: number;
-  }> {
-    const skip = (pagination.page - 1) * pagination.limit;
-    const take = pagination.limit;
-    const [data, totalItem] = await Promise.all([
-      this.prismaService.shop.findMany({
-        where: {
-          status: 'APPROVED',
-          isActive: true,
-          deletedAt: null,
-        },
-        take,
-        skip,
-      }),
-      this.prismaService.shop.count({
-        where: {
-          deletedAt: null,
-        },
-      }),
-    ]);
-
-    return {
-      data,
-      totalItem,
-      page: pagination.page,
-      limmit: pagination.limit,
-      totalPage: Math.ceil(totalItem / pagination.limit),
-    };
-  }
-
-  findOne(where: WhereUniqueShopType): Promise<any> {
+  findOne(
+    where: WhereUniqueShopType,
+    fillter?: { isActive: boolean },
+  ): Promise<any> {
     return this.prismaService.shop.findFirst({
       where: {
         ...where,
         deletedAt: null,
+        ...fillter,
       },
       include: {
         Template: {

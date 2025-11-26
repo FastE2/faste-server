@@ -38,6 +38,8 @@ export class SearchService {
       orderBy = 'new',
     } = params;
 
+    console.log('PARAMS', params);
+
     const query: any = { bool: { must: [], filter: [] } };
 
     // --- Keyword search ---
@@ -70,7 +72,7 @@ export class SearchService {
           path: 'skus',
           query: {
             range: {
-              'skus.0.price': {
+              'skus.price': {
                 gte: minPrice ?? 0,
                 lte: maxPrice ?? Number.MAX_SAFE_INTEGER,
               },

@@ -88,6 +88,11 @@ export class ProductRepository {
       this.prismaService.product.findMany({
         where,
         include: {
+          skus: {
+            select: {
+              price: true,
+            },
+          },
           _count: {
             select: { likes: true },
           },
@@ -183,6 +188,11 @@ export class ProductRepository {
       this.prismaService.product.findMany({
         where,
         include: {
+          skus: {
+            select: {
+              price: true,
+            },
+          },
           _count: {
             select: { likes: true },
           },

@@ -27,17 +27,24 @@ import { Ispublic } from 'src/common/decorators/auth.decorator';
 export class ShopController {
   constructor(private readonly shopService: ShopService) {}
 
-  @Get()
-  @ZodSerializerDto(GetShopResDTO)
-  getAllShops(@Query() query: PaginationQueryDTO) {
-    return this.shopService.getAllShops(query);
-  }
-
   @Get('/public')
   @Ispublic()
   @ZodSerializerDto(GetShopResDTO)
   getAllShopsIsPublic(@Query() query: PaginationQueryDTO) {
     return this.shopService.getAllShopsIsPublic(query);
+  }
+
+  @Get('slug/:slug')
+  @Ispublic()
+  @ZodSerializerDto(GetShopByIdResDTO)
+  getBySlug(@Param() params: GetParamSlugDTO) {
+    return this.shopService.getShopBySlug(params.slug);
+  }
+
+  @Get()
+  @ZodSerializerDto(GetShopResDTO)
+  getAllShops(@Query() query: PaginationQueryDTO) {
+    return this.shopService.getAllShops(query);
   }
 
   @Post('register')
@@ -47,13 +54,6 @@ export class ShopController {
     @ActiveUser('userId') userId: number,
   ) {
     return this.shopService.registerShop(userId, body);
-  }
-
-  @Get('slug/:slug')
-  @Ispublic()
-  @ZodSerializerDto(GetShopByIdResDTO)
-  getBySlug(@Param() params: GetParamSlugDTO) {
-    return this.shopService.getShopBySlug(params.slug);
   }
 
   // @Get('/:slug')
@@ -67,6 +67,12 @@ export class ShopController {
   @ZodSerializerDto(GetShopByIdResDTO)
   getById(@Param() params: GetParamsDTO) {
     return this.shopService.getShopById(params.id);
+  }
+
+  @Get('/me')
+  @ZodSerializerDto(GetShopByIdResDTO)
+  getShopMe(@ActiveUser('userId') userId: number) {
+    return this.shopService.getShopById(userId);
   }
 
   @Patch('/:id')

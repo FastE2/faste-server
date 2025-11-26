@@ -30,7 +30,7 @@ export class ShopService {
 
   async getAllShopsIsPublic(query: PaginationQueryType) {
     try {
-      return await this.shopRepository.findAllIsPublic(query);
+      return await this.shopRepository.findAll(query, true);
     } catch (error) {
       console.log('/shop/public', error);
       throw error;
@@ -74,7 +74,10 @@ export class ShopService {
 
   async getShopBySlug(slug: string) {
     try {
-      const shop = await this.shopRepository.findOne({ slug });
+      const shop = await this.shopRepository.findOne(
+        { slug },
+        { isActive: true },
+      );
       if (!shop) {
         throw NotFoundRecordException;
       }
