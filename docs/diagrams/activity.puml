@@ -1,0 +1,64 @@
+@startuml
+title Checkout & Order Fulfillment Process
+
+|User|
+start
+:View Cart;
+:Click Checkout;
+
+|System|
+:Validate Stock;
+if (Stock Available?) then (no)
+  :Show Error Message;
+  stop
+else (yes)
+  :Calculate Total (incl. Shipping & Vouchers);
+endif
+
+|User|
+:Confirm Order;
+
+|System|
+:Create Order (Status: PENDING);
+:Request Payment;
+
+|User|
+:Initiate Payment;
+
+|Payment Gateway|
+:Process Transaction;
+if (Payment Success?) then (no)
+  :Return Failure;
+  |System|
+  :Update Order (Status: CANCELLED/FAILED);
+  stop
+else (yes)
+  :Return Success;
+endif
+
+|System|
+:Update Order (Status: PAID);
+:Notify Seller;
+
+|Seller|
+:Receive Order Notification;
+:Prepare Items;
+:Handover to Shipper;
+
+|Shipper|
+:Pick up Package;
+:Deliver to User;
+
+|User|
+:Receive Package;
+:Confirm Receipt;
+
+|System|
+:Update Order (Status: COMPLETED);
+:Release Payment to Seller;
+
+|User|
+:Rate & Review Product;
+
+stop
+@enduml

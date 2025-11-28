@@ -35,3 +35,4 @@ EXPOSE 8080
 
 # Start the server with an increased memory limit
 CMD ["node", "dist/main.js"]
+# © Copyright belongs to the account [ahkiet lekiett2201@gmail.com]. Unauthorized copying, selling, distribution, or modification is prohibited.

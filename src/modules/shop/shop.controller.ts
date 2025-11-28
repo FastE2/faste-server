@@ -69,9 +69,10 @@ export class ShopController {
     return this.shopService.getShopById(params.id);
   }
 
-  @Get('/me')
-  @ZodSerializerDto(GetShopByIdResDTO)
+  @Get('/me/detail')
+  // @ZodSerializerDto(GetShopByIdResDTO)
   getShopMe(@ActiveUser('userId') userId: number) {
+    console.log(userId);
     return this.shopService.getShopById(userId);
   }
 

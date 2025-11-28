@@ -9,6 +9,7 @@ import { WebsocketAdapter } from './common/websockets/websocket.adapter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { patchNestJsSwagger } from 'nestjs-zod';
 
+// © Copyright belongs to the account [ahkiet lekiett2201@gmail.com]. Unauthorized copying, selling, distribution, or modification is prohibited.
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.use(cookieParser());
@@ -63,6 +64,8 @@ async function bootstrap() {
   ║ URL: http://localhost:${port}                ║
   ║ Docs: http://localhost:${port}/api/docs      ║
   ╚═══════════════════════════════════════════╝
+  © Copyright belongs to the account [ahkiet lekiett2201@gmail.com]. Unauthorized copying, selling, distribution, or modification is prohibited.
+
   `);
 }
 bootstrap();

@@ -1,0 +1,50 @@
+@startuml
+title Order Creation Sequence Flow (Based on schema.prisma)
+
+actor "User" as User
+participant "Product/SKU" as Product
+participant "CartItem" as Cart
+participant "AddressShip" as Address
+participant "Voucher" as Voucher
+participant "Order" as Order
+participant "Payment" as Payment
+participant "Transaction" as Transaction
+participant "Shop" as Shop
+
+== Product Discovery & Cart ==
+User -> Product: View Product Details
+User -> Cart: Add Item to Cart (skuId, quantity)
+activate Cart
+Cart -> Product: Validate Stock
+Cart --> User: Item Added
+deactivate Cart
+
+== Checkout Process ==
+User -> Address: Select/Create Shipping Address
+User -> Voucher: Apply Voucher (optional)
+activate Voucher
+Voucher --> User: Voucher Valid/Invalid
+deactivate Voucher
+
+User -> Order: Place Order
+activate Order
+Order -> Product: Reserve Stock (SKU)
+Order -> Voucher: Lock Voucher Usage
+Order -> Order: Calculate Total (Price + Shipping - Discount)
+Order -> Shop: Notify New Order
+Order --> User: Order Created (PENDING)
+deactivate Order
+
+== Payment Process ==
+User -> Payment: Initiate Payment
+activate Payment
+Payment -> Transaction: Create Transaction Record
+activate Transaction
+Transaction --> Payment: Transaction Created
+deactivate Transaction
+Payment -> Payment: Process Payment (External Gateway)
+Payment -> Order: Update Order Status (PAID)
+Payment --> User: Payment Success
+deactivate Payment
+
+@enduml

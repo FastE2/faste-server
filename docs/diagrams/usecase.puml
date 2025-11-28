@@ -1,0 +1,70 @@
+@startuml
+left to right direction
+actor "Guest" as Guest
+actor "Registered User" as User
+actor "Seller (Shop Owner)" as Seller
+actor "Admin" as Admin
+
+package "FastE E-commerce System" {
+
+  usecase "Register/Login" as UC1
+  usecase "Search & View Products" as UC2
+  usecase "Manage Profile & Address" as UC3
+  usecase "Manage Cart" as UC4
+  usecase "Place Order" as UC5
+  usecase "Make Payment" as UC6
+  usecase "View Order History" as UC7
+  usecase "Rate & Review Product" as UC8
+  usecase "Follow Shop" as UC9
+  
+  usecase "Register Shop" as UC10
+  usecase "Manage Shop Profile" as UC11
+  usecase "Manage Products (CRUD)" as UC12
+  usecase "Manage SKUs & Inventory" as UC13
+  usecase "Manage Discounts & Vouchers" as UC14
+  usecase "Manage Flash Sales" as UC15
+  usecase "Process Orders" as UC16
+  usecase "View Sales Reports" as UC17
+  
+  usecase "Manage Users" as UC18
+  usecase "Manage Roles & Permissions" as UC19
+  usecase "Manage Categories" as UC20
+  usecase "Manage Brands" as UC21
+  usecase "Manage Delivery Types" as UC22
+  usecase "System Configuration" as UC23
+
+}
+
+Guest --> UC1
+Guest --> UC2
+
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+User --> UC5
+User --> UC6
+User --> UC7
+User --> UC8
+User --> UC9
+
+Seller --> UC10
+Seller --> UC11
+Seller --> UC12
+Seller --> UC13
+Seller --> UC14
+Seller --> UC15
+Seller --> UC16
+Seller --> UC17
+
+Admin --> UC18
+Admin --> UC19
+Admin --> UC20
+Admin --> UC21
+Admin --> UC22
+Admin --> UC23
+
+User <|-- Seller : extends
+Guest <|-- User : becomes
+
+@enduml
