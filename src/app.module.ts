@@ -28,6 +28,7 @@ import { FlashsaleModule } from './modules/flashsale/flashsale.module';
 import { TemplateModule } from './modules/template/template.module';
 import { WidgetModule } from './modules/widget/widget.module';
 import { SearchModule } from './modules/search/search.module';
+import { ReviewModule } from './modules/review/review.module';
 
 const modules = [
   AuthModule,
@@ -51,6 +52,7 @@ const modules = [
   TemplateModule,
   WidgetModule,
   SearchModule,
+  ReviewModule,
 ];
 @Module({
   imports: [QueueModule, PrismaModule, CommonModule, ...modules],

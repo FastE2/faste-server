@@ -367,16 +367,16 @@ model Product {
   /// [Variants]
   variants    Json
 
-  rating      Float?        @default(0.0)
-  ratingCount Int           @default(0)
-  rating1Count Int @default(0)
-  rating2Count Int @default(0)
-  rating3Count Int @default(0)
-  rating4Count Int @default(0)
-  rating5Count Int @default(0)
+  rating       Float? @default(0.0)
+  ratingCount  Int    @default(0)
+  rating1Count Int    @default(0)
+  rating2Count Int    @default(0)
+  rating3Count Int    @default(0)
+  rating4Count Int    @default(0)
+  rating5Count Int    @default(0)
 
-  totalViews  Int           @default(0)
-  slugId      String        @unique
+  totalViews Int    @default(0)
+  slugId     String @unique
 
   weightGram Int? @map("weight_gram")
   lengthCm   Int? @map("length_cm")
@@ -1083,15 +1083,16 @@ model ProductTranslation {
 }
 
 model Review {
-  id Int @id @default(autoincrement())
-  orderItemId Int      @unique
-  userId    Int
-  productId Int
-  skuId     Int?
+  id          Int  @id @default(autoincrement())
+  orderItemId Int  @unique
+  userId      Int
+  productId   Int
+  skuId       Int?
+  sellerId    Int
 
-  rating        Int
-  message       String?
-  reason ReviewBadReason?
+  rating  Int
+  message String?
+  reason  ReviewBadReason?
 
   serviceSeller Int // Chất lượng bán hàng
   serviceShip   Int // Chất lượng giao hàng
@@ -1140,6 +1141,7 @@ enum OrderStatus {
   PENDING_PICKUP
   PENDING_DELIVERY
   DELIVERED
+  RECEIVED
   RETURNED
   CANCELLED
 }
@@ -1250,8 +1252,8 @@ enum platformType {
 }
 
 enum ReviewBadReason {
-  DAMAGED_PRODUCT        // Hàng lỗi hoặc bị hư hỏng
-  FAKE_PRODUCT           // Sản phẩm giả mạo
-  NOT_AS_DESCRIBED       // Sản phẩm không như mô tả
-  POOR_QUALITY           // Sản phẩm chất lượng kém
+  DAMAGED_PRODUCT // Hàng lỗi hoặc bị hư hỏng
+  FAKE_PRODUCT // Sản phẩm giả mạo
+  NOT_AS_DESCRIBED // Sản phẩm không như mô tả
+  POOR_QUALITY // Sản phẩm chất lượng kém
 }

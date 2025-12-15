@@ -8,6 +8,7 @@ export const OrderStatusSchema = z.enum([
   OrderStatus.PENDING_PICKUP,
   OrderStatus.PENDING_DELIVERY,
   OrderStatus.DELIVERED,
+  OrderStatus.RECEIVED,
   OrderStatus.RETURNED,
   OrderStatus.CANCELLED,
 ]);
