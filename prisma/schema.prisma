@@ -104,12 +104,8 @@ model User {
   payments         Payment[]
   messagesSent     Message[]           @relation("FromUser")
   messagesReceived Message[]           @relation("ToUser")
-  reviews          Review[]            @relation("Reviewer")
-  deletedreviews   Review[]            @relation("ReviewDeletedBy")
-  reviewees        Review[]            @relation("Reviewee")
   salesReports     SellerSalesReport[]
   notifications    Notification[]
-  Review           Review[]
   UserVoucher      UserVoucher[]
   Transaction      Transaction[]
   AddressLabel     AddressLabel[]
@@ -370,8 +366,15 @@ model Product {
   images      String[]
   /// [Variants]
   variants    Json
+
   rating      Float?        @default(0.0)
   ratingCount Int           @default(0)
+  rating1Count Int @default(0)
+  rating2Count Int @default(0)
+  rating3Count Int @default(0)
+  rating4Count Int @default(0)
+  rating5Count Int @default(0)
+
   totalViews  Int           @default(0)
   slugId      String        @unique
 
@@ -401,6 +404,7 @@ model Product {
   ProductSKUSnapshot ProductSKUSnapshot[]
 
   @@index([deletedAt])
+  @@index([shopId])
 }
 
 model ProductLike {
@@ -795,29 +799,29 @@ model BannerDesign {
   @@index([shopId])
 }
 
-model Review {
-  id          Int      @id @default(autoincrement())
-  revieweeId  Int
-  orderItemId Int      @unique
-  rating      Int
-  content     String
-  images      String[]
-  reviewee    User     @relation("Reviewee", fields: [revieweeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+// model Review {
+//   id          Int      @id @default(autoincrement())
+//   revieweeId  Int
+//   orderItemId Int      @unique
+//   rating      Int
+//   content     String
+//   images      String[]
+//   reviewee    User     @relation("Reviewee", fields: [revieweeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  createdById Int
-  createdBy   User  @relation("Reviewer", fields: [createdById], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  updatedById Int?
-  updatedBy   User? @relation(fields: [updatedById], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  deletedById Int?
-  deletedBy   User? @relation("ReviewDeletedBy", fields: [deletedById], references: [id], onDelete: Cascade, onUpdate: NoAction)
+//   createdById Int
+//   createdBy   User  @relation("Reviewer", fields: [createdById], references: [id], onDelete: Cascade, onUpdate: NoAction)
+//   updatedById Int?
+//   updatedBy   User? @relation(fields: [updatedById], references: [id], onDelete: Cascade, onUpdate: NoAction)
+//   deletedById Int?
+//   deletedBy   User? @relation("ReviewDeletedBy", fields: [deletedById], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  deletedAt DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+//   deletedAt DateTime?
+//   createdAt DateTime  @default(now())
+//   updatedAt DateTime  @updatedAt
 
-  @@index([revieweeId])
-  @@index([createdById])
-}
+//   @@index([revieweeId])
+//   @@index([createdById])
+// }
 
 model Language {
   id                   Int                   @id @default(autoincrement())
@@ -1078,6 +1082,32 @@ model ProductTranslation {
   @@index([productId])
 }
 
+model Review {
+  id Int @id @default(autoincrement())
+  orderItemId Int      @unique
+  userId    Int
+  productId Int
+  skuId     Int?
+
+  rating        Int
+  message       String?
+  reason ReviewBadReason?
+
+  serviceSeller Int // Chất lượng bán hàng
+  serviceShip   Int // Chất lượng giao hàng
+
+  images String[] // Danh sách URL ảnh (không lưu FILE)
+
+  isAnonymous Boolean @default(false) // Người dùng muốn ẩn danh
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([productId])
+  @@index([skuId])
+}
+
 // Enums
 enum ValueTypeDiscount {
   PERCENTAGE
@@ -1217,4 +1247,11 @@ enum WidgetType {
 enum platformType {
   MOBILE
   DESKTOP
+}
+
+enum ReviewBadReason {
+  DAMAGED_PRODUCT        // Hàng lỗi hoặc bị hư hỏng
+  FAKE_PRODUCT           // Sản phẩm giả mạo
+  NOT_AS_DESCRIBED       // Sản phẩm không như mô tả
+  POOR_QUALITY           // Sản phẩm chất lượng kém
 }

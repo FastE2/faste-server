@@ -32,7 +32,7 @@ import { SearchModule } from './modules/search/search.module';
 const modules = [
   AuthModule,
   UserModule,
-  MediaModule,
+  // MediaModule,
   RoleModule,
   PermissionModule,
   LanguageModule,
