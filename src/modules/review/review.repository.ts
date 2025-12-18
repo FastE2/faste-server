@@ -6,6 +6,8 @@ import {
   CreateReviewBodyType,
   UpdateReviewBodyType,
   ReviewQueryType,
+  CreateReviewReplyBodyType,
+  UpdateReviewReplyBodyType,
 } from './review.schema';
 
 type whereUniqueType =
@@ -13,6 +15,14 @@ type whereUniqueType =
       id: number;
     }
   | { id: number; userId: number };
+
+type whereUniqueReplyType =
+  | {
+      id: number;
+    }
+  | { reviewId: number }
+  | { id: number; sellerId: number }
+  | { reviewId: number; sellerId: number };
 
 @Injectable()
 export class ReviewRepository {
@@ -44,7 +54,7 @@ export class ReviewRepository {
     const take = limit;
 
     // build where filter
-    const where: any = { deletedAt: null };
+    const where: any = {};
     if (orderItemId) where.orderItemId = orderItemId;
     if (productId) where.productId = productId;
     if (skuId) where.skuId = skuId;
@@ -57,6 +67,29 @@ export class ReviewRepository {
         skip,
         take,
         orderBy: { [sortBy]: order },
+        select: {
+          id: true,
+          images: true,
+          isAnonymous: true,
+          message: true,
+          orderItemId: true,
+          productId: true,
+          rating: true,
+          reason: true,
+          sellerId: true,
+          serviceSeller: true,
+          serviceShip: true,
+          skuId: true,
+          userId: true,
+          createdAt: true,
+          updatedAt: true,
+          createdBy: {
+            select: {
+              name: true,
+              avatar: true,
+            },
+          },
+        },
       }),
       this.prismaService.review.count({ where }),
     ]);
@@ -124,6 +157,46 @@ export class ReviewRepository {
   delete({ id }: { id: number }) {
     return this.prismaService.review.delete({
       where: { id },
+    });
+  }
+
+  findByIdReply(where: whereUniqueReplyType): Promise<any> {
+    return this.prismaService.reviewReply.findFirst({
+      where,
+    });
+  }
+
+  createReply({
+    data,
+  }: {
+    data: CreateReviewReplyBodyType & { sellerId: number; reviewId: number };
+  }) {
+    return this.prismaService.reviewReply.create({
+      data,
+    });
+  }
+
+  updateReply({
+    id,
+    sellerId,
+    data,
+  }: {
+    id: number;
+    sellerId: number;
+    data: UpdateReviewReplyBodyType;
+  }): Promise<any> {
+    return this.prismaService.reviewReply.update({
+      where: {
+        reviewId: id,
+        sellerId,
+      },
+      data,
+    });
+  }
+
+  deleteReply({ id }: { id: number }) {
+    return this.prismaService.reviewReply.delete({
+      where: { reviewId: id },
     });
   }
 }

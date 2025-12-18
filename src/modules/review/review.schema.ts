@@ -32,6 +32,19 @@ export const ReviewSchema = z.object({
   updatedAt: z.date(),
 });
 
+export const ReviewReplySchema = z.object({
+  id: z.number(),
+  comment: z
+    .string()
+    .trim()
+    .min(1, 'Nội dung phản hồi không được để trống')
+    .max(200, 'Nội dung phản hồi tối đa 200 ký tự'),
+  sellerId: z.number(),
+  reviewId: z.number(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
 export const ReviewQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(10),
@@ -47,6 +60,12 @@ export const ReviewQuerySchema = z.object({
   sortBy: z.enum(['createdAt', 'rating']).default('createdAt'),
   order: z.enum(['asc', 'desc']).default('desc'),
 });
+
+export const CreateReviewReplyBodySchema = ReviewReplySchema.pick({
+  comment: true,
+});
+
+export const UpdateReviewReplyBodySchema = CreateReviewReplyBodySchema;
 
 export const CreateReviewBodySchema = ReviewSchema.pick({
   orderItemId: true,
@@ -79,3 +98,10 @@ export type ReviewType = z.infer<typeof ReviewSchema>;
 export type CreateReviewBodyType = z.infer<typeof CreateReviewBodySchema>;
 export type UpdateReviewBodyType = z.infer<typeof UpdateReviewBodySchema>;
 export type ReviewQueryType = z.infer<typeof ReviewQuerySchema>;
+
+export type UpdateReviewReplyBodyType = z.infer<
+  typeof UpdateReviewReplyBodySchema
+>;
+export type CreateReviewReplyBodyType = z.infer<
+  typeof CreateReviewReplyBodySchema
+>;

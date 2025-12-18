@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
@@ -19,11 +20,13 @@ import { GetParamsDTO } from 'src/common/dtos/request.dto';
 import { ReviewService } from './review.service';
 import {
   CreateReviewBodyDTO,
+  CreateReviewReplyBodyDTO,
   CreateReviewResDTO,
   GetReviewByIdResDTO,
   GetReviewResDTO,
   ReviewQueryDTO,
   UpdateReviewBodyDTO,
+  UpdateReviewReplyBodyDTO,
   UpdateReviewResDTO,
 } from './review.dto';
 import { ActiveRolePermissions } from 'src/common/decorators/active-role-permissions.decorator';
@@ -58,6 +61,18 @@ export class ReviewController {
     });
   }
 
+  @Post()
+  // @ZodSerializerDto(CreateReviewResDTO)
+  createReplyReview(
+    @Body() body: CreateReviewBodyDTO,
+    @ActiveUser('userId') userId: number,
+  ) {
+    return this.reviewService.createReview({
+      data: body,
+      userId,
+    });
+  }
+
   @Patch('/:id')
   @ZodSerializerDto(UpdateReviewResDTO)
   updateReview(
@@ -80,6 +95,52 @@ export class ReviewController {
     @ActiveRolePermissions('name') roleName: string,
   ) {
     return this.reviewService.deleteReview({
+      id: params.id,
+      userId,
+      roleName,
+    });
+  }
+
+  @Post('reply/:id')
+  @ZodSerializerDto(MessageResDTO)
+  createReviewReply(
+    @Param() params: GetParamsDTO,
+    @ActiveUser('userId') userId: number,
+    @ActiveRolePermissions('name') roleName: string,
+    @Body() body: CreateReviewReplyBodyDTO,
+  ) {
+    return this.reviewService.createReviewReply({
+      id: params.id,
+      userId,
+      roleName,
+      data: body,
+    });
+  }
+
+  @Put('reply/:id')
+  @ZodSerializerDto(MessageResDTO)
+  updateReviewReply(
+    @Param() params: GetParamsDTO,
+    @ActiveUser('userId') userId: number,
+    @ActiveRolePermissions('name') roleName: string,
+    @Body() body: UpdateReviewReplyBodyDTO,
+  ) {
+    return this.reviewService.updateReviewReply({
+      id: params.id,
+      userId,
+      roleName,
+      data: body,
+    });
+  }
+
+  @Delete('reply/:id')
+  @ZodSerializerDto(MessageResDTO)
+  deleteReviewReply(
+    @Param() params: GetParamsDTO,
+    @ActiveUser('userId') userId: number,
+    @ActiveRolePermissions('name') roleName: string,
+  ) {
+    return this.reviewService.deleteReviewReply({
       id: params.id,
       userId,
       roleName,

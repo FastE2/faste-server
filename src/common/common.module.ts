@@ -11,6 +11,7 @@ import { EncryptionService } from './libs/crypto/encryption.service';
 import { WebsocketModule } from './websockets/websocket.module';
 import { CommonSKURepository } from './repositories/common-sku.repository';
 import { CommonOrderRepository } from './repositories/common-order.repository';
+import { CommonProductRepository } from './repositories/common-product.repository';
 
 @Global()
 @Module({
@@ -20,6 +21,7 @@ import { CommonOrderRepository } from './repositories/common-order.repository';
     CommonRoleRepository,
     CommonSKURepository,
     CommonOrderRepository,
+    CommonProductRepository,
     Reflector,
     TokenService,
     EncryptionService,
@@ -35,6 +37,7 @@ import { CommonOrderRepository } from './repositories/common-order.repository';
     CommonRoleRepository,
     CommonOrderRepository,
     CommonSKURepository,
+    CommonProductRepository,
     TokenService,
     HashService,
     EncryptionService,

@@ -1,11 +1,13 @@
 import { createZodDto } from 'nestjs-zod';
 import {
   CreateReviewBodySchema,
+  CreateReviewReplyBodySchema,
   CreateReviewResSchema,
   GetReviewByIdResSchema,
   GetReviewResSchema,
   ReviewQuerySchema,
   UpdateReviewBodySchema,
+  UpdateReviewReplyBodySchema,
   UpdateReviewResSchema,
 } from './review.schema';
 
@@ -16,3 +18,10 @@ export class GetReviewByIdResDTO extends createZodDto(GetReviewByIdResSchema) {}
 export class CreateReviewResDTO extends createZodDto(CreateReviewResSchema) {}
 export class UpdateReviewResDTO extends createZodDto(UpdateReviewResSchema) {}
 export class ReviewQueryDTO extends createZodDto(ReviewQuerySchema) {}
+
+export class CreateReviewReplyBodyDTO extends createZodDto(
+  CreateReviewReplyBodySchema,
+) {}
+export class UpdateReviewReplyBodyDTO extends createZodDto(
+  UpdateReviewReplyBodySchema,
+) {}

@@ -83,7 +83,7 @@ export const ALLOWED_STATUS_TRANSITIONS: Record<
   ],
 
   // Đơn hàng đã giao thành công. Có thể trả hàng
-  [ORDER_STATUS.DELIVERED]: [ORDER_STATUS.RETURNED],
+  [ORDER_STATUS.DELIVERED]: [ORDER_STATUS.RETURNED, ORDER_STATUS.RECEIVED],
 
   // Đơn hàng xác nhận đã nhận thì không thể chuyển sang trạng thái khác
   [ORDER_STATUS.RECEIVED]: [],
