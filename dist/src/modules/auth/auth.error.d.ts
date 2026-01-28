@@ -1,0 +1,10 @@
+import { BadRequestException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+export declare const EmailNotExistsException: NotFoundException;
+export declare const InvalidPasswordException: BadRequestException;
+export declare const InvalidTokenException: UnauthorizedException;
+export declare const InvalidOTPException: NotFoundException;
+export declare const ExpiredOTPException: BadRequestException;
+export declare const TwoFactorAlreadyEnabledException: BadRequestException;
+export declare const InvalidTokenTOTPException: BadRequestException;
+export declare const TOTPNotEnabledException: BadRequestException;
+export declare const GoogleUserInfoError: BadRequestException;

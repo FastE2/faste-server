@@ -1,0 +1,58 @@
+import z from 'zod';
+export declare const UserSchema: z.ZodObject<{
+    id: z.ZodNumber;
+    email: z.ZodString;
+    name: z.ZodString;
+    password: z.ZodString;
+    phoneNumber: z.ZodString;
+    avatar: z.ZodNullable<z.ZodString>;
+    gender: z.ZodNullable<z.ZodNativeEnum<{
+        MALE: string;
+        FEMALE: string;
+        OTHER: string;
+    }>>;
+    roleId: z.ZodNumber;
+    totpSecret: z.ZodNullable<z.ZodString>;
+    dateOfBirth: z.ZodEffects<z.ZodNullable<z.ZodDate>, Date | null, unknown>;
+    createdById: z.ZodNullable<z.ZodNumber>;
+    updatedById: z.ZodNullable<z.ZodNumber>;
+    deletedById: z.ZodNullable<z.ZodNumber>;
+    deletedAt: z.ZodNullable<z.ZodDate>;
+    createdAt: z.ZodDate;
+    updatedAt: z.ZodDate;
+}, "strip", z.ZodTypeAny, {
+    id: number;
+    email: string;
+    name: string;
+    password: string;
+    phoneNumber: string;
+    avatar: string | null;
+    gender: string | null;
+    roleId: number;
+    totpSecret: string | null;
+    dateOfBirth: Date | null;
+    createdById: number | null;
+    updatedById: number | null;
+    deletedById: number | null;
+    deletedAt: Date | null;
+    createdAt: Date;
+    updatedAt: Date;
+}, {
+    id: number;
+    email: string;
+    name: string;
+    password: string;
+    phoneNumber: string;
+    avatar: string | null;
+    gender: string | null;
+    roleId: number;
+    totpSecret: string | null;
+    createdById: number | null;
+    updatedById: number | null;
+    deletedById: number | null;
+    deletedAt: Date | null;
+    createdAt: Date;
+    updatedAt: Date;
+    dateOfBirth?: unknown;
+}>;
+export type UserType = z.infer<typeof UserSchema>;

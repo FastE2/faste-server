@@ -1,0 +1,9 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GetParamsProvincesDTO = void 0;
+const nestjs_zod_1 = require("nestjs-zod");
+const provinces_schema_1 = require("./provinces.schema");
+class GetParamsProvincesDTO extends (0, nestjs_zod_1.createZodDto)(provinces_schema_1.GetParamsProvincesSchema) {
+}
+exports.GetParamsProvincesDTO = GetParamsProvincesDTO;
+//# sourceMappingURL=provinces.dto.js.map
