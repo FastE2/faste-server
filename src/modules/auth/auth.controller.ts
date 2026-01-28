@@ -30,6 +30,7 @@ import { Ispublic } from 'src/common/decorators/auth.decorator';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { GoogleService } from './google.service';
 import envConfig from 'src/common/configs/validate-env';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
@@ -39,6 +40,7 @@ export class AuthController {
   ) {}
 
   @Post('register')
+  @Throttle({ default: { limit: 5, ttl: 60 } })
   @Ispublic()
   @ZodSerializerDto(RegisterResDTO)
   register(@Body() body: RegisterBodyDTO) {
@@ -46,6 +48,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @Throttle({ default: { limit: 5, ttl: 60 } })
   @Ispublic()
   @ZodSerializerDto(LoginResDTO)
   login(
@@ -59,6 +62,7 @@ export class AuthController {
   }
 
   @Post('refresh-token')
+  @Throttle({ default: { limit: 3, ttl: 60 } })
   @Ispublic()
   @ZodSerializerDto(RefreshTokenResDTO)
   refreshToken(
@@ -71,6 +75,7 @@ export class AuthController {
   }
 
   @Post('logout')
+  @Throttle({ default: { limit: 3, ttl: 60 } })
   @ZodSerializerDto(MessageResDTO)
   logout(
     @Body() _: EmptyBodyDTO,
@@ -83,6 +88,7 @@ export class AuthController {
   }
 
   @Post('otp')
+  @Throttle({ default: { limit: 3, ttl: 60 } })
   @Ispublic()
   @HttpCode(200)
   @ZodSerializerDto(MessageResDTO)
@@ -91,6 +97,7 @@ export class AuthController {
   }
 
   @Post('forgot-password')
+  @Throttle({ default: { limit: 3, ttl: 60 } })
   @Ispublic()
   @ZodSerializerDto(MessageResDTO)
   @HttpCode(200)
@@ -121,6 +128,7 @@ export class AuthController {
   }
 
   @Get('google-auth')
+  @Throttle({ default: { limit: 5, ttl: 60 } })
   @Ispublic()
   googleAuth(@Ip() ip: string, @UserAgent() userAgent: string) {
     const { url } = this.googleService.getOAuth2ClientUrl({ ip, userAgent });

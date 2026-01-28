@@ -29,6 +29,8 @@ import { TemplateModule } from './modules/template/template.module';
 import { WidgetModule } from './modules/widget/widget.module';
 import { SearchModule } from './modules/search/search.module';
 import { ReviewModule } from './modules/review/review.module';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { HealthModule } from './modules/health/health.module';
 
 const modules = [
   AuthModule,
@@ -53,9 +55,24 @@ const modules = [
   WidgetModule,
   SearchModule,
   ReviewModule,
+  HealthModule,
 ];
 @Module({
-  imports: [QueueModule, PrismaModule, CommonModule, ...modules],
+  imports: [
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60, // 60s
+          limit: 100, // 100 requests
+        },
+      ],
+    }),
+    QueueModule,
+    PrismaModule,
+    CommonModule,
+    ...modules,
+    HealthModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,

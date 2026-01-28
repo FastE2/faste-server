@@ -45,6 +45,8 @@ export class ReviewRepository {
       productId,
       skuId,
       userId,
+      sellerId,
+      isReply,
       rating,
       sortBy,
       order,
@@ -56,7 +58,11 @@ export class ReviewRepository {
     // build where filter
     const where: any = {};
     if (orderItemId) where.orderItemId = orderItemId;
+    if (sellerId) where.sellerId = sellerId;
     if (productId) where.productId = productId;
+    if (typeof isReply === 'boolean') {
+      where.reply = isReply ? { isNot: null } : null;
+    }
     if (skuId) where.skuId = skuId;
     if (userId) where.userId = userId;
     if (rating) where.rating = rating;
@@ -87,6 +93,21 @@ export class ReviewRepository {
             select: {
               name: true,
               avatar: true,
+            },
+          },
+          reply: {
+            select: {
+              id: true,
+              comment: true,
+              createdAt: true,
+              updatedAt: true,
+              seller: {
+                select: {
+                  logo: true,
+                  name: true,
+                  shopid: true,
+                },
+              },
             },
           },
         },

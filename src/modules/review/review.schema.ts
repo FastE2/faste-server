@@ -51,6 +51,7 @@ export const ReviewQuerySchema = z.object({
 
   // filters
   orderItemId: z.coerce.number().int().optional(),
+  sellerId: z.coerce.number().int().optional(),
   productId: z.coerce.number().int().optional(),
   skuId: z.coerce.number().int().optional(),
   userId: z.coerce.number().int().optional(),
@@ -59,6 +60,7 @@ export const ReviewQuerySchema = z.object({
   // sort
   sortBy: z.enum(['createdAt', 'rating']).default('createdAt'),
   order: z.enum(['asc', 'desc']).default('desc'),
+  isReply: z.boolean().optional(),
 });
 
 export const CreateReviewReplyBodySchema = ReviewReplySchema.pick({

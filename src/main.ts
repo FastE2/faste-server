@@ -8,6 +8,8 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { WebsocketAdapter } from './common/websockets/websocket.adapter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { patchNestJsSwagger } from 'nestjs-zod';
+import helmet from 'helmet';
+import { VersioningType } from '@nestjs/common';
 
 // © Copyright belongs to the account [ahkiet lekiett2201@gmail.com]. Unauthorized copying, selling, distribution, or modification is prohibited.
 async function bootstrap() {
@@ -15,13 +17,7 @@ async function bootstrap() {
   app.use(cookieParser());
 
   app.enableCors({
-    origin: [
-      'http://localhost:3000',
-      'http://localhost:8081',
-      'http://192.168.1.124:8081',
-      'exp://192.168.1.124:8081',
-      'expo://192.168.1.124:8081',
-    ],
+    origin: process.env.CORS_ORIGINS?.split(','),
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,
   });
@@ -36,6 +32,20 @@ async function bootstrap() {
   // -- filter
   app.useGlobalFilters(new HttpExceptionFilter());
 
+  // -- helmet for security headers
+  app.use(
+    helmet({
+      contentSecurityPolicy: false,
+      crossOriginEmbedderPolicy: false,
+    }),
+  );
+
+  // -- versioning
+  app.enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: '1',
+  });
+  // -- swagger
   patchNestJsSwagger();
   const config = new DocumentBuilder()
     .setTitle('FastE API')
