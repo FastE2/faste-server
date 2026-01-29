@@ -64,5 +64,5 @@ async function bootstrap() {
 
   `);
 }
-bootstrap();
+void bootstrap();
 //# sourceMappingURL=main.js.map

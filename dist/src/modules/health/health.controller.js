@@ -14,43 +14,57 @@ exports.HealthController = void 0;
 const common_1 = require("@nestjs/common");
 const terminus_1 = require("@nestjs/terminus");
 const throttler_1 = require("@nestjs/throttler");
-const client_1 = require("@prisma/client");
 const redis_health_1 = require("./redis/redis.health");
 const amqp_health_1 = require("./amqp/amqp.health");
-const elasticsearch_health_1 = require("./elasticsearch/elasticsearch.health");
+const prisma_service_1 = require("../../prisma/prisma.service");
+const auth_decorator_1 = require("../../common/decorators/auth.decorator");
 let HealthController = HealthController_1 = class HealthController {
     health;
     prisma;
-    prismaClient;
+    prismaService;
     redisHealth;
-    elasticsearchHealth;
     amqpHealth;
     memory;
     logger = new common_1.Logger(HealthController_1.name);
-    constructor(health, prisma, prismaClient, redisHealth, elasticsearchHealth, amqpHealth, memory) {
+    constructor(health, prisma, prismaService, redisHealth, amqpHealth, memory) {
         this.health = health;
         this.prisma = prisma;
-        this.prismaClient = prismaClient;
+        this.prismaService = prismaService;
         this.redisHealth = redisHealth;
-        this.elasticsearchHealth = elasticsearchHealth;
         this.amqpHealth = amqpHealth;
         this.memory = memory;
     }
     check() {
-        return this.health.check([
-            () => this.prisma.pingCheck('database', this.prismaClient),
-            () => this.redisHealth.isHealthy('redis'),
-            () => this.elasticsearchHealth.isHealthy(),
-            () => this.amqpHealth.isHealthy(),
-            () => this.memory.checkHeap('memory_heap', 300 * 1024 * 1024),
+        this.logger.log('================ HEALTH CHECK START ================');
+        const result = this.health.check([
+            () => this.logCheck('DATABASE', () => this.prisma.pingCheck('database', this.prismaService, {
+                timeout: 3000,
+            })),
+            () => this.logCheck('REDIS', () => this.redisHealth.isHealthy('redis')),
+            () => this.logCheck('RABBITMQ', () => this.amqpHealth.isHealthy()),
+            () => this.logCheck('MEMORY', () => this.memory.checkHeap('memory_heap', 300 * 1024 * 1024)),
         ]);
+        return result;
+    }
+    async logCheck(name, fn) {
+        this.logger.log(`[${name}] checking...`);
+        try {
+            const result = await fn();
+            this.logger.log(`[${name}] healthy`);
+            return result;
+        }
+        catch (error) {
+            this.logger.error(`[${name}] unhealthy`, error.stack);
+            throw error;
+        }
     }
 };
 exports.HealthController = HealthController;
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.Get)('/'),
     (0, throttler_1.SkipThrottle)(),
     (0, terminus_1.HealthCheck)(),
+    (0, auth_decorator_1.Ispublic)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
@@ -59,9 +73,8 @@ exports.HealthController = HealthController = HealthController_1 = __decorate([
     (0, common_1.Controller)('health'),
     __metadata("design:paramtypes", [terminus_1.HealthCheckService,
         terminus_1.PrismaHealthIndicator,
-        client_1.PrismaClient,
+        prisma_service_1.PrismaService,
         redis_health_1.RedisCloudHealthIndicator,
-        elasticsearch_health_1.ElasticsearchHealthIndicator,
         amqp_health_1.AmqpHealthIndicator,
         terminus_1.MemoryHealthIndicator])
 ], HealthController);

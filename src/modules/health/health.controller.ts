@@ -10,6 +10,8 @@ import { PrismaClient } from '@prisma/client';
 import { RedisCloudHealthIndicator } from './redis/redis.health';
 import { AmqpHealthIndicator } from './amqp/amqp.health';
 import { ElasticsearchHealthIndicator } from './elasticsearch/elasticsearch.health';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Ispublic } from 'src/common/decorators/auth.decorator';
 
 @Controller('health')
 export class HealthController {
@@ -18,32 +20,57 @@ export class HealthController {
   constructor(
     private health: HealthCheckService,
     private prisma: PrismaHealthIndicator,
-    private prismaClient: PrismaClient,
+    private prismaService: PrismaService,
     private redisHealth: RedisCloudHealthIndicator,
-    private elasticsearchHealth: ElasticsearchHealthIndicator,
+    // private elasticsearchHealth: ElasticsearchHealthIndicator,
     private amqpHealth: AmqpHealthIndicator,
     private memory: MemoryHealthIndicator,
   ) {}
 
-  @Get()
+  @Get('/')
   @SkipThrottle()
   @HealthCheck()
+  @Ispublic()
   check() {
-    return this.health.check([
-      // DATABASE
-      () => this.prisma.pingCheck('database', this.prismaClient),
+    this.logger.log('================ HEALTH CHECK START ================');
 
-      // REDIS
-      () => this.redisHealth.isHealthy('redis'),
+    const result = this.health.check([
+      () =>
+        this.logCheck('DATABASE', () =>
+          this.prisma.pingCheck('database', this.prismaService, {
+            timeout: 3000,
+          }),
+        ),
+
+      () => this.logCheck('REDIS', () => this.redisHealth.isHealthy('redis')),
 
       // ELASTICSEARCH
-      () => this.elasticsearchHealth.isHealthy(),
+      // () => this.elasticsearchHealth.isHealthy(),
 
-      // AMQP (RabbitMQ)
-      () => this.amqpHealth.isHealthy(),
+      () => this.logCheck('RABBITMQ', () => this.amqpHealth.isHealthy()),
 
-      // MEMORY
-      () => this.memory.checkHeap('memory_heap', 300 * 1024 * 1024),
+      () =>
+        this.logCheck('MEMORY', () =>
+          this.memory.checkHeap('memory_heap', 300 * 1024 * 1024),
+        ),
     ]);
+
+    return result;
+  }
+
+  /**
+   * Group logger for health checks
+   */
+  private async logCheck(name: string, fn: () => Promise<any>) {
+    this.logger.log(`[${name}] checking...`);
+
+    try {
+      const result = await fn();
+      this.logger.log(`[${name}] healthy`);
+      return result;
+    } catch (error) {
+      this.logger.error(`[${name}] unhealthy`, error.stack);
+      throw error;
+    }
   }
 }
