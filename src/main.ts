@@ -40,11 +40,14 @@ async function bootstrap() {
     }),
   );
 
+  app.setGlobalPrefix('api');
+
   // -- versioning
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: '1',
   });
+
   // -- swagger
   patchNestJsSwagger();
   const config = new DocumentBuilder()

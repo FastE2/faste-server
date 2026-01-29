@@ -17,7 +17,6 @@ const throttler_1 = require("@nestjs/throttler");
 const redis_health_1 = require("./redis/redis.health");
 const amqp_health_1 = require("./amqp/amqp.health");
 const prisma_service_1 = require("../../prisma/prisma.service");
-const auth_decorator_1 = require("../../common/decorators/auth.decorator");
 let HealthController = HealthController_1 = class HealthController {
     health;
     prisma;
@@ -37,9 +36,6 @@ let HealthController = HealthController_1 = class HealthController {
     check() {
         this.logger.log('================ HEALTH CHECK START ================');
         const result = this.health.check([
-            () => this.logCheck('DATABASE', () => this.prisma.pingCheck('database', this.prismaService, {
-                timeout: 3000,
-            })),
             () => this.logCheck('REDIS', () => this.redisHealth.isHealthy('redis')),
             () => this.logCheck('RABBITMQ', () => this.amqpHealth.isHealthy()),
             () => this.logCheck('MEMORY', () => this.memory.checkHeap('memory_heap', 300 * 1024 * 1024)),
@@ -64,7 +60,6 @@ __decorate([
     (0, common_1.Get)('/'),
     (0, throttler_1.SkipThrottle)(),
     (0, terminus_1.HealthCheck)(),
-    (0, auth_decorator_1.Ispublic)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)

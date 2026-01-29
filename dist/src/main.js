@@ -27,6 +27,7 @@ async function bootstrap() {
         contentSecurityPolicy: false,
         crossOriginEmbedderPolicy: false,
     }));
+    app.setGlobalPrefix('api');
     app.enableVersioning({
         type: common_1.VersioningType.URI,
         defaultVersion: '1',

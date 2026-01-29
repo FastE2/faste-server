@@ -11,7 +11,6 @@ import { RedisCloudHealthIndicator } from './redis/redis.health';
 import { AmqpHealthIndicator } from './amqp/amqp.health';
 import { ElasticsearchHealthIndicator } from './elasticsearch/elasticsearch.health';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Ispublic } from 'src/common/decorators/auth.decorator';
 
 @Controller('health')
 export class HealthController {
@@ -30,17 +29,16 @@ export class HealthController {
   @Get('/')
   @SkipThrottle()
   @HealthCheck()
-  @Ispublic()
   check() {
     this.logger.log('================ HEALTH CHECK START ================');
 
     const result = this.health.check([
-      () =>
-        this.logCheck('DATABASE', () =>
-          this.prisma.pingCheck('database', this.prismaService, {
-            timeout: 3000,
-          }),
-        ),
+      // () =>
+      //   this.logCheck('DATABASE', () =>
+      //     this.prisma.pingCheck('database', this.prismaService, {
+      //       timeout: 3000,
+      //     }),
+      //   ),
 
       () => this.logCheck('REDIS', () => this.redisHealth.isHealthy('redis')),
 
