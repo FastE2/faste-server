@@ -42,6 +42,7 @@ let AuthGuard = class AuthGuard {
         const token = this.getToken(request);
         try {
             const payload = await this.tokenService.verifyAccessToken(token);
+            console.log('payload', payload);
             if (!payload) {
                 this.throwException('Error.UnableToDecodeToken');
             }
@@ -55,16 +56,17 @@ let AuthGuard = class AuthGuard {
             request[auth_constant_1.REQUEST_USER_KEY] = payload;
         }
         catch (error) {
-            console.log('authorize', error);
+            console.log('Authorize', error);
             throw error;
         }
     }
     validate(id) {
+        console.log('Validating user with id:', id);
         return this.commonUserRepository.findUniqueUser({ id });
     }
     async validateUserPermission(decodedAccessToken, request) {
         const roleId = decodedAccessToken.roleId;
-        const path = request.route.path;
+        const path = request.originalUrl.split('?')[0].replace(/^\/api\/v\d+/, '');
         const method = request.method;
         const role = await this.prismaService.role
             .findUniqueOrThrow({
@@ -83,7 +85,8 @@ let AuthGuard = class AuthGuard {
                 },
             },
         })
-            .catch(() => {
+            .catch((e) => {
+            console.log(e);
             throw new common_1.ForbiddenException();
         });
         const canAccess = role.permissions.length > 0;

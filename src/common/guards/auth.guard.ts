@@ -48,7 +48,7 @@ export class AuthGuard implements CanActivate {
 
     try {
       const payload = await this.tokenService.verifyAccessToken(token);
-
+      console.log('payload', payload);
       if (!payload) {
         this.throwException('Error.UnableToDecodeToken');
       }
@@ -61,12 +61,13 @@ export class AuthGuard implements CanActivate {
       }
       request[REQUEST_USER_KEY] = payload;
     } catch (error) {
-      console.log('authorize', error);
+      console.log('Authorize', error);
       throw error;
     }
   }
 
   private validate(id: number) {
+    console.log('Validating user with id:', id);
     return this.commonUserRepository.findUniqueUser({ id });
   }
 
@@ -75,7 +76,7 @@ export class AuthGuard implements CanActivate {
     request: any,
   ): Promise<void> {
     const roleId: number = decodedAccessToken.roleId;
-    const path: string = request.route.path;
+    const path = request.originalUrl.split('?')[0].replace(/^\/api\/v\d+/, '');
     const method = request.method as keyof typeof HTTPMethod;
     // const data = await this.prismaService.rolePermission
     //   .findFirst({
@@ -129,10 +130,10 @@ export class AuthGuard implements CanActivate {
           },
         },
       })
-      .catch(() => {
+      .catch((e) => {
+        console.log(e);
         throw new ForbiddenException();
       });
-    // console.log('ROLE HEADER DATA', role);
     const canAccess = role.permissions.length > 0;
     if (!canAccess) {
       throw new ForbiddenException();
