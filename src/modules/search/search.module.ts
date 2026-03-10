@@ -4,6 +4,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import envConfig from 'src/common/configs/validate-env';
 import { SearchService } from './search.service';
 import { SearchController } from './search.controller';
+import { SearchProductService } from './search-product.service';
 
 @Module({
   imports: [
@@ -30,6 +31,6 @@ import { SearchController } from './search.controller';
     }),
   ],
   controllers: [SearchController],
-  providers: [SearchService],
+  providers: [SearchService, SearchProductService],
 })
 export class SearchModule {}

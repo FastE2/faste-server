@@ -18,10 +18,13 @@ const microservices_1 = require("@nestjs/microservices");
 const search_service_1 = require("./search.service");
 const auth_decorator_1 = require("../../common/decorators/auth.decorator");
 const create_dto_1 = require("./dtos/create.dto");
+const search_product_service_1 = require("./search-product.service");
 let SearchController = class SearchController {
     searchService;
-    constructor(searchService) {
+    searchProductService;
+    constructor(searchService, searchProductService) {
         this.searchService = searchService;
+        this.searchProductService = searchProductService;
     }
     searchProducts(keyword, categoryIdsStr, minPriceStr, maxPriceStr, ratingStr, sortBy = 'newest', pageStr, limitStr, order = 'asc', orderBy = 'new') {
         const page = Number(pageStr) || 1;
@@ -35,15 +38,14 @@ let SearchController = class SearchController {
         if (rating != null && (rating < 0 || rating > 5)) {
             throw new common_1.BadRequestException('Rating must be greater than 0 and less than 5');
         }
-        const from = (page - 1) * limit;
-        return this.searchService.search({
+        return this.searchProductService.search({
             keyword,
             categoryIds,
             minPrice,
             maxPrice,
             rating,
-            from,
-            size: limit,
+            page,
+            limit,
             sortBy,
             order,
             orderBy,
@@ -52,7 +54,7 @@ let SearchController = class SearchController {
     async suggest(keyword) {
         if (!keyword)
             return [];
-        return this.searchService.suggest(keyword);
+        return await this.searchProductService.suggest(keyword);
     }
     async indexProduct(payload) {
         const { id, ...rest } = payload;
@@ -116,6 +118,6 @@ __decorate([
 ], SearchController.prototype, "delete", null);
 exports.SearchController = SearchController = __decorate([
     (0, common_1.Controller)('search'),
-    __metadata("design:paramtypes", [search_service_1.SearchService])
+    __metadata("design:paramtypes", [search_service_1.SearchService, search_product_service_1.SearchProductService])
 ], SearchController);
 //# sourceMappingURL=search.controller.js.map

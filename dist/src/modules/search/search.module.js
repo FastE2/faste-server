@@ -16,6 +16,7 @@ const microservices_1 = require("@nestjs/microservices");
 const validate_env_1 = __importDefault(require("../../common/configs/validate-env"));
 const search_service_1 = require("./search.service");
 const search_controller_1 = require("./search.controller");
+const search_product_service_1 = require("./search-product.service");
 let SearchModule = class SearchModule {
 };
 exports.SearchModule = SearchModule;
@@ -45,7 +46,7 @@ exports.SearchModule = SearchModule = __decorate([
             }),
         ],
         controllers: [search_controller_1.SearchController],
-        providers: [search_service_1.SearchService],
+        providers: [search_service_1.SearchService, search_product_service_1.SearchProductService],
     })
 ], SearchModule);
 //# sourceMappingURL=search.module.js.map

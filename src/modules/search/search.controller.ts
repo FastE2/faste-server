@@ -10,10 +10,14 @@ import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { SearchService } from './search.service';
 import { Ispublic } from 'src/common/decorators/auth.decorator';
 import { CreateProductSearchDTO } from './dtos/create.dto';
+import { SearchProductService } from './search-product.service';
 
 @Controller('search')
 export class SearchController {
-  constructor(private readonly searchService: SearchService) {}
+  constructor(
+    private readonly searchService: SearchService,
+    private readonly searchProductService: SearchProductService,
+  ) {}
 
   /**
    * POST /search
@@ -47,15 +51,14 @@ export class SearchController {
         'Rating must be greater than 0 and less than 5',
       );
     }
-    const from = (page - 1) * limit;
-    return this.searchService.search({
+    return this.searchProductService.search({
       keyword,
       categoryIds,
       minPrice,
       maxPrice,
       rating,
-      from,
-      size: limit,
+      page,
+      limit,
       sortBy,
       order,
       orderBy,
@@ -64,9 +67,9 @@ export class SearchController {
 
   @Get('suggest')
   @Ispublic()
-  async suggest(@Query('keyword') keyword: string) {
+  async suggest(@Query('keyword') keyword: string): Promise<any[]> {
     if (!keyword) return [];
-    return this.searchService.suggest(keyword);
+    return await this.searchProductService.suggest(keyword);
   }
 
   @EventPattern('product.created')
