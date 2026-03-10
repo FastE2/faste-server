@@ -24,24 +24,24 @@ export declare class SearchProductService {
         products: ({
             skus: {
                 id: number;
-                sold: number;
-                weightGram: number | null;
-                lengthCm: number | null;
-                widthCm: number | null;
-                heightCm: number | null;
-                shopId: number;
                 updatedById: number | null;
                 deletedById: number | null;
                 deletedAt: Date | null;
                 createdAt: Date;
                 updatedAt: Date;
+                userId: number | null;
                 skuCode: string;
                 productId: number;
                 image: string;
                 price: number;
                 attributes: PrismaJson.AttributesType;
                 quantity: number;
-                userId: number | null;
+                sold: number;
+                weightGram: number | null;
+                lengthCm: number | null;
+                widthCm: number | null;
+                heightCm: number | null;
+                shopId: number;
             }[];
             categories: {
                 productId: number;
@@ -50,10 +50,21 @@ export declare class SearchProductService {
         } & {
             id: number;
             name: string;
+            status: import(".prisma/client").$Enums.ProductStatus;
+            updatedById: number | null;
+            deletedById: number | null;
+            deletedAt: Date | null;
+            createdAt: Date;
+            updatedAt: Date;
             description: string;
+            sold: number;
+            weightGram: number | null;
+            lengthCm: number | null;
+            widthCm: number | null;
+            heightCm: number | null;
+            shopId: number;
             basePrice: number;
             brandId: number;
-            status: import(".prisma/client").$Enums.ProductStatus;
             publishedAt: Date | null;
             images: string[];
             variants: PrismaJson.Variants;
@@ -66,17 +77,6 @@ export declare class SearchProductService {
             rating5Count: number;
             totalViews: number;
             slugId: string;
-            sold: number;
-            weightGram: number | null;
-            lengthCm: number | null;
-            widthCm: number | null;
-            heightCm: number | null;
-            shopId: number;
-            updatedById: number | null;
-            deletedById: number | null;
-            deletedAt: Date | null;
-            createdAt: Date;
-            updatedAt: Date;
         })[];
     }>;
     suggest(keyword: string): Promise<suggestKeywordType[]>;

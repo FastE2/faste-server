@@ -118,6 +118,7 @@ __decorate([
 ], SearchController.prototype, "delete", null);
 exports.SearchController = SearchController = __decorate([
     (0, common_1.Controller)('search'),
-    __metadata("design:paramtypes", [search_service_1.SearchService, search_product_service_1.SearchProductService])
+    __metadata("design:paramtypes", [search_service_1.SearchService,
+        search_product_service_1.SearchProductService])
 ], SearchController);
 //# sourceMappingURL=search.controller.js.map

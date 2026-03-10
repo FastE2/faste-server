@@ -59,7 +59,7 @@ export class OrderController {
     });
   }
 
-  @Post('cancel/:id')
+  @Patch('cancel/:id')
   @ZodSerializerDto(MessageResDTO)
   cancelOrder(
     @Param() params: GetParamsDTO,

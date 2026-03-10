@@ -13,63 +13,53 @@ export declare class ProductService {
         roleName: string;
     }): Promise<{
         data: ({
+            categories: {
+                productId: number;
+                categoryId: number;
+            }[];
             brand: {
-                id: number;
                 name: string;
                 createdById: number | null;
+                createdAt: Date;
+                id: number;
+                description: string;
                 updatedById: number | null;
                 deletedById: number | null;
                 deletedAt: Date | null;
-                createdAt: Date;
                 updatedAt: Date;
-                description: string;
                 logo: string;
             };
             skus: {
-                id: number;
-                updatedById: number | null;
-                deletedById: number | null;
-                deletedAt: Date | null;
-                createdAt: Date;
-                updatedAt: Date;
-                userId: number | null;
-                skuCode: string;
-                productId: number;
-                image: string;
                 price: number;
-                attributes: PrismaJson.AttributesType;
-                quantity: number;
+                createdAt: Date;
+                id: number;
                 sold: number;
                 weightGram: number | null;
                 lengthCm: number | null;
                 widthCm: number | null;
                 heightCm: number | null;
                 shopId: number;
-            }[];
-            categories: {
+                updatedById: number | null;
+                deletedById: number | null;
+                deletedAt: Date | null;
+                updatedAt: Date;
                 productId: number;
-                categoryId: number;
+                skuCode: string;
+                image: string;
+                attributes: PrismaJson.AttributesType;
+                quantity: number;
+                userId: number | null;
             }[];
             discounts: {
                 productId: number;
                 discountId: number;
             }[];
         } & {
-            id: number;
             name: string;
             status: import(".prisma/client").$Enums.ProductStatus;
-            updatedById: number | null;
-            deletedById: number | null;
-            deletedAt: Date | null;
             createdAt: Date;
-            updatedAt: Date;
+            id: number;
             description: string;
-            sold: number;
-            weightGram: number | null;
-            lengthCm: number | null;
-            widthCm: number | null;
-            heightCm: number | null;
-            shopId: number;
             basePrice: number;
             brandId: number;
             publishedAt: Date | null;
@@ -84,6 +74,16 @@ export declare class ProductService {
             rating5Count: number;
             totalViews: number;
             slugId: string;
+            sold: number;
+            weightGram: number | null;
+            lengthCm: number | null;
+            widthCm: number | null;
+            heightCm: number | null;
+            shopId: number;
+            updatedById: number | null;
+            deletedById: number | null;
+            deletedAt: Date | null;
+            updatedAt: Date;
         })[];
         totalItem: number;
         page: number;
@@ -95,64 +95,17 @@ export declare class ProductService {
         userId: number;
         roleName: string;
     }): Promise<{
-        brand: {
-            translations: {
-                id: number;
-                name: string;
-                createdById: number;
-                updatedById: number | null;
-                deletedById: number | null;
-                deletedAt: Date | null;
-                createdAt: Date;
-                updatedAt: Date;
-                description: string;
-                brandId: number;
-                languageId: number;
-            }[];
-        } & {
-            id: number;
-            name: string;
-            createdById: number | null;
-            updatedById: number | null;
-            deletedById: number | null;
-            deletedAt: Date | null;
-            createdAt: Date;
-            updatedAt: Date;
-            description: string;
-            logo: string;
-        };
-        skus: {
-            id: number;
-            updatedById: number | null;
-            deletedById: number | null;
-            deletedAt: Date | null;
-            createdAt: Date;
-            updatedAt: Date;
-            userId: number | null;
-            skuCode: string;
-            productId: number;
-            image: string;
-            price: number;
-            attributes: PrismaJson.AttributesType;
-            quantity: number;
-            sold: number;
-            weightGram: number | null;
-            lengthCm: number | null;
-            widthCm: number | null;
-            heightCm: number | null;
-            shopId: number;
-        }[];
         categories: ({
             category: {
-                id: number;
                 name: string;
                 createdById: number;
+                createdAt: Date;
+                id: number;
+                description: string;
                 updatedById: number | null;
                 deletedById: number | null;
                 deletedAt: Date | null;
-                createdAt: Date;
                 updatedAt: Date | null;
-                description: string;
                 image: string | null;
                 parentCategoryId: number | null;
             };
@@ -160,35 +113,72 @@ export declare class ProductService {
             productId: number;
             categoryId: number;
         })[];
-        productTranslations: {
-            id: number;
+        brand: {
+            translations: {
+                name: string;
+                createdById: number;
+                createdAt: Date;
+                id: number;
+                description: string;
+                brandId: number;
+                updatedById: number | null;
+                deletedById: number | null;
+                deletedAt: Date | null;
+                updatedAt: Date;
+                languageId: number;
+            }[];
+        } & {
             name: string;
-            createdById: number;
+            createdById: number | null;
+            createdAt: Date;
+            id: number;
+            description: string;
             updatedById: number | null;
             deletedById: number | null;
             deletedAt: Date | null;
-            createdAt: Date;
             updatedAt: Date;
+            logo: string;
+        };
+        skus: {
+            price: number;
+            createdAt: Date;
+            id: number;
+            sold: number;
+            weightGram: number | null;
+            lengthCm: number | null;
+            widthCm: number | null;
+            heightCm: number | null;
+            shopId: number;
+            updatedById: number | null;
+            deletedById: number | null;
+            deletedAt: Date | null;
+            updatedAt: Date;
+            productId: number;
+            skuCode: string;
+            image: string;
+            attributes: PrismaJson.AttributesType;
+            quantity: number;
+            userId: number | null;
+        }[];
+        productTranslations: {
+            name: string;
+            createdById: number;
+            createdAt: Date;
+            id: number;
             description: string;
+            updatedById: number | null;
+            deletedById: number | null;
+            deletedAt: Date | null;
+            updatedAt: Date;
             productId: number;
             languageId: number;
         }[];
     } & {
-        id: number;
         name: string;
         status: import(".prisma/client").$Enums.ProductStatus;
-        updatedById: number | null;
-        deletedById: number | null;
-        deletedAt: Date | null;
         createdAt: Date;
-        updatedAt: Date;
+        id: number;
         description: string;
-        sold: number;
-        weightGram: number | null;
-        lengthCm: number | null;
-        widthCm: number | null;
-        heightCm: number | null;
-        shopId: number;
         basePrice: number;
         brandId: number;
         publishedAt: Date | null;
@@ -203,6 +193,16 @@ export declare class ProductService {
         rating5Count: number;
         totalViews: number;
         slugId: string;
+        sold: number;
+        weightGram: number | null;
+        lengthCm: number | null;
+        widthCm: number | null;
+        heightCm: number | null;
+        shopId: number;
+        updatedById: number | null;
+        deletedById: number | null;
+        deletedAt: Date | null;
+        updatedAt: Date;
     }>;
     create({ data, createdById, roleName, }: {
         data: CreateProductBodyType;

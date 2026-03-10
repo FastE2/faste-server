@@ -52,16 +52,17 @@ export class AuthGuard implements CanActivate {
       if (!payload) {
         this.throwException('Error.UnableToDecodeToken');
       }
-      // const [user, _] = await Promise.all([
-      //   this.validate(payload.userId),
-      //   this.validateUserPermission(payload, request),
-      // ]);
-      // if (!user) {
-      //   this.throwException('Error.InvalidToken');
-      // }
+      const [user] = await Promise.all([
+        this.validate(payload.userId),
+        this.validateUserPermission(payload, request),
+      ]);
+      console.log('Authenticated user:', user);
+      if (!user) {
+        this.throwException('Error.InvalidToken');
+      }
       request[REQUEST_USER_KEY] = payload;
     } catch (error) {
-      console.log('Authorize');
+      console.log('Authorize', error);
       throw error;
     }
   }
@@ -76,41 +77,51 @@ export class AuthGuard implements CanActivate {
     request: any,
   ): Promise<void> {
     const roleId: number = decodedAccessToken.roleId;
-    const path = request.originalUrl.split('?')[0].replace(/^\/api\/v\d+/, '');
+    const path =
+      request.route?.path?.replace(/^\/api\/v\d+/, '') ||
+      request.originalUrl.split('?')[0].replace(/^\/api\/v\d+/, '');
     const method = request.method as keyof typeof HTTPMethod;
-    // const data = await this.prismaService.rolePermission
-    //   .findFirst({
-    //     where: {
-    //       roleId,
-    //       role: {
-    //         deletedAt: null,
-    //         isActive: true,
-    //       },
-    //       permission: {
-    //         deletedAt: null,
-    //         path,
-    //         method,
-    //       },
-    //     },
-    //     select: {
-    //       role: {
-    //         select: {
-    //           name: true,
-    //           id: true,
-    //         },
-    //       },
-    //       permission: {
-    //         select: {
-    //           id: true,
-    //           name: true,
-    //         },
-    //       },
-    //     },
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //     throw new ForbiddenException();
-    //   });
+    console.log(
+      'Validating permissions for roleId:',
+      roleId,
+      'path:',
+      path,
+      'method:',
+      method,
+    );
+    await this.prismaService.rolePermission
+      .findFirst({
+        where: {
+          roleId,
+          role: {
+            deletedAt: null,
+            isActive: true,
+          },
+          permission: {
+            deletedAt: null,
+            path,
+            method,
+          },
+        },
+        select: {
+          role: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+          permission: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      })
+      .catch((error) => {
+        console.log('auth guard - validateUserPermission', error);
+        throw new ForbiddenException();
+      });
     // console.log('OKOKOKK', data);
 
     const role = await this.prismaService.role

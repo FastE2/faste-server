@@ -102,7 +102,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], OrderController.prototype, "createOrder", null);
 __decorate([
-    (0, common_1.Post)('cancel/:id'),
+    (0, common_1.Patch)('cancel/:id'),
     (0, nestjs_zod_1.ZodSerializerDto)(response_dto_1.MessageResDTO),
     __param(0, (0, common_1.Param)()),
     __param(1, (0, active_user_decorator_1.ActiveUser)('userId')),

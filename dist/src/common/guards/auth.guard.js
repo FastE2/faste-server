@@ -45,10 +45,18 @@ let AuthGuard = class AuthGuard {
             if (!payload) {
                 this.throwException('Error.UnableToDecodeToken');
             }
+            const [user] = await Promise.all([
+                this.validate(payload.userId),
+                this.validateUserPermission(payload, request),
+            ]);
+            console.log('Authenticated user:', user);
+            if (!user) {
+                this.throwException('Error.InvalidToken');
+            }
             request[auth_constant_1.REQUEST_USER_KEY] = payload;
         }
         catch (error) {
-            console.log('Authorize');
+            console.log('Authorize', error);
             throw error;
         }
     }
@@ -58,8 +66,42 @@ let AuthGuard = class AuthGuard {
     }
     async validateUserPermission(decodedAccessToken, request) {
         const roleId = decodedAccessToken.roleId;
-        const path = request.originalUrl.split('?')[0].replace(/^\/api\/v\d+/, '');
+        const path = request.route?.path?.replace(/^\/api\/v\d+/, '') || request.originalUrl.split('?')[0].replace(/^\/api\/v\d+/, '');
         const method = request.method;
+        console.log('Validating permissions for roleId:', roleId, 'path:', path, 'method:', method);
+        await this.prismaService.rolePermission
+            .findFirst({
+            where: {
+                roleId,
+                role: {
+                    deletedAt: null,
+                    isActive: true,
+                },
+                permission: {
+                    deletedAt: null,
+                    path,
+                    method,
+                },
+            },
+            select: {
+                role: {
+                    select: {
+                        name: true,
+                        id: true,
+                    },
+                },
+                permission: {
+                    select: {
+                        id: true,
+                        name: true,
+                    },
+                },
+            },
+        })
+            .catch((error) => {
+            console.log("auth guard - validateUserPermission", error);
+            throw new common_1.ForbiddenException();
+        });
         const role = await this.prismaService.role
             .findUniqueOrThrow({
             where: {
