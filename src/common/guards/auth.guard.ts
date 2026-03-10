@@ -48,20 +48,20 @@ export class AuthGuard implements CanActivate {
 
     try {
       const payload = await this.tokenService.verifyAccessToken(token);
-      console.log('payload', payload);
+      // console.log('payload', payload);
       if (!payload) {
         this.throwException('Error.UnableToDecodeToken');
       }
-      const [user, _] = await Promise.all([
-        this.validate(payload.userId),
-        this.validateUserPermission(payload, request),
-      ]);
-      if (!user) {
-        this.throwException('Error.InvalidToken');
-      }
+      // const [user, _] = await Promise.all([
+      //   this.validate(payload.userId),
+      //   this.validateUserPermission(payload, request),
+      // ]);
+      // if (!user) {
+      //   this.throwException('Error.InvalidToken');
+      // }
       request[REQUEST_USER_KEY] = payload;
     } catch (error) {
-      console.log('Authorize', error);
+      console.log('Authorize');
       throw error;
     }
   }

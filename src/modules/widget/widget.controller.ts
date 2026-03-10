@@ -31,6 +31,7 @@ export class WidgetController {
     @Param('templateId') templateId: string,
     @ActiveUser('userId') userId: number,
   ) {
+    console.log('templateId', templateId);
     return this.widgetService.getAllWidgetsByTemplate(
       Number(templateId),
       userId,

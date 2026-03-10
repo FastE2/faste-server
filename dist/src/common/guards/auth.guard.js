@@ -42,21 +42,13 @@ let AuthGuard = class AuthGuard {
         const token = this.getToken(request);
         try {
             const payload = await this.tokenService.verifyAccessToken(token);
-            console.log('payload', payload);
             if (!payload) {
                 this.throwException('Error.UnableToDecodeToken');
-            }
-            const [user, _] = await Promise.all([
-                this.validate(payload.userId),
-                this.validateUserPermission(payload, request),
-            ]);
-            if (!user) {
-                this.throwException('Error.InvalidToken');
             }
             request[auth_constant_1.REQUEST_USER_KEY] = payload;
         }
         catch (error) {
-            console.log('Authorize', error);
+            console.log('Authorize');
             throw error;
         }
     }

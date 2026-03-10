@@ -16,8 +16,9 @@ const common_1 = require("@nestjs/common");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.use((0, cookie_parser_1.default)());
+    const corsOrigin = process.env.CORS_ORIGIN?.split(",") || [];
     app.enableCors({
-        origin: process.env.CORS_ORIGINS?.split(','),
+        origin: corsOrigin.length > 0 ? corsOrigin : true,
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
         credentials: true,
     });

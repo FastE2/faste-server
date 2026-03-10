@@ -16,8 +16,10 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.use(cookieParser());
 
+  const corsOrigin = process.env.CORS_ORIGIN?.split(',') || [];
+
   app.enableCors({
-    origin: process.env.CORS_ORIGINS?.split(','),
+    origin: corsOrigin.length > 0 ? corsOrigin : true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,
   });

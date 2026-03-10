@@ -27,6 +27,7 @@ let WidgetController = class WidgetController {
         this.widgetService = widgetService;
     }
     getAllWidgets(templateId, userId) {
+        console.log('templateId', templateId);
         return this.widgetService.getAllWidgetsByTemplate(Number(templateId), userId);
     }
     getAllWidgetsByTemplateIsPublic(templateId) {
