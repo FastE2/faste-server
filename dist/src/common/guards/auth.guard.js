@@ -66,7 +66,8 @@ let AuthGuard = class AuthGuard {
     }
     async validateUserPermission(decodedAccessToken, request) {
         const roleId = decodedAccessToken.roleId;
-        const path = request.route?.path?.replace(/^\/api\/v\d+/, '') || request.originalUrl.split('?')[0].replace(/^\/api\/v\d+/, '');
+        const path = request.route?.path?.replace(/^\/api\/v\d+/, '') ||
+            request.originalUrl.split('?')[0].replace(/^\/api\/v\d+/, '');
         const method = request.method;
         console.log('Validating permissions for roleId:', roleId, 'path:', path, 'method:', method);
         await this.prismaService.rolePermission
@@ -99,7 +100,7 @@ let AuthGuard = class AuthGuard {
             },
         })
             .catch((error) => {
-            console.log("auth guard - validateUserPermission", error);
+            console.log('auth guard - validateUserPermission', error);
             throw new common_1.ForbiddenException();
         });
         const role = await this.prismaService.role

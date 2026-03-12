@@ -1,12 +1,15 @@
 declare const GetOrderListQueryDTO_base: import("nestjs-zod").ZodDto<{
     page: number;
     limit: number;
+    role?: string | undefined;
     status?: "PENDING_CONFIRMATION" | "PROCESSING" | "PENDING_PAYMENT" | "PENDING_PICKUP" | "PENDING_DELIVERY" | "DELIVERED" | "RECEIVED" | "RETURNED" | "CANCELLED" | undefined;
 }, import("zod").ZodObjectDef<{
+    role: import("zod").ZodOptional<import("zod").ZodString>;
     page: import("zod").ZodDefault<import("zod").ZodNumber>;
     limit: import("zod").ZodDefault<import("zod").ZodNumber>;
     status: import("zod").ZodOptional<import("zod").ZodEnum<["PENDING_CONFIRMATION", "PROCESSING", "PENDING_PAYMENT", "PENDING_PICKUP", "PENDING_DELIVERY", "DELIVERED", "RECEIVED", "RETURNED", "CANCELLED"]>>;
 }, "strict", import("zod").ZodTypeAny>, {
+    role?: string | undefined;
     page?: number | undefined;
     limit?: number | undefined;
     status?: "PENDING_CONFIRMATION" | "PROCESSING" | "PENDING_PAYMENT" | "PENDING_PICKUP" | "PENDING_DELIVERY" | "DELIVERED" | "RECEIVED" | "RETURNED" | "CANCELLED" | undefined;

@@ -5,24 +5,24 @@ export declare class UserController {
     constructor(userService: UserService);
     getAllUser(query: GetUsersQueryDTO): Promise<{
         data: {
+            role: {
+                id: number;
+                name: string;
+            };
             id: number;
+            email: string;
             name: string;
+            phoneNumber: string;
+            avatar: string | null;
+            gender: string | null;
+            roleId: number;
+            dateOfBirth: Date | null;
             createdById: number | null;
             updatedById: number | null;
             deletedById: number | null;
             deletedAt: Date | null;
             createdAt: Date;
             updatedAt: Date;
-            email: string;
-            phoneNumber: string;
-            avatar: string | null;
-            gender: string | null;
-            roleId: number;
-            dateOfBirth: Date | null;
-            role: {
-                id: number;
-                name: string;
-            };
         }[];
         page: number;
         totalItem: number;
@@ -31,14 +31,8 @@ export declare class UserController {
     }>;
     getById(params: GetUserParamsDTO): Promise<Omit<{
         id: number;
-        name: string;
-        createdById: number | null;
-        updatedById: number | null;
-        deletedById: number | null;
-        deletedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
         email: string;
+        name: string;
         password: string;
         phoneNumber: string;
         avatar: string | null;
@@ -46,6 +40,12 @@ export declare class UserController {
         roleId: number;
         totpSecret: string | null;
         dateOfBirth: Date | null;
+        createdById: number | null;
+        updatedById: number | null;
+        deletedById: number | null;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
     }, "password" | "totpSecret"> & {
         role: {
             id: number;
@@ -54,14 +54,8 @@ export declare class UserController {
     }>;
     createUser(body: CreateUserBodyDTO, userId: number, roleName: string): Promise<Omit<{
         id: number;
-        name: string;
-        createdById: number | null;
-        updatedById: number | null;
-        deletedById: number | null;
-        deletedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
         email: string;
+        name: string;
         password: string;
         phoneNumber: string;
         avatar: string | null;
@@ -69,22 +63,28 @@ export declare class UserController {
         roleId: number;
         totpSecret: string | null;
         dateOfBirth: Date | null;
-    }, "password" | "totpSecret">>;
-    updateUser(body: UpdateUserBodyDTO, params: GetUserParamsDTO, userId: number, roleName: string): Promise<{
-        id: number;
-        name: string;
         createdById: number | null;
         updatedById: number | null;
         deletedById: number | null;
         deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
+    }, "password" | "totpSecret">>;
+    updateUser(body: UpdateUserBodyDTO, params: GetUserParamsDTO, userId: number, roleName: string): Promise<{
+        id: number;
         email: string;
+        name: string;
         phoneNumber: string;
         avatar: string | null;
         gender: string | null;
         roleId: number;
         dateOfBirth: Date | null;
+        createdById: number | null;
+        updatedById: number | null;
+        deletedById: number | null;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     deleteUser(params: GetUserParamsDTO, userId: number, roleName: string): Promise<{
         message: string;

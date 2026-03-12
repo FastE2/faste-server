@@ -231,14 +231,17 @@ export declare const GetOrderListResSchema: z.ZodObject<{
     totalPages: number;
 }>;
 export declare const GetOrderListQuerySchema: z.ZodObject<{
+    role: z.ZodOptional<z.ZodString>;
     page: z.ZodDefault<z.ZodNumber>;
     limit: z.ZodDefault<z.ZodNumber>;
     status: z.ZodOptional<z.ZodEnum<["PENDING_CONFIRMATION", "PROCESSING", "PENDING_PAYMENT", "PENDING_PICKUP", "PENDING_DELIVERY", "DELIVERED", "RECEIVED", "RETURNED", "CANCELLED"]>>;
 }, "strict", z.ZodTypeAny, {
     page: number;
     limit: number;
+    role?: string | undefined;
     status?: "PENDING_CONFIRMATION" | "PROCESSING" | "PENDING_PAYMENT" | "PENDING_PICKUP" | "PENDING_DELIVERY" | "DELIVERED" | "RECEIVED" | "RETURNED" | "CANCELLED" | undefined;
 }, {
+    role?: string | undefined;
     page?: number | undefined;
     limit?: number | undefined;
     status?: "PENDING_CONFIRMATION" | "PROCESSING" | "PENDING_PAYMENT" | "PENDING_PICKUP" | "PENDING_DELIVERY" | "DELIVERED" | "RECEIVED" | "RETURNED" | "CANCELLED" | undefined;

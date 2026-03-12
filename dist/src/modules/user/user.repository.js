@@ -20,10 +20,18 @@ let UserRepository = class UserRepository {
     async list(pagination) {
         const skip = (pagination.page - 1) * pagination.limit;
         const take = pagination.limit;
+        const roleFilter = pagination.role
+            ? {
+                role: {
+                    name: pagination.role,
+                },
+            }
+            : {};
         const [data, totalItem] = await Promise.all([
             this.prismaService.user.findMany({
                 where: {
                     deletedAt: null,
+                    ...roleFilter,
                 },
                 omit: {
                     password: true,

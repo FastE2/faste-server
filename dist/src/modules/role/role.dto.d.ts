@@ -23,12 +23,18 @@ export declare class CreateRoleBodyDTO extends CreateRoleBodyDTO_base {
 declare const GetRolesQueryDTO_base: import("nestjs-zod").ZodDto<{
     page: number;
     limit: number;
+    role?: string | undefined;
+    status?: string | undefined;
 }, import("zod").ZodObjectDef<{
     page: import("zod").ZodDefault<import("zod").ZodNumber>;
     limit: import("zod").ZodDefault<import("zod").ZodNumber>;
+    role: import("zod").ZodOptional<import("zod").ZodString>;
+    status: import("zod").ZodOptional<import("zod").ZodString>;
 }, "strict", import("zod").ZodTypeAny>, {
     page?: number | undefined;
     limit?: number | undefined;
+    role?: string | undefined;
+    status?: string | undefined;
 }>;
 export declare class GetRolesQueryDTO extends GetRolesQueryDTO_base {
 }

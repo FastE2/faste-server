@@ -70,7 +70,7 @@ let ProductService = class ProductService {
     async findAll({ query, userId, roleName, }) {
         try {
             const where = { deletedAt: null };
-            if (roleName === role_base_constant_1.ROLE_NAME.SELLER || roleName === role_base_constant_1.ROLE_NAME.ADMIN) {
+            if (roleName === role_base_constant_1.ROLE_NAME.SELLER) {
                 where.shopId = userId;
             }
             else if (roleName !== role_base_constant_1.ROLE_NAME.ADMIN &&

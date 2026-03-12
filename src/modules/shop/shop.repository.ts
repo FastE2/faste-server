@@ -28,6 +28,10 @@ export class ShopRepository {
     if (isPublic) {
       where.status = 'APPROVED';
       where.isActive = true;
+    } else {
+      if (pagination.status) {
+        where.status = pagination.status;
+      }
     }
     const [data, totalItem] = await Promise.all([
       this.prismaService.shop.findMany({
@@ -38,6 +42,7 @@ export class ShopRepository {
       this.prismaService.shop.count({
         where: {
           deletedAt: null,
+          ...where,
         },
       }),
     ]);

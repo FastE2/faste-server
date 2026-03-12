@@ -7,6 +7,8 @@ exports.PaginationQuerySchema = zod_1.z
     .object({
     page: zod_1.z.coerce.number().int().positive().default(1),
     limit: zod_1.z.coerce.number().int().positive().default(10),
+    role: zod_1.z.string().optional(),
+    status: zod_1.z.string().optional(),
 })
     .strict();
 exports.GetParamsSchema = zod_1.z.object({
