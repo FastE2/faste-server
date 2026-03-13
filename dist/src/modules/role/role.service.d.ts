@@ -23,6 +23,18 @@ export declare class RoleService {
         isActive: boolean;
         description: string;
     }>;
+    getRoleByIdIncludePermissions(id: number): Promise<{
+        id: number;
+        name: string;
+        createdById: number | null;
+        updatedById: number | null;
+        deletedById: number | null;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        isActive: boolean;
+        description: string;
+    }>;
     createRole({ data, createdById, }: {
         data: CreateRoleBodyType;
         createdById: number;

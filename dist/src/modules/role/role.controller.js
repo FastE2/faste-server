@@ -36,6 +36,9 @@ let RoleController = class RoleController {
     getById(params) {
         return this.roleService.getRoleById(params.id);
     }
+    getByIdIncludePermission(params) {
+        return this.roleService.getRoleByIdIncludePermissions(params.id);
+    }
     updateUser(body, params, userId) {
         return this.roleService.updateRole({
             id: params.id,
@@ -76,6 +79,13 @@ __decorate([
     __metadata("design:paramtypes", [role_dto_1.GetRoleParamsDTO]),
     __metadata("design:returntype", void 0)
 ], RoleController.prototype, "getById", null);
+__decorate([
+    (0, common_1.Get)('/:id/permissions'),
+    __param(0, (0, common_1.Param)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [role_dto_1.GetRoleParamsDTO]),
+    __metadata("design:returntype", void 0)
+], RoleController.prototype, "getByIdIncludePermission", null);
 __decorate([
     (0, common_1.Patch)('/:id'),
     (0, nestjs_zod_1.ZodSerializerDto)(role_dto_1.UpdateRoleResDTO),

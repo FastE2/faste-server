@@ -32,6 +32,19 @@ export class RoleService {
     }
   }
 
+  async getRoleByIdIncludePermissions(id: number) {
+    try {
+      const role = await this.roleRepository.findByIdIncludePermissions(id);
+      if (!role) {
+        throw NotFoundRecordException;
+      }
+      return role;
+    } catch (error) {
+      console.log('/role/:id/permissions', error);
+      throw error;
+    }
+  }
+
   async createRole({
     data,
     createdById,
@@ -86,6 +99,7 @@ export class RoleService {
     ];
 
     if (baseRoles.includes(role.name)) {
+      console.log(`Forbidden action on base role: ${role.name}`, role);
       throw ForbiddenActionOnBaseRoleException;
     }
   }

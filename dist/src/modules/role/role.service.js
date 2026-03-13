@@ -43,6 +43,19 @@ let RoleService = class RoleService {
             throw error;
         }
     }
+    async getRoleByIdIncludePermissions(id) {
+        try {
+            const role = await this.roleRepository.findByIdIncludePermissions(id);
+            if (!role) {
+                throw errors_1.NotFoundRecordException;
+            }
+            return role;
+        }
+        catch (error) {
+            console.log('/role/:id/permissions', error);
+            throw error;
+        }
+    }
     async createRole({ data, createdById, }) {
         try {
             const role = await this.roleRepository.create({ createdById, data });
@@ -79,6 +92,7 @@ let RoleService = class RoleService {
             role_base_constant_1.ROLE_NAME.SELLER,
         ];
         if (baseRoles.includes(role.name)) {
+            console.log(`Forbidden action on base role: ${role.name}`, role);
             throw role_error_1.ForbiddenActionOnBaseRoleException;
         }
     }

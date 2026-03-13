@@ -50,6 +50,21 @@ let RoleRepository = class RoleRepository {
             },
         });
     }
+    findByIdIncludePermissions(id) {
+        return this.prismaService.role.findUnique({
+            where: {
+                id,
+                deletedAt: null,
+            },
+            include: {
+                permissions: {
+                    where: {
+                        deletedAt: null,
+                    },
+                },
+            },
+        });
+    }
     create({ createdById, data, }) {
         return this.prismaService.role.create({
             data: {

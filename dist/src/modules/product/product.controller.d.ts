@@ -10,53 +10,63 @@ export declare class ProductController {
     getBySlugId(params: GetParamSlugIdDTO): Promise<any>;
     getProducts(query: GetProductsQueryDTO, userId: number, roleName: string): Promise<{
         data: ({
-            categories: {
-                productId: number;
-                categoryId: number;
-            }[];
             brand: {
+                id: number;
                 name: string;
                 createdById: number | null;
-                createdAt: Date;
-                id: number;
-                description: string;
                 updatedById: number | null;
                 deletedById: number | null;
                 deletedAt: Date | null;
+                createdAt: Date;
                 updatedAt: Date;
+                description: string;
                 logo: string;
             };
             skus: {
-                price: number;
-                createdAt: Date;
                 id: number;
+                updatedById: number | null;
+                deletedById: number | null;
+                deletedAt: Date | null;
+                createdAt: Date;
+                updatedAt: Date;
+                userId: number | null;
+                skuCode: string;
+                productId: number;
+                image: string;
+                price: number;
+                attributes: PrismaJson.AttributesType;
+                quantity: number;
                 sold: number;
                 weightGram: number | null;
                 lengthCm: number | null;
                 widthCm: number | null;
                 heightCm: number | null;
                 shopId: number;
-                updatedById: number | null;
-                deletedById: number | null;
-                deletedAt: Date | null;
-                updatedAt: Date;
+            }[];
+            categories: {
                 productId: number;
-                skuCode: string;
-                image: string;
-                attributes: PrismaJson.AttributesType;
-                quantity: number;
-                userId: number | null;
+                categoryId: number;
             }[];
             discounts: {
                 productId: number;
                 discountId: number;
             }[];
         } & {
+            id: number;
             name: string;
             status: import(".prisma/client").$Enums.ProductStatus;
+            updatedById: number | null;
+            deletedById: number | null;
+            deletedAt: Date | null;
             createdAt: Date;
-            id: number;
+            updatedAt: Date;
             description: string;
+            sold: number;
+            weightGram: number | null;
+            lengthCm: number | null;
+            widthCm: number | null;
+            heightCm: number | null;
+            shopId: number;
             basePrice: number;
             brandId: number;
             publishedAt: Date | null;
@@ -71,16 +81,6 @@ export declare class ProductController {
             rating5Count: number;
             totalViews: number;
             slugId: string;
-            sold: number;
-            weightGram: number | null;
-            lengthCm: number | null;
-            widthCm: number | null;
-            heightCm: number | null;
-            shopId: number;
-            updatedById: number | null;
-            deletedById: number | null;
-            deletedAt: Date | null;
-            updatedAt: Date;
         })[];
         totalItem: number;
         page: number;

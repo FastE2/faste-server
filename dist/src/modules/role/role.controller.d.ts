@@ -34,6 +34,18 @@ export declare class RoleController {
         isActive: boolean;
         description: string;
     }>;
+    getByIdIncludePermission(params: GetRoleParamsDTO): Promise<{
+        id: number;
+        name: string;
+        createdById: number | null;
+        updatedById: number | null;
+        deletedById: number | null;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        isActive: boolean;
+        description: string;
+    }>;
     updateUser(body: UpdateRoleBodyDTO, params: GetRoleParamsDTO, userId: number): Promise<{
         id: number;
         name: string;

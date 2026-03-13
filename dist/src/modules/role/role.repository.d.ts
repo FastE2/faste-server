@@ -14,6 +14,7 @@ export declare class RoleRepository {
         totalPage: number;
     }>;
     findById(id: number): Promise<RoleType | null>;
+    findByIdIncludePermissions(id: number): Promise<RoleType | null>;
     create({ createdById, data, }: {
         createdById: number;
         data: CreateRoleBodyType;
