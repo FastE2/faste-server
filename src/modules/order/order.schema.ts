@@ -43,6 +43,7 @@ export const GetOrderListResSchema = z.object({
 });
 
 export const GetOrderListQuerySchema = PaginationQuerySchema.extend({
+  keyword: z.string(),
   status: OrderStatusSchema.optional(),
 });
 

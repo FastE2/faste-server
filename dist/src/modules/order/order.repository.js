@@ -26,12 +26,35 @@ let OrderRepository = class OrderRepository {
         this.orderProducer = orderProducer;
     }
     async list({ _where, query, }) {
-        const { page, limit, status } = query;
+        const { page, limit, status, keyword: kw } = query;
+        const keyword = kw?.trim();
         const skip = (page - 1) * limit;
         const take = limit;
         const where = {
             ..._where,
             status,
+            ...(keyword && {
+                OR: [
+                    {
+                        Shop: {
+                            name: {
+                                contains: keyword,
+                                mode: 'insensitive',
+                            },
+                        },
+                    },
+                    {
+                        items: {
+                            some: {
+                                productName: {
+                                    contains: keyword,
+                                    mode: 'insensitive',
+                                },
+                            },
+                        },
+                    },
+                ],
+            }),
         };
         const [totalItems, data] = await Promise.all([
             this.prismaService.order.count({

@@ -11,15 +11,15 @@ export declare const CreateOrderBodySchema: z.ZodArray<z.ZodObject<{
     cartItemIds: z.ZodArray<z.ZodNumber, "many">;
 }, "strip", z.ZodTypeAny, {
     shopId: number;
+    paymentMethod: "COD" | "SEPAY" | "WEB3";
     addressShipId: number;
     deliveryId: number;
-    paymentMethod: "COD" | "SEPAY" | "WEB3";
     cartItemIds: number[];
 }, {
     shopId: number;
+    paymentMethod: "COD" | "SEPAY" | "WEB3";
     addressShipId: number;
     deliveryId: number;
-    paymentMethod: "COD" | "SEPAY" | "WEB3";
     cartItemIds: number[];
 }>, "many">;
 export declare const UpdateOrderBodySchema: z.ZodObject<{
@@ -34,18 +34,18 @@ export declare const UpdateOrderBodySchema: z.ZodObject<{
 }>;
 export declare const GetOrderListResSchema: z.ZodObject<{
     data: z.ZodArray<z.ZodObject<Omit<{
-        id: z.ZodNumber;
         status: z.ZodEnum<["PENDING_CONFIRMATION", "PROCESSING", "PENDING_PAYMENT", "PENDING_PICKUP", "PENDING_DELIVERY", "DELIVERED", "RECEIVED", "RETURNED", "CANCELLED"]>;
+        shopId: z.ZodNullable<z.ZodNumber>;
+        addressShipId: z.ZodNumber;
+        id: z.ZodNumber;
+        userId: z.ZodNumber;
+        paymentId: z.ZodNullable<z.ZodNumber>;
         createdById: z.ZodNullable<z.ZodNumber>;
         updatedById: z.ZodNullable<z.ZodNumber>;
         deletedById: z.ZodNullable<z.ZodNumber>;
         deletedAt: z.ZodNullable<z.ZodDate>;
         createdAt: z.ZodDate;
         updatedAt: z.ZodDate;
-        userId: z.ZodNumber;
-        shopId: z.ZodNullable<z.ZodNumber>;
-        addressShipId: z.ZodNumber;
-        paymentId: z.ZodNullable<z.ZodNumber>;
         items: z.ZodArray<z.ZodObject<{
             id: z.ZodNumber;
             productId: z.ZodNullable<z.ZodNumber>;
@@ -77,88 +77,88 @@ export declare const GetOrderListResSchema: z.ZodObject<{
             id: number;
             createdAt: Date;
             productId: number | null;
-            image: string;
-            quantity: number;
+            productName: string;
             productTranslations: {
                 id: number;
                 name: string;
                 description: string;
                 languageId: string;
             }[];
-            skuId: number | null;
-            productName: string;
             skuPrice: number;
+            image: string;
             skuAttributes: Record<string, string>;
+            skuId: number | null;
             orderId: number | null;
+            quantity: number;
         }, {
             id: number;
             createdAt: Date;
             productId: number | null;
-            image: string;
-            quantity: number;
+            productName: string;
             productTranslations: {
                 id: number;
                 name: string;
                 description: string;
                 languageId: string;
             }[];
-            skuId: number | null;
-            productName: string;
             skuPrice: number;
+            image: string;
             skuAttributes: Record<string, string>;
+            skuId: number | null;
             orderId: number | null;
+            quantity: number;
         }>, "many">;
-    }, "createdById" | "updatedById" | "deletedById" | "deletedAt" | "addressShipId">, "strip", z.ZodTypeAny, {
-        id: number;
+    }, "addressShipId" | "createdById" | "updatedById" | "deletedById" | "deletedAt">, "strip", z.ZodTypeAny, {
         status: "PENDING_CONFIRMATION" | "PROCESSING" | "PENDING_PAYMENT" | "PENDING_PICKUP" | "PENDING_DELIVERY" | "DELIVERED" | "RECEIVED" | "RETURNED" | "CANCELLED";
+        shopId: number | null;
+        id: number;
+        userId: number;
+        paymentId: number | null;
         createdAt: Date;
         updatedAt: Date;
-        userId: number;
-        shopId: number | null;
-        paymentId: number | null;
         items: {
             id: number;
             createdAt: Date;
             productId: number | null;
-            image: string;
-            quantity: number;
+            productName: string;
             productTranslations: {
                 id: number;
                 name: string;
                 description: string;
                 languageId: string;
             }[];
-            skuId: number | null;
-            productName: string;
             skuPrice: number;
+            image: string;
             skuAttributes: Record<string, string>;
+            skuId: number | null;
             orderId: number | null;
+            quantity: number;
         }[];
     }, {
-        id: number;
         status: "PENDING_CONFIRMATION" | "PROCESSING" | "PENDING_PAYMENT" | "PENDING_PICKUP" | "PENDING_DELIVERY" | "DELIVERED" | "RECEIVED" | "RETURNED" | "CANCELLED";
+        shopId: number | null;
+        id: number;
+        userId: number;
+        paymentId: number | null;
         createdAt: Date;
         updatedAt: Date;
-        userId: number;
-        shopId: number | null;
-        paymentId: number | null;
         items: {
             id: number;
             createdAt: Date;
             productId: number | null;
-            image: string;
-            quantity: number;
+            productName: string;
             productTranslations: {
                 id: number;
                 name: string;
                 description: string;
                 languageId: string;
             }[];
-            skuId: number | null;
-            productName: string;
             skuPrice: number;
+            image: string;
             skuAttributes: Record<string, string>;
+            skuId: number | null;
             orderId: number | null;
+            quantity: number;
         }[];
     }>, "many">;
     totalItems: z.ZodNumber;
@@ -167,98 +167,101 @@ export declare const GetOrderListResSchema: z.ZodObject<{
     totalPages: z.ZodNumber;
 }, "strip", z.ZodTypeAny, {
     data: {
-        id: number;
         status: "PENDING_CONFIRMATION" | "PROCESSING" | "PENDING_PAYMENT" | "PENDING_PICKUP" | "PENDING_DELIVERY" | "DELIVERED" | "RECEIVED" | "RETURNED" | "CANCELLED";
+        shopId: number | null;
+        id: number;
+        userId: number;
+        paymentId: number | null;
         createdAt: Date;
         updatedAt: Date;
-        userId: number;
-        shopId: number | null;
-        paymentId: number | null;
         items: {
             id: number;
             createdAt: Date;
             productId: number | null;
-            image: string;
-            quantity: number;
+            productName: string;
             productTranslations: {
                 id: number;
                 name: string;
                 description: string;
                 languageId: string;
             }[];
-            skuId: number | null;
-            productName: string;
             skuPrice: number;
+            image: string;
             skuAttributes: Record<string, string>;
+            skuId: number | null;
             orderId: number | null;
+            quantity: number;
         }[];
     }[];
+    totalItems: number;
     page: number;
     limit: number;
-    totalItems: number;
     totalPages: number;
 }, {
     data: {
-        id: number;
         status: "PENDING_CONFIRMATION" | "PROCESSING" | "PENDING_PAYMENT" | "PENDING_PICKUP" | "PENDING_DELIVERY" | "DELIVERED" | "RECEIVED" | "RETURNED" | "CANCELLED";
+        shopId: number | null;
+        id: number;
+        userId: number;
+        paymentId: number | null;
         createdAt: Date;
         updatedAt: Date;
-        userId: number;
-        shopId: number | null;
-        paymentId: number | null;
         items: {
             id: number;
             createdAt: Date;
             productId: number | null;
-            image: string;
-            quantity: number;
+            productName: string;
             productTranslations: {
                 id: number;
                 name: string;
                 description: string;
                 languageId: string;
             }[];
-            skuId: number | null;
-            productName: string;
             skuPrice: number;
+            image: string;
             skuAttributes: Record<string, string>;
+            skuId: number | null;
             orderId: number | null;
+            quantity: number;
         }[];
     }[];
+    totalItems: number;
     page: number;
     limit: number;
-    totalItems: number;
     totalPages: number;
 }>;
 export declare const GetOrderListQuerySchema: z.ZodObject<{
-    role: z.ZodOptional<z.ZodString>;
     page: z.ZodDefault<z.ZodNumber>;
     limit: z.ZodDefault<z.ZodNumber>;
+    role: z.ZodOptional<z.ZodString>;
+    keyword: z.ZodString;
     status: z.ZodOptional<z.ZodEnum<["PENDING_CONFIRMATION", "PROCESSING", "PENDING_PAYMENT", "PENDING_PICKUP", "PENDING_DELIVERY", "DELIVERED", "RECEIVED", "RETURNED", "CANCELLED"]>>;
 }, "strict", z.ZodTypeAny, {
     page: number;
     limit: number;
+    keyword: string;
     role?: string | undefined;
     status?: "PENDING_CONFIRMATION" | "PROCESSING" | "PENDING_PAYMENT" | "PENDING_PICKUP" | "PENDING_DELIVERY" | "DELIVERED" | "RECEIVED" | "RETURNED" | "CANCELLED" | undefined;
 }, {
-    role?: string | undefined;
+    keyword: string;
     page?: number | undefined;
     limit?: number | undefined;
+    role?: string | undefined;
     status?: "PENDING_CONFIRMATION" | "PROCESSING" | "PENDING_PAYMENT" | "PENDING_PICKUP" | "PENDING_DELIVERY" | "DELIVERED" | "RECEIVED" | "RETURNED" | "CANCELLED" | undefined;
 }>;
 export declare const GetOrderDetailResSchema: z.ZodObject<{
-    id: z.ZodNumber;
     status: z.ZodEnum<["PENDING_CONFIRMATION", "PROCESSING", "PENDING_PAYMENT", "PENDING_PICKUP", "PENDING_DELIVERY", "DELIVERED", "RECEIVED", "RETURNED", "CANCELLED"]>;
+    shopId: z.ZodNullable<z.ZodNumber>;
+    addressShipId: z.ZodNumber;
+    id: z.ZodNumber;
+    userId: z.ZodNumber;
+    paymentId: z.ZodNullable<z.ZodNumber>;
     createdById: z.ZodNullable<z.ZodNumber>;
     updatedById: z.ZodNullable<z.ZodNumber>;
     deletedById: z.ZodNullable<z.ZodNumber>;
     deletedAt: z.ZodNullable<z.ZodDate>;
     createdAt: z.ZodDate;
     updatedAt: z.ZodDate;
-    userId: z.ZodNumber;
-    shopId: z.ZodNullable<z.ZodNumber>;
-    addressShipId: z.ZodNumber;
-    paymentId: z.ZodNullable<z.ZodNumber>;
     items: z.ZodArray<z.ZodObject<{
         id: z.ZodNumber;
         productId: z.ZodNullable<z.ZodNumber>;
@@ -290,98 +293,98 @@ export declare const GetOrderDetailResSchema: z.ZodObject<{
         id: number;
         createdAt: Date;
         productId: number | null;
-        image: string;
-        quantity: number;
+        productName: string;
         productTranslations: {
             id: number;
             name: string;
             description: string;
             languageId: string;
         }[];
-        skuId: number | null;
-        productName: string;
         skuPrice: number;
+        image: string;
         skuAttributes: Record<string, string>;
+        skuId: number | null;
         orderId: number | null;
+        quantity: number;
     }, {
         id: number;
         createdAt: Date;
         productId: number | null;
-        image: string;
-        quantity: number;
+        productName: string;
         productTranslations: {
             id: number;
             name: string;
             description: string;
             languageId: string;
         }[];
-        skuId: number | null;
-        productName: string;
         skuPrice: number;
+        image: string;
         skuAttributes: Record<string, string>;
+        skuId: number | null;
         orderId: number | null;
+        quantity: number;
     }>, "many">;
 }, "strip", z.ZodTypeAny, {
-    id: number;
     status: "PENDING_CONFIRMATION" | "PROCESSING" | "PENDING_PAYMENT" | "PENDING_PICKUP" | "PENDING_DELIVERY" | "DELIVERED" | "RECEIVED" | "RETURNED" | "CANCELLED";
+    shopId: number | null;
+    addressShipId: number;
+    id: number;
+    userId: number;
+    paymentId: number | null;
     createdById: number | null;
     updatedById: number | null;
     deletedById: number | null;
     deletedAt: Date | null;
     createdAt: Date;
     updatedAt: Date;
-    userId: number;
-    shopId: number | null;
-    addressShipId: number;
-    paymentId: number | null;
     items: {
         id: number;
         createdAt: Date;
         productId: number | null;
-        image: string;
-        quantity: number;
+        productName: string;
         productTranslations: {
             id: number;
             name: string;
             description: string;
             languageId: string;
         }[];
-        skuId: number | null;
-        productName: string;
         skuPrice: number;
+        image: string;
         skuAttributes: Record<string, string>;
+        skuId: number | null;
         orderId: number | null;
+        quantity: number;
     }[];
 }, {
-    id: number;
     status: "PENDING_CONFIRMATION" | "PROCESSING" | "PENDING_PAYMENT" | "PENDING_PICKUP" | "PENDING_DELIVERY" | "DELIVERED" | "RECEIVED" | "RETURNED" | "CANCELLED";
+    shopId: number | null;
+    addressShipId: number;
+    id: number;
+    userId: number;
+    paymentId: number | null;
     createdById: number | null;
     updatedById: number | null;
     deletedById: number | null;
     deletedAt: Date | null;
     createdAt: Date;
     updatedAt: Date;
-    userId: number;
-    shopId: number | null;
-    addressShipId: number;
-    paymentId: number | null;
     items: {
         id: number;
         createdAt: Date;
         productId: number | null;
-        image: string;
-        quantity: number;
+        productName: string;
         productTranslations: {
             id: number;
             name: string;
             description: string;
             languageId: string;
         }[];
-        skuId: number | null;
-        productName: string;
         skuPrice: number;
+        image: string;
         skuAttributes: Record<string, string>;
+        skuId: number | null;
         orderId: number | null;
+        quantity: number;
     }[];
 }>;
 export declare const UpdateOrderStatusBodySchema: z.ZodObject<Pick<{
@@ -416,31 +419,31 @@ export declare const CancelOrderResSchema: z.ZodObject<{
     createdAt: z.ZodDate;
     updatedAt: z.ZodDate;
 }, "strip", z.ZodTypeAny, {
-    id: number;
     status: "PENDING_CONFIRMATION" | "PROCESSING" | "PENDING_PAYMENT" | "PENDING_PICKUP" | "PENDING_DELIVERY" | "DELIVERED" | "RECEIVED" | "RETURNED" | "CANCELLED";
+    shopId: number | null;
+    addressShipId: number;
+    id: number;
+    userId: number;
+    paymentId: number | null;
     createdById: number | null;
     updatedById: number | null;
     deletedById: number | null;
     deletedAt: Date | null;
     createdAt: Date;
     updatedAt: Date;
-    userId: number;
-    shopId: number | null;
-    addressShipId: number;
-    paymentId: number | null;
 }, {
-    id: number;
     status: "PENDING_CONFIRMATION" | "PROCESSING" | "PENDING_PAYMENT" | "PENDING_PICKUP" | "PENDING_DELIVERY" | "DELIVERED" | "RECEIVED" | "RETURNED" | "CANCELLED";
+    shopId: number | null;
+    addressShipId: number;
+    id: number;
+    userId: number;
+    paymentId: number | null;
     createdById: number | null;
     updatedById: number | null;
     deletedById: number | null;
     deletedAt: Date | null;
     createdAt: Date;
     updatedAt: Date;
-    userId: number;
-    shopId: number | null;
-    addressShipId: number;
-    paymentId: number | null;
 }>;
 export type GetOrderListResType = z.infer<typeof GetOrderListResSchema>;
 export type GetOrderListQueryType = z.infer<typeof GetOrderListQuerySchema>;

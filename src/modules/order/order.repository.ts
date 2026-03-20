@@ -40,12 +40,35 @@ export class OrderRepository {
     _where: WhereListOrderType;
     query: GetOrderListQueryType;
   }): Promise<any> {
-    const { page, limit, status } = query;
+    const { page, limit, status, keyword: kw } = query;
+    const keyword = kw?.trim();
     const skip = (page - 1) * limit;
     const take = limit;
     const where: Prisma.OrderWhereInput = {
       ..._where,
       status,
+      ...(keyword && {
+        OR: [
+          {
+            Shop: {
+              name: {
+                contains: keyword,
+                mode: 'insensitive',
+              },
+            },
+          },
+          {
+            items: {
+              some: {
+                productName: {
+                  contains: keyword,
+                  mode: 'insensitive',
+                },
+              },
+            },
+          },
+        ],
+      }),
     };
 
     const [totalItems, data] = await Promise.all([

@@ -34,6 +34,7 @@ exports.GetOrderListResSchema = zod_1.z.object({
     totalPages: zod_1.z.number(),
 });
 exports.GetOrderListQuerySchema = request_schema_1.PaginationQuerySchema.extend({
+    keyword: zod_1.z.string(),
     status: order_schema_1.OrderStatusSchema.optional(),
 });
 exports.GetOrderDetailResSchema = order_schema_1.OrderSchema.extend({
