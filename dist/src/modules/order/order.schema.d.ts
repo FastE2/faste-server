@@ -234,19 +234,19 @@ export declare const GetOrderListQuerySchema: z.ZodObject<{
     page: z.ZodDefault<z.ZodNumber>;
     limit: z.ZodDefault<z.ZodNumber>;
     role: z.ZodOptional<z.ZodString>;
-    keyword: z.ZodString;
+    keyword: z.ZodOptional<z.ZodString>;
     status: z.ZodOptional<z.ZodEnum<["PENDING_CONFIRMATION", "PROCESSING", "PENDING_PAYMENT", "PENDING_PICKUP", "PENDING_DELIVERY", "DELIVERED", "RECEIVED", "RETURNED", "CANCELLED"]>>;
 }, "strict", z.ZodTypeAny, {
     page: number;
     limit: number;
-    keyword: string;
     role?: string | undefined;
+    keyword?: string | undefined;
     status?: "PENDING_CONFIRMATION" | "PROCESSING" | "PENDING_PAYMENT" | "PENDING_PICKUP" | "PENDING_DELIVERY" | "DELIVERED" | "RECEIVED" | "RETURNED" | "CANCELLED" | undefined;
 }, {
-    keyword: string;
     page?: number | undefined;
     limit?: number | undefined;
     role?: string | undefined;
+    keyword?: string | undefined;
     status?: "PENDING_CONFIRMATION" | "PROCESSING" | "PENDING_PAYMENT" | "PENDING_PICKUP" | "PENDING_DELIVERY" | "DELIVERED" | "RECEIVED" | "RETURNED" | "CANCELLED" | undefined;
 }>;
 export declare const GetOrderDetailResSchema: z.ZodObject<{

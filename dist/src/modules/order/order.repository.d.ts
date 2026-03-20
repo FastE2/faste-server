@@ -27,33 +27,33 @@ export declare class OrderRepository {
         items: {
             id: number;
             createdAt: Date;
+            productId: number | null;
             productName: string;
+            productTranslations: PrismaJson.ProductTranslations;
             skuPrice: number;
             image: string;
             skuAttributes: PrismaJson.AttributesType;
             skuId: number | null;
             orderId: number | null;
             quantity: number;
-            productId: number | null;
-            productTranslations: PrismaJson.ProductTranslations;
         }[];
     } & {
-        id: number;
-        paymentId: number | null;
-        userId: number;
         status: import(".prisma/client").$Enums.OrderStatus;
-        addressShipId: number;
         shopId: number;
-        deliveryId: number;
-        voucherId: number | null;
         paymentMethod: import(".prisma/client").$Enums.PaymentMethod;
+        addressShipId: number;
+        deliveryId: number;
+        id: number;
+        userId: number;
+        paymentId: number | null;
         createdById: number;
         updatedById: number | null;
         deletedById: number | null;
-        isReviewed: boolean;
         deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
+        voucherId: number | null;
+        isReviewed: boolean;
     }>;
     findUniqueClientById({ userId, orderId, }: {
         userId: number;

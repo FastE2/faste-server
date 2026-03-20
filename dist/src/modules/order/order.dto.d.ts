@@ -1,20 +1,20 @@
 declare const GetOrderListQueryDTO_base: import("nestjs-zod").ZodDto<{
     page: number;
     limit: number;
-    keyword: string;
     role?: string | undefined;
+    keyword?: string | undefined;
     status?: "PENDING_CONFIRMATION" | "PROCESSING" | "PENDING_PAYMENT" | "PENDING_PICKUP" | "PENDING_DELIVERY" | "DELIVERED" | "RECEIVED" | "RETURNED" | "CANCELLED" | undefined;
 }, import("zod").ZodObjectDef<{
     page: import("zod").ZodDefault<import("zod").ZodNumber>;
     limit: import("zod").ZodDefault<import("zod").ZodNumber>;
     role: import("zod").ZodOptional<import("zod").ZodString>;
-    keyword: import("zod").ZodString;
+    keyword: import("zod").ZodOptional<import("zod").ZodString>;
     status: import("zod").ZodOptional<import("zod").ZodEnum<["PENDING_CONFIRMATION", "PROCESSING", "PENDING_PAYMENT", "PENDING_PICKUP", "PENDING_DELIVERY", "DELIVERED", "RECEIVED", "RETURNED", "CANCELLED"]>>;
 }, "strict", import("zod").ZodTypeAny>, {
-    keyword: string;
     page?: number | undefined;
     limit?: number | undefined;
     role?: string | undefined;
+    keyword?: string | undefined;
     status?: "PENDING_CONFIRMATION" | "PROCESSING" | "PENDING_PAYMENT" | "PENDING_PICKUP" | "PENDING_DELIVERY" | "DELIVERED" | "RECEIVED" | "RETURNED" | "CANCELLED" | undefined;
 }>;
 export declare class GetOrderListQueryDTO extends GetOrderListQueryDTO_base {
