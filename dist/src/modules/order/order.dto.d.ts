@@ -5,15 +5,15 @@ declare const GetOrderListQueryDTO_base: import("nestjs-zod").ZodDto<{
     keyword?: string | undefined;
     status?: "PENDING_CONFIRMATION" | "PROCESSING" | "PENDING_PAYMENT" | "PENDING_PICKUP" | "PENDING_DELIVERY" | "DELIVERED" | "RECEIVED" | "RETURNED" | "CANCELLED" | undefined;
 }, import("zod").ZodObjectDef<{
+    role: import("zod").ZodOptional<import("zod").ZodString>;
     page: import("zod").ZodDefault<import("zod").ZodNumber>;
     limit: import("zod").ZodDefault<import("zod").ZodNumber>;
-    role: import("zod").ZodOptional<import("zod").ZodString>;
     keyword: import("zod").ZodOptional<import("zod").ZodString>;
     status: import("zod").ZodOptional<import("zod").ZodEnum<["PENDING_CONFIRMATION", "PROCESSING", "PENDING_PAYMENT", "PENDING_PICKUP", "PENDING_DELIVERY", "DELIVERED", "RECEIVED", "RETURNED", "CANCELLED"]>>;
 }, "strict", import("zod").ZodTypeAny>, {
+    role?: string | undefined;
     page?: number | undefined;
     limit?: number | undefined;
-    role?: string | undefined;
     keyword?: string | undefined;
     status?: "PENDING_CONFIRMATION" | "PROCESSING" | "PENDING_PAYMENT" | "PENDING_PICKUP" | "PENDING_DELIVERY" | "DELIVERED" | "RECEIVED" | "RETURNED" | "CANCELLED" | undefined;
 }>;
@@ -21,9 +21,9 @@ export declare class GetOrderListQueryDTO extends GetOrderListQueryDTO_base {
 }
 declare const CreateOrderBodyDTO_base: import("nestjs-zod").ZodDto<{
     shopId: number;
-    paymentMethod: "COD" | "SEPAY" | "WEB3";
     addressShipId: number;
     deliveryId: number;
+    paymentMethod: "COD" | "SEPAY" | "WEB3";
     cartItemIds: number[];
 }[], import("zod").ZodArrayDef<import("zod").ZodObject<{
     shopId: import("zod").ZodNumber;
@@ -37,21 +37,21 @@ declare const CreateOrderBodyDTO_base: import("nestjs-zod").ZodDto<{
     cartItemIds: import("zod").ZodArray<import("zod").ZodNumber, "many">;
 }, "strip", import("zod").ZodTypeAny, {
     shopId: number;
-    paymentMethod: "COD" | "SEPAY" | "WEB3";
     addressShipId: number;
     deliveryId: number;
+    paymentMethod: "COD" | "SEPAY" | "WEB3";
     cartItemIds: number[];
 }, {
     shopId: number;
-    paymentMethod: "COD" | "SEPAY" | "WEB3";
     addressShipId: number;
     deliveryId: number;
+    paymentMethod: "COD" | "SEPAY" | "WEB3";
     cartItemIds: number[];
 }>>, {
     shopId: number;
-    paymentMethod: "COD" | "SEPAY" | "WEB3";
     addressShipId: number;
     deliveryId: number;
+    paymentMethod: "COD" | "SEPAY" | "WEB3";
     cartItemIds: number[];
 }[]>;
 export declare class CreateOrderBodyDTO extends CreateOrderBodyDTO_base {
