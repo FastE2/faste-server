@@ -303,7 +303,16 @@ let AuthService = class AuthService {
             if (!user.totpSecret) {
                 throw auth_error_1.TOTPNotEnabledException;
             }
+            let isVerifiedEmail = false;
             if (totpCode) {
+                await this.validateVerificationCode({
+                    email: user.email,
+                    code: totpCode,
+                    type: auth_constant_1.VerificationCodeTypeType.DISABLE_2FA,
+                });
+                isVerifiedEmail = true;
+            }
+            if (!isVerifiedEmail && totpCode) {
                 const decryptedSecret = this.encryptionService.decrypt(user.totpSecret);
                 const isValid = this.twoFactorService.verifyTOTP({
                     email: user.email,

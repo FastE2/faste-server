@@ -5,6 +5,7 @@ export declare class ProfileController {
     constructor(profileService: ProfileService);
     getProfile(userId: number): Promise<any>;
     updateUser(body: UpdateProfileBodyDTO, userId: number): Promise<{
+        isTwoFactorEnabled: boolean;
         id: number;
         email: string;
         name: string;

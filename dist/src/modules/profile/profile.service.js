@@ -24,7 +24,15 @@ let ProfileService = class ProfileService {
     }
     async getProfile(id) {
         try {
-            return await this.commonUserRepository.findUniqueUserProfile({ id });
+            const user = await this.commonUserRepository.findUniqueUserProfile({ id });
+            if (!user) {
+                throw new common_1.NotFoundException('User not found');
+            }
+            const { totpSecret, ...safeUser } = user;
+            return {
+                ...safeUser,
+                isTwoFactorEnabled: !!totpSecret,
+            };
         }
         catch (error) {
             console.log('/profile', error);
@@ -41,7 +49,10 @@ let ProfileService = class ProfileService {
                 throw new common_1.NotFoundException();
             }
             const { password, totpSecret, ...safeUser } = updateUser;
-            return safeUser;
+            return {
+                ...safeUser,
+                isTwoFactorEnabled: !!totpSecret,
+            };
         }
         catch (error) {
             console.log('/profile', error);

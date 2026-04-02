@@ -11,6 +11,7 @@ export declare class ProfileService {
         id: number;
         data: UpdateUserBodyType;
     }): Promise<{
+        isTwoFactorEnabled: boolean;
         id: number;
         email: string;
         name: string;

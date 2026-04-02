@@ -252,7 +252,7 @@ export declare const CreateAddressShipBodySchema: z.ZodObject<Pick<{
     longitude: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
     createdAt: z.ZodDefault<z.ZodDate>;
     updatedAt: z.ZodOptional<z.ZodDate>;
-}, "name" | "countryId" | "phone" | "divisionId" | "divisionPath" | "street" | "houseNumber" | "address" | "addressInstruction" | "zipcode" | "town" | "labelId" | "isDeliveryAddress" | "isDefault" | "latitude" | "longitude" | "geoinfo">, "strict", z.ZodTypeAny, {
+}, "name" | "countryId" | "latitude" | "longitude" | "phone" | "divisionId" | "divisionPath" | "street" | "houseNumber" | "address" | "addressInstruction" | "zipcode" | "town" | "labelId" | "isDeliveryAddress" | "isDefault" | "geoinfo">, "strict", z.ZodTypeAny, {
     name: string;
     countryId: number;
     phone: string;
@@ -266,14 +266,14 @@ export declare const CreateAddressShipBodySchema: z.ZodObject<Pick<{
     address: string;
     isDeliveryAddress: boolean;
     isDefault: boolean;
+    latitude?: number | null | undefined;
+    longitude?: number | null | undefined;
     street?: string | null | undefined;
     houseNumber?: string | null | undefined;
     addressInstruction?: string | null | undefined;
     zipcode?: string | null | undefined;
     town?: string | null | undefined;
     labelId?: number | null | undefined;
-    latitude?: number | null | undefined;
-    longitude?: number | null | undefined;
     geoinfo?: {
         region: {
             latitude: number;
@@ -298,6 +298,8 @@ export declare const CreateAddressShipBodySchema: z.ZodObject<Pick<{
         WARD?: string | undefined;
     } | null;
     address: string;
+    latitude?: number | null | undefined;
+    longitude?: number | null | undefined;
     street?: string | null | undefined;
     houseNumber?: string | null | undefined;
     addressInstruction?: string | null | undefined;
@@ -306,8 +308,6 @@ export declare const CreateAddressShipBodySchema: z.ZodObject<Pick<{
     labelId?: number | null | undefined;
     isDeliveryAddress?: boolean | undefined;
     isDefault?: boolean | undefined;
-    latitude?: number | null | undefined;
-    longitude?: number | null | undefined;
     geoinfo?: {
         region: {
             latitude: number;
@@ -408,7 +408,7 @@ export declare const UpdateAddressShipBodySchema: z.ZodObject<Pick<{
     longitude: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
     createdAt: z.ZodDefault<z.ZodDate>;
     updatedAt: z.ZodOptional<z.ZodDate>;
-}, "name" | "countryId" | "phone" | "divisionId" | "divisionPath" | "street" | "houseNumber" | "address" | "addressInstruction" | "zipcode" | "town" | "labelId" | "isDeliveryAddress" | "isDefault" | "latitude" | "longitude" | "geoinfo">, "strict", z.ZodTypeAny, {
+}, "name" | "countryId" | "latitude" | "longitude" | "phone" | "divisionId" | "divisionPath" | "street" | "houseNumber" | "address" | "addressInstruction" | "zipcode" | "town" | "labelId" | "isDeliveryAddress" | "isDefault" | "geoinfo">, "strict", z.ZodTypeAny, {
     name: string;
     countryId: number;
     phone: string;
@@ -422,14 +422,14 @@ export declare const UpdateAddressShipBodySchema: z.ZodObject<Pick<{
     address: string;
     isDeliveryAddress: boolean;
     isDefault: boolean;
+    latitude?: number | null | undefined;
+    longitude?: number | null | undefined;
     street?: string | null | undefined;
     houseNumber?: string | null | undefined;
     addressInstruction?: string | null | undefined;
     zipcode?: string | null | undefined;
     town?: string | null | undefined;
     labelId?: number | null | undefined;
-    latitude?: number | null | undefined;
-    longitude?: number | null | undefined;
     geoinfo?: {
         region: {
             latitude: number;
@@ -454,6 +454,8 @@ export declare const UpdateAddressShipBodySchema: z.ZodObject<Pick<{
         WARD?: string | undefined;
     } | null;
     address: string;
+    latitude?: number | null | undefined;
+    longitude?: number | null | undefined;
     street?: string | null | undefined;
     houseNumber?: string | null | undefined;
     addressInstruction?: string | null | undefined;
@@ -462,8 +464,6 @@ export declare const UpdateAddressShipBodySchema: z.ZodObject<Pick<{
     labelId?: number | null | undefined;
     isDeliveryAddress?: boolean | undefined;
     isDefault?: boolean | undefined;
-    latitude?: number | null | undefined;
-    longitude?: number | null | undefined;
     geoinfo?: {
         region: {
             latitude: number;

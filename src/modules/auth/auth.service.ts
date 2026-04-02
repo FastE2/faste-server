@@ -370,7 +370,18 @@ export class AuthService {
       if (!user.totpSecret) {
         throw TOTPNotEnabledException;
       }
+      let isVerifiedEmail = false;
+
       if (totpCode) {
+        await this.validateVerificationCode({
+          email: user.email,
+          code: totpCode,
+          type: VerificationCodeTypeType.DISABLE_2FA,
+        });
+        isVerifiedEmail = true;
+      }
+
+      if (!isVerifiedEmail && totpCode) {
         const decryptedSecret = this.encryptionService.decrypt(user.totpSecret);
         const isValid = this.twoFactorService.verifyTOTP({
           email: user.email,

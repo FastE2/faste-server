@@ -48,6 +48,7 @@ let CommonUserRepository = class CommonUserRepository {
                 dateOfBirth: true,
                 followers: true,
                 following: true,
+                totpSecret: true,
             },
         });
     }

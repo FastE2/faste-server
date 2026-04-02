@@ -36,6 +36,7 @@ export class TwoFactorService {
   }): boolean {
     const totp = this.createTOTP(email, secret);
     const delta = totp.validate({ token, window: 1 });
+    console.log('verifyTOTP', { email, token, secret, delta });
     return delta !== null;
   }
 

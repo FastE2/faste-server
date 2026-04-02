@@ -75,6 +75,7 @@ let TwoFactorService = class TwoFactorService {
     verifyTOTP({ email, token, secret, }) {
         const totp = this.createTOTP(email, secret);
         const delta = totp.validate({ token, window: 1 });
+        console.log('verifyTOTP', { email, token, secret, delta });
         return delta !== null;
     }
     async enableTwoFaForUser(userId, secretBase32) {

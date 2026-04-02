@@ -33,6 +33,7 @@ export class CommonUserRepository {
             name: true,
           },
         },
+
         gender: true,
         addresses: true,
         avatar: true,
@@ -40,6 +41,7 @@ export class CommonUserRepository {
         dateOfBirth: true,
         followers: true,
         following: true,
+        totpSecret: true,
       },
     });
   }
