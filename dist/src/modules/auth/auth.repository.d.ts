@@ -28,6 +28,15 @@ export declare class AuthRepository {
         lastActive: Date;
         isActive: boolean;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import(".prisma/client").Prisma.PrismaClientOptions>;
+    findDevicesByUserId(userId: number): import(".prisma/client").Prisma.PrismaPromise<{
+        id: number;
+        createdAt: Date;
+        userId: number;
+        userAgent: string;
+        ip: string;
+        lastActive: Date;
+        isActive: boolean;
+    }[]>;
     createRefreshToken(data: {
         token: string;
         deviceId: number;

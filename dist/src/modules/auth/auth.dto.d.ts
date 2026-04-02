@@ -190,4 +190,47 @@ declare const TwoFAEnableResDTO_base: import("nestjs-zod").ZodDto<{
 }>;
 export declare class TwoFAEnableResDTO extends TwoFAEnableResDTO_base {
 }
+declare const DeviceResDTO_base: import("nestjs-zod").ZodDto<{
+    id: number;
+    createdAt: Date;
+    userId: number;
+    userAgent: string;
+    ip: string;
+    lastActive: Date;
+    isActive: boolean;
+}[], import("zod").ZodArrayDef<import("zod").ZodObject<{
+    id: import("zod").ZodNumber;
+    userId: import("zod").ZodNumber;
+    userAgent: import("zod").ZodString;
+    ip: import("zod").ZodString;
+    lastActive: import("zod").ZodDate;
+    createdAt: import("zod").ZodDate;
+    isActive: import("zod").ZodBoolean;
+}, "strip", import("zod").ZodTypeAny, {
+    id: number;
+    createdAt: Date;
+    userId: number;
+    userAgent: string;
+    ip: string;
+    lastActive: Date;
+    isActive: boolean;
+}, {
+    id: number;
+    createdAt: Date;
+    userId: number;
+    userAgent: string;
+    ip: string;
+    lastActive: Date;
+    isActive: boolean;
+}>>, {
+    id: number;
+    createdAt: Date;
+    userId: number;
+    userAgent: string;
+    ip: string;
+    lastActive: Date;
+    isActive: boolean;
+}[]>;
+export declare class DeviceResDTO extends DeviceResDTO_base {
+}
 export {};

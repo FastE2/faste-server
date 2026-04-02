@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GoogleAuthStateSchema = exports.DeviceSchema = exports.TwoFAEnableResSchema = exports.TwoFADisableBodySchema = exports.ForgotPasswordBodySchema = exports.SendOTPBodySchema = exports.RegisterResSchema = exports.RefreshTokenResSchema = exports.LoginResSchema = exports.LoginBodySchema = exports.VerificationCodeSchema = exports.RefreshTokenSchema = exports.RegisterBodySchema = void 0;
+exports.GoogleAuthStateSchema = exports.DeviceResSchema = exports.DeviceSchema = exports.TwoFAEnableResSchema = exports.TwoFADisableBodySchema = exports.ForgotPasswordBodySchema = exports.SendOTPBodySchema = exports.RegisterResSchema = exports.RefreshTokenResSchema = exports.LoginResSchema = exports.LoginBodySchema = exports.VerificationCodeSchema = exports.RefreshTokenSchema = exports.RegisterBodySchema = void 0;
 const auth_constant_1 = require("../../common/constants/auth.constant");
 const user_schema_1 = require("../../common/schemas/user.schema");
 const zod_1 = __importDefault(require("zod"));
@@ -95,6 +95,7 @@ exports.DeviceSchema = zod_1.default.object({
     createdAt: zod_1.default.date(),
     isActive: zod_1.default.boolean(),
 });
+exports.DeviceResSchema = zod_1.default.array(exports.DeviceSchema);
 exports.GoogleAuthStateSchema = exports.DeviceSchema.pick({
     userAgent: true,
     ip: true,

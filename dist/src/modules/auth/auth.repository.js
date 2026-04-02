@@ -35,20 +35,33 @@ let AuthRepository = class AuthRepository {
         });
     }
     updateOrCreateDeviceUser(body) {
+        console.log('updateOrCreateDeviceUser', body);
         const deviceUser = this.prismaService.device.upsert({
             where: {
-                ip: body.ip,
+                ip_userAgent: {
+                    ip: body.ip,
+                    userAgent: body.userAgent,
+                },
             },
             create: {
                 ip: body.ip,
                 userAgent: body.userAgent,
                 userId: body.userId,
+                lastActive: new Date(),
             },
             update: {
                 lastActive: new Date(),
+                userId: body.userId,
             },
         });
         return deviceUser;
+    }
+    findDevicesByUserId(userId) {
+        return this.prismaService.device.findMany({
+            where: {
+                userId,
+            },
+        });
     }
     createRefreshToken(data) {
         return this.prismaService.refreshToken.create({

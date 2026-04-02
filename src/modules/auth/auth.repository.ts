@@ -50,20 +50,34 @@ export class AuthRepository {
     userAgent: string;
     userId: number;
   }) {
+    console.log('updateOrCreateDeviceUser', body);
     const deviceUser = this.prismaService.device.upsert({
       where: {
-        ip: body.ip,
+        ip_userAgent: {
+          ip: body.ip,
+          userAgent: body.userAgent,
+        },
       },
       create: {
         ip: body.ip,
         userAgent: body.userAgent,
         userId: body.userId,
+        lastActive: new Date(),
       },
       update: {
         lastActive: new Date(),
+        userId: body.userId,
       },
     });
     return deviceUser;
+  }
+
+  findDevicesByUserId(userId: number) {
+    return this.prismaService.device.findMany({
+      where: {
+        userId,
+      },
+    });
   }
 
   createRefreshToken(data: {

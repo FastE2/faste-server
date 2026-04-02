@@ -244,6 +244,31 @@ export declare const DeviceSchema: z.ZodObject<{
     lastActive: Date;
     isActive: boolean;
 }>;
+export declare const DeviceResSchema: z.ZodArray<z.ZodObject<{
+    id: z.ZodNumber;
+    userId: z.ZodNumber;
+    userAgent: z.ZodString;
+    ip: z.ZodString;
+    lastActive: z.ZodDate;
+    createdAt: z.ZodDate;
+    isActive: z.ZodBoolean;
+}, "strip", z.ZodTypeAny, {
+    id: number;
+    createdAt: Date;
+    userId: number;
+    userAgent: string;
+    ip: string;
+    lastActive: Date;
+    isActive: boolean;
+}, {
+    id: number;
+    createdAt: Date;
+    userId: number;
+    userAgent: string;
+    ip: string;
+    lastActive: Date;
+    isActive: boolean;
+}>, "many">;
 export declare const GoogleAuthStateSchema: z.ZodObject<Pick<{
     id: z.ZodNumber;
     userId: z.ZodNumber;
@@ -272,3 +297,4 @@ export type TwoFADisableBodyType = z.infer<typeof TwoFADisableBodySchema>;
 export type TwoFAEnableResType = z.infer<typeof TwoFAEnableResSchema>;
 export type GoogleAuthStateType = z.infer<typeof GoogleAuthStateSchema>;
 export type GoogleAuthBodyType = GoogleAuthStateType;
+export type DeviceResType = z.infer<typeof DeviceResSchema>;

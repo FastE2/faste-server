@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TwoFAEnableResDTO = exports.TwoFADisableBodyDTO = exports.ForgotPasswordBodyDTO = exports.SendOTPBodyDTO = exports.RefreshTokenResDTO = exports.LoginResDTO = exports.LoginBodyDTO = exports.RegisterResDTO = exports.RegisterBodyDTO = void 0;
+exports.DeviceResDTO = exports.TwoFAEnableResDTO = exports.TwoFADisableBodyDTO = exports.ForgotPasswordBodyDTO = exports.SendOTPBodyDTO = exports.RefreshTokenResDTO = exports.LoginResDTO = exports.LoginBodyDTO = exports.RegisterResDTO = exports.RegisterBodyDTO = void 0;
 const nestjs_zod_1 = require("nestjs-zod");
 const auth_schema_1 = require("./auth.schema");
 class RegisterBodyDTO extends (0, nestjs_zod_1.createZodDto)(auth_schema_1.RegisterBodySchema) {
@@ -30,4 +30,7 @@ exports.TwoFADisableBodyDTO = TwoFADisableBodyDTO;
 class TwoFAEnableResDTO extends (0, nestjs_zod_1.createZodDto)(auth_schema_1.TwoFAEnableResSchema) {
 }
 exports.TwoFAEnableResDTO = TwoFAEnableResDTO;
+class DeviceResDTO extends (0, nestjs_zod_1.createZodDto)(auth_schema_1.DeviceResSchema) {
+}
+exports.DeviceResDTO = DeviceResDTO;
 //# sourceMappingURL=auth.dto.js.map

@@ -12,14 +12,14 @@ declare const CreateAddressShipBodyDTO_base: import("nestjs-zod").ZodDto<{
     address: string;
     isDeliveryAddress: boolean;
     isDefault: boolean;
-    latitude?: number | null | undefined;
-    longitude?: number | null | undefined;
     street?: string | null | undefined;
     houseNumber?: string | null | undefined;
     addressInstruction?: string | null | undefined;
     zipcode?: string | null | undefined;
     town?: string | null | undefined;
     labelId?: number | null | undefined;
+    latitude?: number | null | undefined;
+    longitude?: number | null | undefined;
     geoinfo?: {
         region: {
             latitude: number;
@@ -119,7 +119,7 @@ declare const CreateAddressShipBodyDTO_base: import("nestjs-zod").ZodDto<{
     longitude: import("zod").ZodOptional<import("zod").ZodNullable<import("zod").ZodNumber>>;
     createdAt: import("zod").ZodDefault<import("zod").ZodDate>;
     updatedAt: import("zod").ZodOptional<import("zod").ZodDate>;
-}, "name" | "countryId" | "latitude" | "longitude" | "phone" | "divisionId" | "divisionPath" | "street" | "houseNumber" | "address" | "addressInstruction" | "zipcode" | "town" | "labelId" | "isDeliveryAddress" | "isDefault" | "geoinfo">, "strict", import("zod").ZodTypeAny>, {
+}, "name" | "countryId" | "phone" | "divisionId" | "divisionPath" | "street" | "houseNumber" | "address" | "addressInstruction" | "zipcode" | "town" | "labelId" | "isDeliveryAddress" | "isDefault" | "latitude" | "longitude" | "geoinfo">, "strict", import("zod").ZodTypeAny>, {
     name: string;
     countryId: number;
     phone: string;
@@ -131,8 +131,6 @@ declare const CreateAddressShipBodyDTO_base: import("nestjs-zod").ZodDto<{
         WARD?: string | undefined;
     } | null;
     address: string;
-    latitude?: number | null | undefined;
-    longitude?: number | null | undefined;
     street?: string | null | undefined;
     houseNumber?: string | null | undefined;
     addressInstruction?: string | null | undefined;
@@ -141,6 +139,8 @@ declare const CreateAddressShipBodyDTO_base: import("nestjs-zod").ZodDto<{
     labelId?: number | null | undefined;
     isDeliveryAddress?: boolean | undefined;
     isDefault?: boolean | undefined;
+    latitude?: number | null | undefined;
+    longitude?: number | null | undefined;
     geoinfo?: {
         region: {
             latitude: number;
@@ -170,14 +170,14 @@ declare const UpdateAddressShipBodyDTO_base: import("nestjs-zod").ZodDto<{
     address: string;
     isDeliveryAddress: boolean;
     isDefault: boolean;
-    latitude?: number | null | undefined;
-    longitude?: number | null | undefined;
     street?: string | null | undefined;
     houseNumber?: string | null | undefined;
     addressInstruction?: string | null | undefined;
     zipcode?: string | null | undefined;
     town?: string | null | undefined;
     labelId?: number | null | undefined;
+    latitude?: number | null | undefined;
+    longitude?: number | null | undefined;
     geoinfo?: {
         region: {
             latitude: number;
@@ -277,7 +277,7 @@ declare const UpdateAddressShipBodyDTO_base: import("nestjs-zod").ZodDto<{
     longitude: import("zod").ZodOptional<import("zod").ZodNullable<import("zod").ZodNumber>>;
     createdAt: import("zod").ZodDefault<import("zod").ZodDate>;
     updatedAt: import("zod").ZodOptional<import("zod").ZodDate>;
-}, "name" | "countryId" | "latitude" | "longitude" | "phone" | "divisionId" | "divisionPath" | "street" | "houseNumber" | "address" | "addressInstruction" | "zipcode" | "town" | "labelId" | "isDeliveryAddress" | "isDefault" | "geoinfo">, "strict", import("zod").ZodTypeAny>, {
+}, "name" | "countryId" | "phone" | "divisionId" | "divisionPath" | "street" | "houseNumber" | "address" | "addressInstruction" | "zipcode" | "town" | "labelId" | "isDeliveryAddress" | "isDefault" | "latitude" | "longitude" | "geoinfo">, "strict", import("zod").ZodTypeAny>, {
     name: string;
     countryId: number;
     phone: string;
@@ -289,8 +289,6 @@ declare const UpdateAddressShipBodyDTO_base: import("nestjs-zod").ZodDto<{
         WARD?: string | undefined;
     } | null;
     address: string;
-    latitude?: number | null | undefined;
-    longitude?: number | null | undefined;
     street?: string | null | undefined;
     houseNumber?: string | null | undefined;
     addressInstruction?: string | null | undefined;
@@ -299,6 +297,8 @@ declare const UpdateAddressShipBodyDTO_base: import("nestjs-zod").ZodDto<{
     labelId?: number | null | undefined;
     isDeliveryAddress?: boolean | undefined;
     isDefault?: boolean | undefined;
+    latitude?: number | null | undefined;
+    longitude?: number | null | undefined;
     geoinfo?: {
         region: {
             latitude: number;

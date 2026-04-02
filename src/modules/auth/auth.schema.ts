@@ -104,6 +104,8 @@ export const DeviceSchema = z.object({
   isActive: z.boolean(),
 });
 
+export const DeviceResSchema = z.array(DeviceSchema);
+
 export const GoogleAuthStateSchema = DeviceSchema.pick({
   userAgent: true,
   ip: true,
@@ -135,3 +137,6 @@ export type TwoFAEnableResType = z.infer<typeof TwoFAEnableResSchema>;
 // -- Google
 export type GoogleAuthStateType = z.infer<typeof GoogleAuthStateSchema>;
 export type GoogleAuthBodyType = GoogleAuthStateType;
+
+// -- Device
+export type DeviceResType = z.infer<typeof DeviceResSchema>;

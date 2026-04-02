@@ -322,6 +322,15 @@ let AuthService = class AuthService {
             throw error;
         }
     }
+    getDevices(userId) {
+        try {
+            return this.authRepository.findDevicesByUserId(userId);
+        }
+        catch (error) {
+            console.log('/auth/device/me', error);
+            throw error;
+        }
+    }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([

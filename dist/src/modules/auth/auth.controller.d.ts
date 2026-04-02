@@ -44,6 +44,15 @@ export declare class AuthController {
     disableTwoFactorAuth(body: TwoFADisableBodyDTO, userId: number): Promise<{
         message: string;
     }>;
+    deviceUser(userId: number): import(".prisma/client").Prisma.PrismaPromise<{
+        id: number;
+        createdAt: Date;
+        userId: number;
+        userAgent: string;
+        ip: string;
+        lastActive: Date;
+        isActive: boolean;
+    }[]>;
     googleAuth(ip: string, userAgent: string): {
         url: string;
     };

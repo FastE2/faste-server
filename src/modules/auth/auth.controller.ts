@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import {
+  DeviceResDTO,
   ForgotPasswordBodyDTO,
   LoginBodyDTO,
   LoginResDTO,
@@ -125,6 +126,13 @@ export class AuthController {
       totpCode: body.totpCode,
       userId,
     });
+  }
+
+  @Get('device/me')
+  @ZodSerializerDto(DeviceResDTO)
+  @HttpCode(200)
+  deviceUser(@ActiveUser('userId') userId: number) {
+    return this.authService.getDevices(userId);
   }
 
   @Get('google-auth')

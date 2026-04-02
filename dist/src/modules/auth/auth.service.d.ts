@@ -73,4 +73,13 @@ export declare class AuthService {
     }): Promise<{
         message: string;
     }>;
+    getDevices(userId: number): import(".prisma/client").Prisma.PrismaPromise<{
+        id: number;
+        createdAt: Date;
+        userId: number;
+        userAgent: string;
+        ip: string;
+        lastActive: Date;
+        isActive: boolean;
+    }[]>;
 }

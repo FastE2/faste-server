@@ -65,6 +65,9 @@ let AuthController = class AuthController {
             userId,
         });
     }
+    deviceUser(userId) {
+        return this.authService.getDevices(userId);
+    }
     googleAuth(ip, userAgent) {
         const { url } = this.googleService.getOAuth2ClientUrl({ ip, userAgent });
         return { url };
@@ -169,6 +172,15 @@ __decorate([
     __metadata("design:paramtypes", [auth_dto_1.TwoFADisableBodyDTO, Number]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "disableTwoFactorAuth", null);
+__decorate([
+    (0, common_1.Get)('device/me'),
+    (0, nestjs_zod_1.ZodSerializerDto)(auth_dto_1.DeviceResDTO),
+    (0, common_1.HttpCode)(200),
+    __param(0, (0, active_user_decorator_1.ActiveUser)('userId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "deviceUser", null);
 __decorate([
     (0, common_1.Get)('google-auth'),
     (0, throttler_1.Throttle)({ default: { limit: 5, ttl: 60 } }),
