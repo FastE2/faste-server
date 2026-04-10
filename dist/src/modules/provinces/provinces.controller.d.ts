@@ -1,10 +1,9 @@
-import { PaginationQueryDTO } from 'src/common/dtos/request.dto';
-import { GetParamsProvincesDTO } from './provinces.dto';
+import { GetParamsProvincesDTO, QueryProvincesDTO } from './provinces.dto';
 import { ProvincesService } from './provinces.service';
 export declare class ProvincesController {
     private readonly provincesService;
     constructor(provincesService: ProvincesService);
-    getStates(countryCode: string, query: PaginationQueryDTO): Promise<{
+    getStates(countryCode: string, query: QueryProvincesDTO): Promise<{
         data: any;
         totalItem: any;
         page: number;
@@ -17,11 +16,11 @@ export declare class ProvincesController {
         code: string | null;
         createdAt: Date;
         updatedAt: Date;
+        parentId: number | null;
         countryId: number | null;
         level: import(".prisma/client").$Enums.DivisionLevel;
-        parentId: number | null;
     }>;
-    getCities(countryCode: string, query: PaginationQueryDTO): Promise<{
+    getCities(countryCode: string, query: QueryProvincesDTO): Promise<{
         data: any;
         totalItem: any;
         page: number;
@@ -34,11 +33,11 @@ export declare class ProvincesController {
         code: string | null;
         createdAt: Date;
         updatedAt: Date;
+        parentId: number | null;
         countryId: number | null;
         level: import(".prisma/client").$Enums.DivisionLevel;
-        parentId: number | null;
     }>;
-    getDistricts(countryCode: string, query: PaginationQueryDTO): Promise<{
+    getDistricts(countryCode: string, query: QueryProvincesDTO): Promise<{
         data: any;
         totalItem: any;
         page: number;
@@ -51,11 +50,11 @@ export declare class ProvincesController {
         code: string | null;
         createdAt: Date;
         updatedAt: Date;
+        parentId: number | null;
         countryId: number | null;
         level: import(".prisma/client").$Enums.DivisionLevel;
-        parentId: number | null;
     }>;
-    getWards(countryCode: string, query: PaginationQueryDTO): Promise<{
+    getWards(countryCode: string, query: QueryProvincesDTO): Promise<{
         data: any;
         totalItem: any;
         page: number;
@@ -68,9 +67,9 @@ export declare class ProvincesController {
         code: string | null;
         createdAt: Date;
         updatedAt: Date;
+        parentId: number | null;
         countryId: number | null;
         level: import(".prisma/client").$Enums.DivisionLevel;
-        parentId: number | null;
     }>;
     getCountryById(countryCode: string): Promise<{
         id: number;

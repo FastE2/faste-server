@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PaginationQueryType } from 'src/common/schemas/request.schema';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { DIVISION_LEVEL } from 'src/common/constants/division-level.constant';
+import { QueryProvincesType } from './provinces.schema';
 
 @Injectable()
 export class ProvincesRepository {
@@ -10,10 +10,11 @@ export class ProvincesRepository {
   private async paginate<T>(
     model: any,
     where: object,
-    pagination: PaginationQueryType,
+    pagination: QueryProvincesType,
   ) {
     const skip = (pagination.page - 1) * pagination.limit;
     const take = pagination.limit;
+    where = { ...where, parentId: pagination.parentId };
 
     const [data, totalItem] = await Promise.all([
       model.findMany({ where, skip, take }),
@@ -40,7 +41,7 @@ export class ProvincesRepository {
   async listDivisions(
     countryCode: string,
     level: DIVISION_LEVEL,
-    pagination: PaginationQueryType,
+    pagination: QueryProvincesType,
   ) {
     const country = await this.findUniqueCountry(countryCode);
     return this.paginate(
@@ -66,7 +67,7 @@ export class ProvincesRepository {
     });
   }
 
-  async listStates(countryCode: string, pagination: PaginationQueryType) {
+  async listStates(countryCode: string, pagination: QueryProvincesType) {
     const country = await this.findUniqueCountry(countryCode);
     return this.paginate(
       this.prismaService.administrativeDivision,
@@ -75,7 +76,7 @@ export class ProvincesRepository {
     );
   }
 
-  async listDistricts(countryCode: string, pagination: PaginationQueryType) {
+  async listDistricts(countryCode: string, pagination: QueryProvincesType) {
     const country = await this.findUniqueCountry(countryCode);
     return this.paginate(
       this.prismaService.administrativeDivision,
@@ -84,7 +85,7 @@ export class ProvincesRepository {
     );
   }
 
-  async listCities(countryCode: string, pagination: PaginationQueryType) {
+  async listCities(countryCode: string, pagination: QueryProvincesType) {
     const country = await this.findUniqueCountry(countryCode);
     return this.paginate(
       this.prismaService.administrativeDivision,
@@ -93,7 +94,7 @@ export class ProvincesRepository {
     );
   }
 
-  async listWards(countryCode: string, pagination: PaginationQueryType) {
+  async listWards(countryCode: string, pagination: QueryProvincesType) {
     const country = await this.findUniqueCountry(countryCode);
     return this.paginate(
       this.prismaService.administrativeDivision,

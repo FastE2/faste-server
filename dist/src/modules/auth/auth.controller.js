@@ -39,7 +39,6 @@ let AuthController = class AuthController {
         return this.authService.register(body);
     }
     login(body, userAgent, ip, res) {
-        console.log({ userAgent, ip });
         return this.authService.login({ ...body, userAgent, ip }, res);
     }
     refreshToken(_, req, res) {

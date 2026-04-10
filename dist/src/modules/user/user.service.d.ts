@@ -11,41 +11,35 @@ export declare class UserService {
     private readonly hashService;
     constructor(userRepository: UserRepository, commonUserRepository: CommonUserRepository, commonRoleRepository: CommonRoleRepository, hashService: HashService);
     getAllUsers(query: PaginationQueryType): Promise<{
-        page: number;
         data: {
             role: {
-                name: string;
                 id: number;
+                name: string;
             };
-            name: string;
-            createdAt: Date;
-            updatedAt: Date;
-            deletedAt: Date | null;
-            deletedById: number | null;
             id: number;
-            createdById: number | null;
-            updatedById: number | null;
             email: string;
+            name: string;
             phoneNumber: string;
             avatar: string | null;
             gender: string | null;
             roleId: number;
             dateOfBirth: Date | null;
+            createdById: number | null;
+            updatedById: number | null;
+            deletedById: number | null;
+            deletedAt: Date | null;
+            createdAt: Date;
+            updatedAt: Date;
         }[];
+        page: number;
         totalItem: number;
         limmit: number;
         totalPage: number;
     }>;
     getUserById(id: number): Promise<Omit<{
-        name: string;
-        createdAt: Date;
-        updatedAt: Date;
-        deletedAt: Date | null;
-        deletedById: number | null;
         id: number;
-        createdById: number | null;
-        updatedById: number | null;
         email: string;
+        name: string;
         password: string;
         phoneNumber: string;
         avatar: string | null;
@@ -53,6 +47,12 @@ export declare class UserService {
         roleId: number;
         totpSecret: string | null;
         dateOfBirth: Date | null;
+        createdById: number | null;
+        updatedById: number | null;
+        deletedById: number | null;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
     }, "password" | "totpSecret"> & {
         role: {
             id: number;
@@ -64,15 +64,9 @@ export declare class UserService {
         updatedById: number;
         updatedByRoleName: string;
     }): Promise<Omit<{
-        name: string;
-        createdAt: Date;
-        updatedAt: Date;
-        deletedAt: Date | null;
-        deletedById: number | null;
         id: number;
-        createdById: number | null;
-        updatedById: number | null;
         email: string;
+        name: string;
         password: string;
         phoneNumber: string;
         avatar: string | null;
@@ -80,6 +74,12 @@ export declare class UserService {
         roleId: number;
         totpSecret: string | null;
         dateOfBirth: Date | null;
+        createdById: number | null;
+        updatedById: number | null;
+        deletedById: number | null;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
     }, "password" | "totpSecret">>;
     updateUser({ id, data, updatedById, updatedByRoleName, }: {
         id: number;
@@ -87,20 +87,20 @@ export declare class UserService {
         updatedById: number;
         updatedByRoleName: string;
     }): Promise<{
-        name: string;
-        createdAt: Date;
-        updatedAt: Date;
-        deletedAt: Date | null;
-        deletedById: number | null;
         id: number;
-        createdById: number | null;
-        updatedById: number | null;
         email: string;
+        name: string;
         phoneNumber: string;
         avatar: string | null;
         gender: string | null;
         roleId: number;
         dateOfBirth: Date | null;
+        createdById: number | null;
+        updatedById: number | null;
+        deletedById: number | null;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     private verifyYourself;
     private verifyRoleAdmin;

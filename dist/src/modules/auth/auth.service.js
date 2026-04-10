@@ -98,7 +98,6 @@ let AuthService = class AuthService {
                     token: body.totpCode,
                     secret: decryptedSecret,
                 });
-                console.log('ISVALID', isValid);
                 if (!isValid) {
                     throw auth_error_1.InvalidTokenTOTPException;
                 }
@@ -133,7 +132,7 @@ let AuthService = class AuthService {
                 httpOnly: true,
                 secure: false,
                 sameSite: 'lax',
-                path: '/auth',
+                path: '/',
                 maxAge: 1 * 24 * 3600 * 1000,
             });
             return { accessToken };
@@ -151,7 +150,7 @@ let AuthService = class AuthService {
                     httpOnly: true,
                     secure: false,
                     sameSite: 'lax',
-                    path: '/auth',
+                    path: '/',
                 });
                 throw auth_error_1.InvalidTokenException;
             }
@@ -177,7 +176,7 @@ let AuthService = class AuthService {
                 httpOnly: true,
                 secure: false,
                 sameSite: 'lax',
-                path: '/auth',
+                path: '/',
             });
             await this.authRepository.deleteRefreshToken(token);
             return { message: 'Logout successfully' };

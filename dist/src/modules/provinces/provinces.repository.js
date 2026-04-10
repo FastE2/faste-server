@@ -21,6 +21,7 @@ let ProvincesRepository = class ProvincesRepository {
     async paginate(model, where, pagination) {
         const skip = (pagination.page - 1) * pagination.limit;
         const take = pagination.limit;
+        where = { ...where, parentId: pagination.parentId };
         const [data, totalItem] = await Promise.all([
             model.findMany({ where, skip, take }),
             model.count({ where }),

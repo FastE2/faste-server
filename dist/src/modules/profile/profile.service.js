@@ -24,7 +24,9 @@ let ProfileService = class ProfileService {
     }
     async getProfile(id) {
         try {
-            const user = await this.commonUserRepository.findUniqueUserProfile({ id });
+            const user = await this.commonUserRepository.findUniqueUserProfile({
+                id,
+            });
             if (!user) {
                 throw new common_1.NotFoundException('User not found');
             }

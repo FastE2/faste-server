@@ -14,7 +14,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProvincesController = void 0;
 const common_1 = require("@nestjs/common");
-const request_dto_1 = require("../../common/dtos/request.dto");
 const provinces_dto_1 = require("./provinces.dto");
 const provinces_service_1 = require("./provinces.service");
 let ProvincesController = class ProvincesController {
@@ -56,7 +55,7 @@ __decorate([
     __param(0, (0, common_1.Param)('countryCode')),
     __param(1, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, request_dto_1.PaginationQueryDTO]),
+    __metadata("design:paramtypes", [String, provinces_dto_1.QueryProvincesDTO]),
     __metadata("design:returntype", void 0)
 ], ProvincesController.prototype, "getStates", null);
 __decorate([
@@ -71,7 +70,7 @@ __decorate([
     __param(0, (0, common_1.Param)('countryCode')),
     __param(1, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, request_dto_1.PaginationQueryDTO]),
+    __metadata("design:paramtypes", [String, provinces_dto_1.QueryProvincesDTO]),
     __metadata("design:returntype", void 0)
 ], ProvincesController.prototype, "getCities", null);
 __decorate([
@@ -86,7 +85,7 @@ __decorate([
     __param(0, (0, common_1.Param)('countryCode')),
     __param(1, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, request_dto_1.PaginationQueryDTO]),
+    __metadata("design:paramtypes", [String, provinces_dto_1.QueryProvincesDTO]),
     __metadata("design:returntype", void 0)
 ], ProvincesController.prototype, "getDistricts", null);
 __decorate([
@@ -101,7 +100,7 @@ __decorate([
     __param(0, (0, common_1.Param)('countryCode')),
     __param(1, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, request_dto_1.PaginationQueryDTO]),
+    __metadata("design:paramtypes", [String, provinces_dto_1.QueryProvincesDTO]),
     __metadata("design:returntype", void 0)
 ], ProvincesController.prototype, "getWards", null);
 __decorate([

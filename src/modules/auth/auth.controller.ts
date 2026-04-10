@@ -58,7 +58,6 @@ export class AuthController {
     @Ip() ip: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    console.log({ userAgent, ip });
     return this.authService.login({ ...body, userAgent, ip }, res);
   }
 

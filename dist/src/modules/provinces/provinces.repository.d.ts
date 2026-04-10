@@ -1,6 +1,6 @@
-import { PaginationQueryType } from 'src/common/schemas/request.schema';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { DIVISION_LEVEL } from 'src/common/constants/division-level.constant';
+import { QueryProvincesType } from './provinces.schema';
 export declare class ProvincesRepository {
     private readonly prismaService;
     constructor(prismaService: PrismaService);
@@ -15,7 +15,7 @@ export declare class ProvincesRepository {
         phoneCode: string | null;
         addressFormat: PrismaJson.AddressFormat | null;
     }>;
-    listDivisions(countryCode: string, level: DIVISION_LEVEL, pagination: PaginationQueryType): Promise<{
+    listDivisions(countryCode: string, level: DIVISION_LEVEL, pagination: QueryProvincesType): Promise<{
         data: any;
         totalItem: any;
         page: number;
@@ -28,32 +28,32 @@ export declare class ProvincesRepository {
         code: string | null;
         createdAt: Date;
         updatedAt: Date;
+        parentId: number | null;
         countryId: number | null;
         level: import(".prisma/client").$Enums.DivisionLevel;
-        parentId: number | null;
     } | null>;
-    listStates(countryCode: string, pagination: PaginationQueryType): Promise<{
+    listStates(countryCode: string, pagination: QueryProvincesType): Promise<{
         data: any;
         totalItem: any;
         page: number;
         limit: number;
         totalPage: number;
     }>;
-    listDistricts(countryCode: string, pagination: PaginationQueryType): Promise<{
+    listDistricts(countryCode: string, pagination: QueryProvincesType): Promise<{
         data: any;
         totalItem: any;
         page: number;
         limit: number;
         totalPage: number;
     }>;
-    listCities(countryCode: string, pagination: PaginationQueryType): Promise<{
+    listCities(countryCode: string, pagination: QueryProvincesType): Promise<{
         data: any;
         totalItem: any;
         page: number;
         limit: number;
         totalPage: number;
     }>;
-    listWards(countryCode: string, pagination: PaginationQueryType): Promise<{
+    listWards(countryCode: string, pagination: QueryProvincesType): Promise<{
         data: any;
         totalItem: any;
         page: number;
@@ -66,9 +66,9 @@ export declare class ProvincesRepository {
         code: string | null;
         createdAt: Date;
         updatedAt: Date;
+        parentId: number | null;
         countryId: number | null;
         level: import(".prisma/client").$Enums.DivisionLevel;
-        parentId: number | null;
     } | null>;
     findDistrictById(countryCode: string, id: number): Promise<{
         id: number;
@@ -76,9 +76,9 @@ export declare class ProvincesRepository {
         code: string | null;
         createdAt: Date;
         updatedAt: Date;
+        parentId: number | null;
         countryId: number | null;
         level: import(".prisma/client").$Enums.DivisionLevel;
-        parentId: number | null;
     } | null>;
     findCityById(countryCode: string, id: number): Promise<{
         id: number;
@@ -86,9 +86,9 @@ export declare class ProvincesRepository {
         code: string | null;
         createdAt: Date;
         updatedAt: Date;
+        parentId: number | null;
         countryId: number | null;
         level: import(".prisma/client").$Enums.DivisionLevel;
-        parentId: number | null;
     } | null>;
     findWardById(countryCode: string, id: number): Promise<{
         id: number;
@@ -96,8 +96,8 @@ export declare class ProvincesRepository {
         code: string | null;
         createdAt: Date;
         updatedAt: Date;
+        parentId: number | null;
         countryId: number | null;
         level: import(".prisma/client").$Enums.DivisionLevel;
-        parentId: number | null;
     } | null>;
 }

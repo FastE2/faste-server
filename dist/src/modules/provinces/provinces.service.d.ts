@@ -1,5 +1,5 @@
-import { PaginationQueryType } from 'src/common/schemas/request.schema';
 import { ProvincesRepository } from './provinces.repository';
+import { QueryProvincesType } from './provinces.schema';
 export declare class ProvincesService {
     private readonly provincesRepository;
     constructor(provincesRepository: ProvincesRepository);
@@ -13,28 +13,28 @@ export declare class ProvincesService {
         phoneCode: string | null;
         addressFormat: PrismaJson.AddressFormat | null;
     }>;
-    getStates(countryCode: string, query: PaginationQueryType): Promise<{
+    getStates(countryCode: string, query: QueryProvincesType): Promise<{
         data: any;
         totalItem: any;
         page: number;
         limit: number;
         totalPage: number;
     }>;
-    getDistricts(countryCode: string, query: PaginationQueryType): Promise<{
+    getDistricts(countryCode: string, query: QueryProvincesType): Promise<{
         data: any;
         totalItem: any;
         page: number;
         limit: number;
         totalPage: number;
     }>;
-    getCities(countryCode: string, query: PaginationQueryType): Promise<{
+    getCities(countryCode: string, query: QueryProvincesType): Promise<{
         data: any;
         totalItem: any;
         page: number;
         limit: number;
         totalPage: number;
     }>;
-    getWards(countryCode: string, query: PaginationQueryType): Promise<{
+    getWards(countryCode: string, query: QueryProvincesType): Promise<{
         data: any;
         totalItem: any;
         page: number;
@@ -47,9 +47,9 @@ export declare class ProvincesService {
         code: string | null;
         createdAt: Date;
         updatedAt: Date;
+        parentId: number | null;
         countryId: number | null;
         level: import(".prisma/client").$Enums.DivisionLevel;
-        parentId: number | null;
     }>;
     getDistrictById(countryCode: string, id: number): Promise<{
         id: number;
@@ -57,9 +57,9 @@ export declare class ProvincesService {
         code: string | null;
         createdAt: Date;
         updatedAt: Date;
+        parentId: number | null;
         countryId: number | null;
         level: import(".prisma/client").$Enums.DivisionLevel;
-        parentId: number | null;
     }>;
     getCityById(countryCode: string, id: number): Promise<{
         id: number;
@@ -67,9 +67,9 @@ export declare class ProvincesService {
         code: string | null;
         createdAt: Date;
         updatedAt: Date;
+        parentId: number | null;
         countryId: number | null;
         level: import(".prisma/client").$Enums.DivisionLevel;
-        parentId: number | null;
     }>;
     getWardById(countryCode: string, id: number): Promise<{
         id: number;
@@ -77,8 +77,8 @@ export declare class ProvincesService {
         code: string | null;
         createdAt: Date;
         updatedAt: Date;
+        parentId: number | null;
         countryId: number | null;
         level: import(".prisma/client").$Enums.DivisionLevel;
-        parentId: number | null;
     }>;
 }

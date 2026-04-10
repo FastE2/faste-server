@@ -25,35 +25,35 @@ export declare class OrderRepository {
     }): Promise<any>;
     findUniqueOrder(where: WhereUniqueOrderType): Promise<{
         items: {
-            createdAt: Date;
             id: number;
-            orderId: number | null;
+            createdAt: Date;
+            productId: number | null;
+            image: string;
+            quantity: number;
+            productTranslations: PrismaJson.ProductTranslations;
+            skuId: number | null;
             productName: string;
             skuPrice: number;
-            image: string;
             skuAttributes: PrismaJson.AttributesType;
-            skuId: number | null;
-            quantity: number;
-            productId: number | null;
-            productTranslations: PrismaJson.ProductTranslations;
+            orderId: number | null;
         }[];
     } & {
+        id: number;
         status: import(".prisma/client").$Enums.OrderStatus;
-        addressShipId: number;
+        createdById: number;
+        updatedById: number | null;
+        deletedById: number | null;
+        deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        deletedAt: Date | null;
-        deletedById: number | null;
-        id: number;
         userId: number;
         shopId: number;
-        paymentId: number | null;
+        addressShipId: number;
         deliveryId: number;
         voucherId: number | null;
         paymentMethod: import(".prisma/client").$Enums.PaymentMethod;
-        createdById: number;
-        updatedById: number | null;
         isReviewed: boolean;
+        paymentId: number | null;
     }>;
     findUniqueClientById({ userId, orderId, }: {
         userId: number;

@@ -106,7 +106,6 @@ export class AuthService {
           token: body.totpCode,
           secret: decryptedSecret,
         });
-        console.log('ISVALID', isValid);
         if (!isValid) {
           throw InvalidTokenTOTPException;
         }
@@ -153,7 +152,7 @@ export class AuthService {
         httpOnly: true,
         secure: false,
         sameSite: 'lax',
-        path: '/auth',
+        path: '/',
         maxAge: 1 * 24 * 3600 * 1000,
       });
 
@@ -175,7 +174,7 @@ export class AuthService {
           httpOnly: true,
           secure: false,
           sameSite: 'lax',
-          path: '/auth',
+          path: '/',
         });
         throw InvalidTokenException;
       }
@@ -207,7 +206,7 @@ export class AuthService {
         httpOnly: true,
         secure: false,
         sameSite: 'lax',
-        path: '/auth',
+        path: '/',
       });
 
       await this.authRepository.deleteRefreshToken(token);

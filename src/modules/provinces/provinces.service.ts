@@ -4,6 +4,7 @@ import { NotFoundRecordException } from 'src/common/errors';
 import { ProvincesRepository } from './provinces.repository';
 import { DIVISION_LEVEL } from '../../common/constants/division-level.constant';
 import { isPrismaRecordNotFound } from 'src/common/errors/prisma';
+import { QueryProvincesType } from './provinces.schema';
 
 @Injectable()
 export class ProvincesService {
@@ -22,7 +23,7 @@ export class ProvincesService {
     }
   }
 
-  async getStates(countryCode: string, query: PaginationQueryType) {
+  async getStates(countryCode: string, query: QueryProvincesType) {
     try {
       return await this.provincesRepository.listDivisions(
         countryCode,
@@ -38,7 +39,7 @@ export class ProvincesService {
     }
   }
 
-  async getDistricts(countryCode: string, query: PaginationQueryType) {
+  async getDistricts(countryCode: string, query: QueryProvincesType) {
     try {
       return await this.provincesRepository.listDivisions(
         countryCode,
@@ -54,7 +55,7 @@ export class ProvincesService {
     }
   }
 
-  async getCities(countryCode: string, query: PaginationQueryType) {
+  async getCities(countryCode: string, query: QueryProvincesType) {
     try {
       return await this.provincesRepository.listDivisions(
         countryCode,
@@ -70,7 +71,7 @@ export class ProvincesService {
     }
   }
 
-  async getWards(countryCode: string, query: PaginationQueryType) {
+  async getWards(countryCode: string, query: QueryProvincesType) {
     try {
       return await this.provincesRepository.listDivisions(
         countryCode,

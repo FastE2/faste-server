@@ -1,7 +1,5 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ZodSerializerDto } from 'nestjs-zod';
-import { PaginationQueryDTO } from 'src/common/dtos/request.dto';
-import { GetParamsProvincesDTO } from './provinces.dto';
+import { GetParamsProvincesDTO, QueryProvincesDTO } from './provinces.dto';
 import { ProvincesService } from './provinces.service';
 
 @Controller('provinces')
@@ -12,7 +10,7 @@ export class ProvincesController {
   @Get(':countryCode/s')
   getStates(
     @Param('countryCode') countryCode: string,
-    @Query() query: PaginationQueryDTO,
+    @Query() query: QueryProvincesDTO,
   ) {
     return this.provincesService.getStates(countryCode, query);
   }
@@ -26,7 +24,7 @@ export class ProvincesController {
   @Get(':countryCode/c')
   getCities(
     @Param('countryCode') countryCode: string,
-    @Query() query: PaginationQueryDTO,
+    @Query() query: QueryProvincesDTO,
   ) {
     return this.provincesService.getCities(countryCode, query);
   }
@@ -40,7 +38,7 @@ export class ProvincesController {
   @Get(':countryCode/d')
   getDistricts(
     @Param('countryCode') countryCode: string,
-    @Query() query: PaginationQueryDTO,
+    @Query() query: QueryProvincesDTO,
   ) {
     return this.provincesService.getDistricts(countryCode, query);
   }
@@ -54,7 +52,7 @@ export class ProvincesController {
   @Get(':countryCode/w')
   getWards(
     @Param('countryCode') countryCode: string,
-    @Query() query: PaginationQueryDTO,
+    @Query() query: QueryProvincesDTO,
   ) {
     return this.provincesService.getWards(countryCode, query);
   }
