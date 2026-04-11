@@ -3,7 +3,6 @@ import { AppModule } from './app.module';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import cookieParser from 'cookie-parser';
-import { AuthGuard } from './common/guards/auth.guard';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { WebsocketAdapter } from './common/websockets/websocket.adapter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
