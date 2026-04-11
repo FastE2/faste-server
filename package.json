@@ -13,7 +13,7 @@
   },
   "scripts": {
     "prepare": "husky install || true",
-    "build": "prisma generate && cross-env NODE_OPTIONS=--max-old-space-size=4096 nest build",
+    "build": "npx prisma generate && nest build --builder swc && npm prune --production",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -80,7 +80,7 @@
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
     "@swc/cli": "^0.6.0",
-    "@swc/core": "^1.10.7",
+    "@swc/core": "^1.15.24",
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.9",
     "@types/express": "^5.0.0",

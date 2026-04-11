@@ -1,6 +1,8 @@
 // © Copyright belongs to the account [ahkiet lekiett2201@gmail.com]. Unauthorized copying, selling, distribution, or modification is prohibited.
 generator client {
   provider = "prisma-client-js"
+  engineType    = "library"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 generator json {

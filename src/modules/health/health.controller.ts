@@ -67,7 +67,7 @@ export class HealthController {
       this.logger.log(`[${name}] healthy`);
       return result;
     } catch (error) {
-      this.logger.error(`[${name}] unhealthy`, error.stack);
+      this.logger.error(`[${name}] unhealthy`, error);
       throw error;
     }
   }
