@@ -76,7 +76,7 @@ async function bootstrap() {
   await websocketAdapter.connectToRedis();
   app.useWebSocketAdapter(websocketAdapter);
   const port = process.env.PORT || 8080;
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
   console.log(`
   ╔═══════════════════════════════════════════╗
   ║ FastE API Server is running!              ║

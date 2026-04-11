@@ -8,17 +8,17 @@ export class PrismaService
 {
   constructor() {
     super({
-      datasources: {
-        db: {
-          url: process.env.DATABASE_URL,
-        },
-      },
+      // datasources: {
+      //   db: {
+      //     url: process.env.DATABASE_URL,
+      //   },
+      // },
       log:
         process.env.NODE_ENV === 'production'
           ? ['error', 'warn']
           : ['query', 'info', 'warn', 'error'],
 
-      datasourceUrl: process.env.DATABASE_URL,
+      // datasourceUrl: process.env.DATABASE_URL,
     });
   }
 
