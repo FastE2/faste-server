@@ -13,7 +13,7 @@
   },
   "scripts": {
     "prepare": "husky install || true",
-    "build": "npx prisma generate && nest build --builder swc && npm prune --production",
+    "build": "prisma generate && nest build --builder swc",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
