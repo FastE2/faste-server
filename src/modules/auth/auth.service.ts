@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   ForgotPasswordBodyType,
   LoginBodyType,
@@ -31,6 +31,7 @@ import { TwoFactorService } from './2fa.service';
 import { EncryptionService } from 'src/common/libs/crypto/encryption.service';
 import { generateOTP } from 'src/utils/generate-otp.util';
 import { EmailAlreadyExistsException } from 'src/common/errors';
+import { CaptchaService } from 'src/common/libs/captcha/captcha.service';
 
 @Injectable()
 export class AuthService {
@@ -43,6 +44,7 @@ export class AuthService {
     private readonly mailService: MailService,
     private readonly twoFactorService: TwoFactorService,
     private readonly encryptionService: EncryptionService,
+    private readonly captchaService: CaptchaService,
   ) {}
 
   async register(body: RegisterBodyType) {
@@ -84,6 +86,16 @@ export class AuthService {
     res: Response,
   ) {
     try {
+      const verifyRecaptcha = await this.captchaService.verify(
+        body.captchaToken,
+        body.ip,
+      );
+      if (!verifyRecaptcha) {
+        throw new BadRequestException({
+          path: 'captcha',
+          message: 'Captcha failed',
+        });
+      }
       // Find email exists in db
       const user = await this.commonUserRepository.findUniqueUser({
         email: body.email,

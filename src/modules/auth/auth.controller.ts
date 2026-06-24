@@ -49,6 +49,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @HttpCode(200)
   @Throttle({ default: { limit: 5, ttl: 60 } })
   @Ispublic()
   @ZodSerializerDto(LoginResDTO)

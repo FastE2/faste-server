@@ -28,11 +28,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
       this.logger.error(`ZodSerializationException: ${zodError.message}`);
     }
     return response.status(status).json({
-      ...responseBody,
+      error: responseBody,
+      success: false,
+      data: null,
       timestamp: new Date().toISOString(),
-      statusCode: responseBody['statusCode']
-        ? responseBody['statusCode']
-        : status,
+      code: responseBody['statusCode'] ? responseBody['statusCode'] : status,
     });
   }
 }

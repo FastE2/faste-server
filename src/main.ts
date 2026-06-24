@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import cookieParser from 'cookie-parser';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -9,6 +8,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { patchNestJsSwagger } from 'nestjs-zod';
 import helmet from 'helmet';
 import { VersioningType } from '@nestjs/common';
+import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 
 // © Copyright belongs to the account [ahkiet lekiett2201@gmail.com]. Unauthorized copying, selling, distribution, or modification is prohibited.
 async function bootstrap() {
@@ -28,7 +28,7 @@ async function bootstrap() {
 
   // -- interceptor
   // app.useGlobalInterceptors(new LoggingInterceptor());
-  app.useGlobalInterceptors(new TransformInterceptor());
+  app.useGlobalInterceptors(new ResponseInterceptor());
 
   // -- filter
   app.useGlobalFilters(new HttpExceptionFilter());

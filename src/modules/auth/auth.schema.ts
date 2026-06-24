@@ -47,6 +47,7 @@ export const LoginBodySchema = UserSchema.pick({
 })
   .extend({
     totpCode: z.string().length(6).optional(),
+    captchaToken: z.string().min(10, 'Captcha token invalid'),
   })
   .strict();
 

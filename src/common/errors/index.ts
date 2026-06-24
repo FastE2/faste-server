@@ -9,7 +9,7 @@ export const NotFoundRecordSKUException = new NotFoundException({
 });
 
 export const EmailAlreadyExistsException = new ConflictException({
-  message: 'Error.EmailAlreadyExists',
+  message: 'Email already exists',
   path: 'email',
 });
 

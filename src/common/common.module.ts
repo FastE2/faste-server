@@ -12,6 +12,7 @@ import { WebsocketModule } from './websockets/websocket.module';
 import { CommonSKURepository } from './repositories/common-sku.repository';
 import { CommonOrderRepository } from './repositories/common-order.repository';
 import { CommonProductRepository } from './repositories/common-product.repository';
+import { CaptchaService } from './libs/captcha/captcha.service';
 
 @Global()
 @Module({
@@ -26,6 +27,7 @@ import { CommonProductRepository } from './repositories/common-product.repositor
     TokenService,
     EncryptionService,
     HashService,
+    CaptchaService,
     WebsocketModule,
     {
       provide: APP_GUARD,
