@@ -13,11 +13,10 @@ export class PrismaService
       //     url: process.env.DATABASE_URL,
       //   },
       // },
-      log:
-        process.env.NODE_ENV === 'production'
-          ? ['error', 'warn']
-          : ['query', 'info', 'warn', 'error'],
-
+      // log:
+      //   process.env.NODE_ENV === 'production'
+      //     ? ['error', 'warn']
+      //     : ['query', 'info', 'warn', 'error'],
       // datasourceUrl: process.env.DATABASE_URL,
     });
   }

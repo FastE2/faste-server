@@ -68,6 +68,15 @@ export class ProductController {
     return this.productService.findAll({ query, userId, roleName });
   }
 
+  @Get('/:id')
+  getProductDetail(
+    @Param() params: GetParamsDTO,
+    @ActiveUser('userId') userId: number,
+    @ActiveRolePermissions('name') roleName: string,
+  ) {
+    return this.productService.findById({ id: params.id, userId, roleName });
+  }
+
   @Post()
   createProduct(
     @Body() body: CreateProductBodyDTO,

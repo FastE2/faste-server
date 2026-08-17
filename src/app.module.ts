@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
@@ -31,6 +31,7 @@ import { SearchModule } from './modules/search/search.module';
 import { ReviewModule } from './modules/review/review.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { HealthModule } from './modules/health/health.module';
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
 
 const modules = [
   AuthModule,
@@ -86,4 +87,8 @@ const modules = [
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
