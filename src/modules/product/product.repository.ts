@@ -101,14 +101,7 @@ export class ProductRepository {
         skip,
       }),
       this.prismaService.product.count({
-        where: {
-          status: 'PUBLISHED',
-          deletedAt: null,
-          publishedAt: {
-            lte: new Date(),
-            not: null,
-          },
-        },
+        where,
       }),
     ]);
 
@@ -126,9 +119,9 @@ export class ProductRepository {
     id: number,
   ): Promise<any> {
     const {
-      limit,
+      limit = 10,
       orderBy,
-      page,
+      page = 1,
       sortBy,
       brandIds,
       categories,
@@ -201,14 +194,7 @@ export class ProductRepository {
         skip,
       }),
       this.prismaService.product.count({
-        where: {
-          status: 'PUBLISHED',
-          deletedAt: null,
-          publishedAt: {
-            lte: new Date(),
-            not: null,
-          },
-        },
+        where,
       }),
     ]);
 

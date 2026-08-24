@@ -16,7 +16,6 @@ import {
 } from './order.error';
 import { PAYMENT_STATUS } from 'src/common/constants/payment.constant';
 import { ORDER_STATUS } from 'src/common/constants/order.constant';
-import { CommonUserRepository } from 'src/common/repositories/common-user.repository';
 import { OrderProducer } from './order.producer';
 
 type WhereUniqueOrderType =
@@ -182,189 +181,202 @@ export class OrderRepository {
     transaction: any;
     orders: any;
   }> {
-    const arrayCartItems = body.map((cartItem) => cartItem.cartItemIds).flat();
-    const cartItems = await this.prismaService.cartItem.findMany({
-      where: {
-        id: {
-          in: arrayCartItems,
-        },
-        userId,
-      },
-      include: {
-        sku: {
-          include: {
-            product: {
-              include: {
-                productTranslations: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    if (cartItems.length !== arrayCartItems.length) {
+    const cartItemIds = [...new Set(body.flatMap((item) => item.cartItemIds))];
+    if (cartItemIds.length === 0) {
       throw NotFoundCartItemException;
     }
-    const isOutOfStock = cartItems.some((item) => {
-      return item.sku.quantity <= item.quantity;
-    });
-    if (isOutOfStock) {
-      throw OutOfStockSKUException('sku');
-    }
 
-    const isExistProduct = cartItems.some((item) => {
-      return (
-        item.sku.product.deletedAt !== null ||
-        item.sku.deletedAt !== null ||
-        item.sku.product.publishedAt == null ||
-        item.sku.product.publishedAt > new Date()
-      );
-    });
-    if (isExistProduct) {
-      throw NotFoundRecordException;
-    }
+    const now = new Date();
 
-    const mapCartItem = new Map<number, (typeof cartItems)[0]>();
-    cartItems.forEach((item) => {
-      mapCartItem.set(item.id, item);
-    });
-    const isValidBodyData = body.every((item) => {
-      const bodyCartItemIds = item.cartItemIds;
-      return bodyCartItemIds.every((cartItemId: number) => {
-        const cartItem = mapCartItem.get(cartItemId);
-        return item.shopId === cartItem?.sku.product.shopId;
-      });
-    });
-    if (!isValidBodyData) {
-      throw ProductNotBelongToShopException;
-    }
-    const total = cartItems.reduce((acc, item) => {
-      return acc + item.sku.price * item.quantity;
-    }, 0);
-    const [transaction, orders] = await this.prismaService.$transaction(
-      async (tx) => {
-        const orders = await Promise.all(
-          body.map((item) =>
-            tx.order.create({
-              data: {
-                userId,
-                status:
-                  item.paymentMethod === 'COD'
-                    ? ORDER_STATUS.PENDING_CONFIRMATION
-                    : ORDER_STATUS.PENDING_PAYMENT,
-                paymentMethod: item.paymentMethod,
-                addressShipId: item.addressShipId,
-                deliveryId: item.deliveryId,
-                shopId: item.shopId,
-                createdById: userId,
-                items: {
-                  create: item.cartItemIds.map((cartItemId) => {
-                    const cartItem = mapCartItem.get(cartItemId);
-                    return {
-                      productName: cartItem!.sku.product.name,
-                      skuPrice: cartItem!.sku.price,
-                      skuAttributes: cartItem!.sku.attributes ?? {},
-                      image: cartItem?.sku.image ?? '',
-                      quantity: cartItem!.quantity,
-                      productId: cartItem!.sku.productId,
-                      skuId: cartItem!.skuId,
-                      productTranslations:
-                        cartItem?.sku.product.productTranslations.map(
-                          (translation) => {
-                            return {
-                              id: translation.id,
-                              name: translation.name,
-                              description: translation.description,
-                              languageId: translation.languageId,
-                            };
-                          },
-                        ) ?? [],
-                    };
-                  }),
+    const result = await this.prismaService.$transaction(async (tx) => {
+      // Pessimistic row locking to avoid race conditions
+      await tx.$executeRaw`
+        SELECT 1
+        FROM "CartItem" ci
+        JOIN "SKU" s ON s.id = ci."skuId"
+        WHERE ci.id = ANY(${cartItemIds})
+          AND ci."userId" = ${userId}
+        FOR UPDATE OF ci, s
+      `;
+
+      // Read locked cart items with complete Prisma types
+      const cartItems = await tx.cartItem.findMany({
+        where: {
+          id: {
+            in: cartItemIds,
+          },
+          userId,
+        },
+        include: {
+          sku: {
+            include: {
+              product: {
+                include: {
+                  productTranslations: true,
                 },
               },
-            }),
-          ),
-        );
-        const transaction = await tx.transaction.create({
-          data: {
-            status: PAYMENT_STATUS.PENDING,
-            method: body[0].paymentMethod,
-            total,
-            userId,
-          },
-        });
-
-        const payments = await Promise.all(
-          orders.map((order) => {
-            const orderCartItems = cartItems.filter(
-              (i) => i.sku.product.shopId === order.shopId,
-            );
-            const amount = orderCartItems.reduce(
-              (sum, i) => sum + i.sku.price * i.quantity,
-              0,
-            );
-
-            return tx.payment.create({
-              data: {
-                transactionId: transaction.id,
-                amount,
-                status: PAYMENT_STATUS.PENDING,
-                userId,
-                orderId: order.id,
-              },
-            });
-          }),
-        );
-        const cartItem$ = tx.cartItem.deleteMany({
-          where: {
-            id: {
-              in: arrayCartItems,
             },
           },
+        },
+      });
+
+      if (cartItems.length !== cartItemIds.length) {
+        throw NotFoundCartItemException;
+      }
+
+      const isOutOfStock = cartItems.some((item) => {
+        return item.sku.quantity < item.quantity;
+      });
+      if (isOutOfStock) {
+        throw OutOfStockSKUException('sku');
+      }
+
+      const isExistProduct = cartItems.some((item) => {
+        return (
+          item.sku.product.deletedAt !== null ||
+          item.sku.deletedAt !== null ||
+          item.sku.product.publishedAt == null ||
+          item.sku.product.publishedAt > now
+        );
+      });
+      if (isExistProduct) {
+        throw NotFoundRecordException;
+      }
+
+      const mapCartItem = new Map<number, (typeof cartItems)[0]>();
+      cartItems.forEach((item) => {
+        mapCartItem.set(item.id, item);
+      });
+
+      const isValidBodyData = body.every((item) => {
+        const bodyCartItemIds = item.cartItemIds;
+        return bodyCartItemIds.every((cartItemId: number) => {
+          const cartItem = mapCartItem.get(cartItemId);
+          return item.shopId === cartItem?.sku.product.shopId;
         });
-        const sku$ = Promise.all(
-          cartItems.map((item) =>
-            tx.sKU.update({
-              where: {
-                id: item.sku.id,
-              },
-              data: {
-                quantity: {
-                  decrement: item.quantity,
-                },
-              },
-            }),
-          ),
-        );
-        const updatePaymentOrder$ = await Promise.all(
-          payments.map((payment) =>
-            tx.order.update({
-              where: { id: payment.orderId },
-              data: { paymentId: payment.id },
-            }),
-          ),
-        );
+      });
+      if (!isValidBodyData) {
+        throw ProductNotBelongToShopException;
+      }
 
-        let scheduleCancelPaymentJob$: Promise<any> | null = null;
+      const total = cartItems.reduce((acc, item) => {
+        return acc + item.sku.price * item.quantity;
+      }, 0);
 
-        if (body[0].paymentMethod !== 'COD') {
-          scheduleCancelPaymentJob$ = this.orderProducer.scheduleCancelJob(
-            transaction.id,
+      const orders = await Promise.all(
+        body.map((item) =>
+          tx.order.create({
+            data: {
+              userId,
+              status:
+                item.paymentMethod === 'COD'
+                  ? ORDER_STATUS.PENDING_CONFIRMATION
+                  : ORDER_STATUS.PENDING_PAYMENT,
+              paymentMethod: item.paymentMethod,
+              addressShipId: item.addressShipId,
+              deliveryId: item.deliveryId,
+              shopId: item.shopId,
+              createdById: userId,
+              items: {
+                create: item.cartItemIds.map((cartItemId) => {
+                  const cartItem = mapCartItem.get(cartItemId);
+                  return {
+                    productName: cartItem!.sku.product.name,
+                    skuPrice: cartItem!.sku.price,
+                    skuAttributes: cartItem!.sku.attributes ?? {},
+                    image: cartItem?.sku.image ?? '',
+                    quantity: cartItem!.quantity,
+                    productId: cartItem!.sku.productId,
+                    skuId: cartItem!.skuId,
+                    productTranslations:
+                      cartItem?.sku.product.productTranslations.map(
+                        (translation) => {
+                          return {
+                            id: translation.id,
+                            name: translation.name,
+                            description: translation.description,
+                            languageId: translation.languageId,
+                          };
+                        },
+                      ) ?? [],
+                  };
+                }),
+              },
+            },
+          }),
+        ),
+      );
+
+      const transaction = await tx.transaction.create({
+        data: {
+          status: PAYMENT_STATUS.PENDING,
+          method: body[0].paymentMethod,
+          total,
+          userId,
+        },
+      });
+
+      const payments = await Promise.all(
+        orders.map((order) => {
+          const orderCartItems = cartItems.filter(
+            (i) => i.sku.product.shopId === order.shopId,
           );
-        }
-        const [_] = await Promise.all([
-          cartItem$,
-          sku$,
-          updatePaymentOrder$,
-          scheduleCancelPaymentJob$,
-        ]);
-        return [transaction, orders];
-      },
-    );
+          const amount = orderCartItems.reduce(
+            (sum, i) => sum + i.sku.price * i.quantity,
+            0,
+          );
 
-    return { transaction, orders };
+          return tx.payment.create({
+            data: {
+              transactionId: transaction.id,
+              amount,
+              status: PAYMENT_STATUS.PENDING,
+              userId,
+              orderId: order.id,
+            },
+          });
+        }),
+      );
+
+      await tx.cartItem.deleteMany({
+        where: {
+          id: {
+            in: cartItemIds,
+          },
+        },
+      });
+
+      // Update SKU quantity atomically and verify that it matches our check
+      for (const item of cartItems) {
+        const affectedRows = await tx.$executeRaw`
+          UPDATE "SKU"
+          SET quantity = quantity - ${item.quantity}
+          WHERE id = ${item.sku.id}
+            AND quantity >= ${item.quantity}
+        `;
+        if (affectedRows === 0) {
+          throw OutOfStockSKUException('sku');
+        }
+      }
+
+      await Promise.all(
+        payments.map((payment) =>
+          tx.order.update({
+            where: { id: payment.orderId },
+            data: { paymentId: payment.id },
+          }),
+        ),
+      );
+
+      return [transaction, orders];
+    });
+
+    // Schedule side effects outside the database transaction block (Atomicity guarantee)
+    if (body[0].paymentMethod !== 'COD') {
+      await this.orderProducer.scheduleCancelJob(result[0].id);
+    }
+
+    return { transaction: result[0], orders: result[1] };
   }
 
   async cancel(userId: number, orderId: number): Promise<CancelOrderResType> {
