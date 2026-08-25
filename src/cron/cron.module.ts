@@ -5,9 +5,7 @@ import { FlashSaleStatusTask } from './tasks/flash-sale-status.task';
 import { VerificationCodeTask } from './tasks/verification-code.task';
 import { ProductViewsTask } from './tasks/product-views.task';
 
-const tasks = envConfig.CRON_ENABLED
-  ? [FlashSaleStatusTask, VerificationCodeTask, ProductViewsTask]
-  : [];
+const tasks = envConfig.CRON_ENABLED ? [ProductViewsTask] : [];
 
 @Module({
   imports: envConfig.CRON_ENABLED ? [ScheduleModule.forRoot()] : [],
