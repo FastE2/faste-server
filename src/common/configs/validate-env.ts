@@ -37,6 +37,13 @@ const configSchema = z.object({
   AMQP_URL: z.string(),
   ELASTICSEARCH_NODE: z.string(),
   ELASTICSEARCH_APIKEY: z.string(),
+  CRON_ENABLED: z
+    .preprocess((val) => {
+      if (val === undefined || val === null) return true;
+      return val === 'true' || val === true;
+    }, z.boolean())
+    .optional()
+    .default(true),
 });
 
 const configServer = configSchema.safeParse(process.env);

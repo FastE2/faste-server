@@ -74,11 +74,28 @@ Before running the application, ensure you have the following installed:
    npm install
    ```
 
-3. **Database Migration**
+3. **Configure Environment Variables**
+   Copy the example environment file and fill in your local values:
+   ```bash
+   cp .env.example .env
+   ```
+
+4. **Database Migration**
    ```bash
    npx prisma generate
    npx prisma migrate dev
    ```
+
+## ⏰ Cron & Scheduled Tasks
+
+The backend includes a modular cron task system utilizing `@nestjs/schedule` to run background jobs.
+
+You can configure the cron system using the `CRON_ENABLED` environment variable:
+* **`CRON_ENABLED=true`** (default): Enables all background tasks, including:
+  * **Flash Sale Status Transition** (runs every minute): Automates live/scheduled/ended transitions for flash sales.
+  * **Product Views Synchronization** (runs every day at midnight): Syncs daily unique product views from Redis HyperLogLog (HLL) to the PostgreSQL database `totalViews` column and cleans up processed keys.
+  * **Verification Code Cleanup** (runs every hour): Removes expired verification codes.
+* **`CRON_ENABLED=false`**: Fully disables all scheduled cron tasks and prevents scheduling hooks from being registered.
 
 ## 🏃 Running the App
 

@@ -5,6 +5,7 @@ import {
   CreateProductBodyType,
   CreateProductInDBBodyType,
   GetProductsQueryType,
+  GetProductsManageQueryType,
   UpdateProductBodyType,
 } from './product.schema';
 import { ROLE_NAME } from 'src/common/constants/role-base.constant';
@@ -282,21 +283,76 @@ export class ProductRepository {
     pagination,
     where,
   }: {
-    pagination: PaginationQueryType;
+    pagination: GetProductsManageQueryType;
     where: Prisma.ProductWhereInput;
   }) {
     const skip = (pagination.page - 1) * pagination.limit;
     const take = pagination.limit;
 
+    const queryWhere: Prisma.ProductWhereInput = {
+      ...where,
+    };
+
+    if (pagination.status) {
+      queryWhere.status = pagination.status;
+    }
+
+    if (pagination.sku) {
+      queryWhere.skus = {
+        some: {
+          skuCode: {
+            contains: pagination.sku,
+            mode: 'insensitive',
+          },
+          deletedAt: null,
+        },
+      };
+    }
+
+    if (pagination.name) {
+      queryWhere.name = {
+        contains: pagination.name,
+        mode: 'insensitive',
+      };
+    }
+
+    if (pagination.brandIds && pagination.brandIds.length > 0) {
+      queryWhere.brandId = {
+        in: pagination.brandIds,
+      };
+    }
+
+    if (pagination.categories && pagination.categories.length > 0) {
+      queryWhere.categories = {
+        some: {
+          category: {
+            id: {
+              in: pagination.categories,
+            },
+          },
+        },
+      };
+    }
+
+    if (
+      pagination.minPrice !== undefined ||
+      pagination.maxPrice !== undefined
+    ) {
+      queryWhere.basePrice = {
+        gte: pagination.minPrice,
+        lte: pagination.maxPrice,
+      };
+    }
+
     const [data, totalItem] = await Promise.all([
       this.prismaService.product.findMany({
-        where,
+        where: queryWhere,
         include: { brand: true, categories: true, skus: true, discounts: true },
         take,
         skip,
       }),
       this.prismaService.product.count({
-        where,
+        where: queryWhere,
       }),
     ]);
 

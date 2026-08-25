@@ -256,7 +256,15 @@ export const GetProductsQuerySchema = z.object({
 
 export const UpdateProductBodySchema = CreateProductInDBBodySchema;
 
+export const GetProductsManageQuerySchema = GetProductsQuerySchema.extend({
+  status: z.nativeEnum(ProductStatus).optional(),
+  sku: z.string().trim().optional(),
+});
+
 export type GetProductsQueryType = z.infer<typeof GetProductsQuerySchema>;
+export type GetProductsManageQueryType = z.infer<
+  typeof GetProductsManageQuerySchema
+>;
 export type UpdateProductBodyType = z.infer<typeof UpdateProductBodySchema>;
 export type CreateProductBodyType = z.infer<typeof CreateProductBodySchema>;
 export const UpdateCategoryBodySchema = CreateProductBodySchema;

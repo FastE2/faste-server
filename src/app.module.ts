@@ -32,8 +32,11 @@ import { ReviewModule } from './modules/review/review.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { HealthModule } from './modules/health/health.module';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
+import { RedisModule } from './infra/redis/redis.module';
+import { CronModule } from './cron/cron.module';
 
 const modules = [
+  CronModule,
   AuthModule,
   UserModule,
   // MediaModule,
@@ -70,6 +73,7 @@ const modules = [
     }),
     QueueModule,
     PrismaModule,
+    RedisModule,
     CommonModule,
     ...modules,
     HealthModule,

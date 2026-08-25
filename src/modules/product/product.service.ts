@@ -1,18 +1,24 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { NotFoundRecordException } from 'src/common/errors';
 import { Prisma } from '@prisma/client';
 import {
   CreateProductBodyType,
   CreateProductInDBBodyType,
+  GetProductsManageQueryType,
   GetProductsQueryType,
 } from './product.schema';
 import { ProductRepository } from './product.repository';
 import { ROLE_NAME } from 'src/common/constants/role-base.constant';
 import { buildSkuCode } from '../../common/helpers/generate-skus.helper';
+import Redis from 'ioredis';
 
 @Injectable()
 export class ProductService {
-  constructor(private readonly productRepository: ProductRepository) {}
+  private readonly logger = new Logger(ProductService.name);
+  constructor(
+    private readonly productRepository: ProductRepository,
+    private readonly redis: Redis,
+  ) {}
   async findAllPublic(query: GetProductsQueryType) {
     try {
       return await this.productRepository.findAllPublic(query);
@@ -44,7 +50,11 @@ export class ProductService {
     }
   }
 
-  async findBySlugIdPublic(slugId: string) {
+  async findBySlugIdPublic(
+    slugId: string,
+    ipAddress?: string,
+    userAgent?: string,
+  ) {
     try {
       const product = await this.productRepository.findOneUniquePublic({
         slugId,
@@ -52,6 +62,16 @@ export class ProductService {
       if (!product) {
         throw NotFoundRecordException;
       }
+
+      if (ipAddress && userAgent) {
+        this.recordProductView(slugId, ipAddress, userAgent).catch((err) =>
+          this.logger.error('Failed to record product view', err),
+        );
+      }
+      const todayViews = await this.getDailyUniqueViews(slugId);
+
+      product.totalViews += todayViews;
+
       return product;
     } catch (error) {
       console.log('/product/public', error);
@@ -64,7 +84,7 @@ export class ProductService {
     userId,
     roleName,
   }: {
-    query: GetProductsQueryType;
+    query: GetProductsManageQueryType;
     userId: number;
     roleName: string;
   }) {
@@ -252,5 +272,30 @@ export class ProductService {
       throw new ForbiddenException();
     }
     return true;
+  }
+
+  async recordProductView(
+    slugId: string,
+    ipAddress: string,
+    userAgent: string,
+  ) {
+    const today = new Date().toISOString().split('T')[0];
+    const key = `views:product:${slugId}:${today}`;
+
+    console.log(
+      `Recording product view for slugId: ${slugId}, IP: ${ipAddress}, User-Agent: ${userAgent}`,
+    );
+
+    const pipeline = this.redis.pipeline();
+    pipeline.pfadd(key, `${ipAddress}:${userAgent}`);
+    pipeline.expire(key, 60 * 60 * 24 * 30);
+    await pipeline.exec();
+  }
+
+  async getDailyUniqueViews(slugId: string, dateStr?: string): Promise<number> {
+    const targetDate = dateStr ?? new Date().toISOString().split('T')[0];
+    const key = `views:product:${slugId}:${targetDate}`;
+
+    return await this.redis.pfcount(key);
   }
 }

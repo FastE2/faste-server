@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Ip,
   Param,
   Patch,
   Post,
@@ -17,11 +18,13 @@ import {
   CreateProductBodyDTO,
   GetAllProductPublicResDTO,
   GetParamSlugIdDTO,
+  GetProductsManageQueryDTO,
   GetProductsQueryDTO,
   UpdateProductBodyDTO,
 } from './product.dto';
 import { Ispublic } from 'src/common/decorators/auth.decorator';
 import { ActiveRolePermissions } from 'src/common/decorators/active-role-permissions.decorator';
+import { UserAgent } from 'src/common/decorators/user-agent.decorator';
 
 @Controller('products')
 export class ProductController {
@@ -54,14 +57,18 @@ export class ProductController {
 
   @Get('/public/slug/:slugId')
   @Ispublic()
-  getBySlugId(@Param() params: GetParamSlugIdDTO) {
-    return this.productService.findBySlugIdPublic(params.slugId);
+  getBySlugId(
+    @UserAgent() userAgent: string,
+    @Ip() ip: string,
+    @Param() params: GetParamSlugIdDTO,
+  ) {
+    return this.productService.findBySlugIdPublic(params.slugId, ip, userAgent);
   }
   // -- END PUBLIC
 
   @Get('')
   getProducts(
-    @Query() query: GetProductsQueryDTO,
+    @Query() query: GetProductsManageQueryDTO,
     @ActiveUser('userId') userId: number,
     @ActiveRolePermissions('name') roleName: string,
   ) {

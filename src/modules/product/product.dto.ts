@@ -3,6 +3,7 @@ import {
   CreateProductBodySchema,
   GetAllProductPublicResSchema,
   GetParamSlugIdSchema,
+  GetProductsManageQuerySchema,
   GetProductsQuerySchema,
   UpdateCategoryBodySchema,
   UpdateProductBodySchema,
@@ -20,6 +21,10 @@ export class UpdateProductBodyDTO extends createZodDto(
 ) {}
 
 export class GetProductsQueryDTO extends createZodDto(GetProductsQuerySchema) {}
+
+export class GetProductsManageQueryDTO extends createZodDto(
+  GetProductsManageQuerySchema,
+) {}
 
 export class GetAllProductPublicResDTO extends createZodDto(
   GetAllProductPublicResSchema,
