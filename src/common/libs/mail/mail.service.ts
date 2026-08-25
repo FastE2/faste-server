@@ -1,7 +1,7 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
-import  fs from 'fs';
-import  path from 'path';
+import fs from 'fs';
+import path from 'path';
 
 @Injectable()
 export class MailService {

@@ -13,7 +13,10 @@ export class EncryptionService {
     const cipher = crypto.createCipheriv(this.algorithm, this.key, iv);
     // let encrypted = cipher.update(text, 'utf8', 'hex');
     // encrypted += cipher.final('hex');
-    const encrypted = Buffer.concat([cipher.update(text, "utf8"), cipher.final()]);
+    const encrypted = Buffer.concat([
+      cipher.update(text, 'utf8'),
+      cipher.final(),
+    ]);
     return `${encrypted.toString('hex')}:${iv.toString('hex')}`;
   }
 

@@ -124,7 +124,7 @@ export class S3Strategy implements IStorageStrategy {
         MaxKeys: limit,
       });
       const response: ListObjectsV2CommandOutput = await this.client.send(cmd);
-      console.log(response)
+      console.log(response);
       // Lọc chỉ lấy file ảnh theo đuôi
       if (response.Contents) {
         const filtered = response.Contents.filter(
