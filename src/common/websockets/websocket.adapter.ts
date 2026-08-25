@@ -1,4 +1,4 @@
-import { INestApplicationContext } from '@nestjs/common';
+import { INestApplicationContext, Logger } from '@nestjs/common';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { ServerOptions, Server, Socket } from 'socket.io';
 import { generateRoomUserId } from 'src/common/helpers/generate';
@@ -8,6 +8,7 @@ import { TokenService } from '../libs/token/token.service';
 import envConfig from '../configs/validate-env';
 
 export class WebsocketAdapter extends IoAdapter {
+  private readonly logger = new Logger(WebsocketAdapter.name);
   private readonly tokenService: TokenService;
   private adapterConstructor: ReturnType<typeof createAdapter>;
 
@@ -17,12 +18,38 @@ export class WebsocketAdapter extends IoAdapter {
   }
 
   async connectToRedis(): Promise<void> {
-    const pubClient = createClient({ url: envConfig.REDIS_URL });
+    const pubClient = createClient({
+      url: envConfig.REDIS_URL,
+      pingInterval: 10000,
+      socket: {
+        connectTimeout: 10000,
+        reconnectStrategy: (retries) => {
+          if (retries > 10) {
+            this.logger.error('Redis reconnect failed after 10 attempts');
+            return new Error('Redis reconnect limit exceeded');
+          }
+          return Math.min(retries * 200, 3000);
+        },
+      },
+    });
+
     const subClient = pubClient.duplicate();
 
-    await Promise.all([pubClient.connect(), subClient.connect()]);
+    pubClient.on('error', (err) =>
+      this.logger.error(`Redis PubClient Error: ${err.message}`),
+    );
+    subClient.on('error', (err) =>
+      this.logger.error(`Redis SubClient Error: ${err.message}`),
+    );
 
-    this.adapterConstructor = createAdapter(pubClient, subClient);
+    try {
+      await Promise.all([pubClient.connect(), subClient.connect()]);
+      this.logger.log('Connected to Upstash Redis Adapter successfully');
+      this.adapterConstructor = createAdapter(pubClient, subClient);
+    } catch (error) {
+      this.logger.error(`Failed to connect to Redis: ${error.message}`);
+      throw error;
+    }
   }
 
   createIOServer(port: number, options?: ServerOptions): Server {
@@ -44,7 +71,6 @@ export class WebsocketAdapter extends IoAdapter {
   }
 
   private registerAuthMiddleware(server: Server) {
-    // áp dụng cho tất cả namespaces
     server.of(/.*/).use((socket, next) => {
       this.wsAuthMiddleware(socket, next).catch(next);
     });
@@ -63,12 +89,8 @@ export class WebsocketAdapter extends IoAdapter {
 
     try {
       const { userId } = await this.tokenService.verifyAccessToken(accessToken);
-
       socket.data.userId = userId;
-
-      // join room cho user
       await socket.join(generateRoomUserId(userId));
-
       next();
     } catch (error) {
       next(new Error('Unauthorized'));

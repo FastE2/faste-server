@@ -368,7 +368,7 @@ export class OrderRepository {
         ),
       );
 
-      return [transaction, orders];
+      return [transaction, orders] as const;
     });
 
     // Schedule side effects outside the database transaction block (Atomicity guarantee)
