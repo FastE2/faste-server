@@ -19,11 +19,13 @@ import { TokenService } from '../libs/token/token.service';
 import { AccessTokenPayload } from '../types/jwt.type';
 import { HTTPMethod } from '../constants/method.constant';
 import { PrismaService } from 'src/prisma/prisma.service';
+import Redis from 'ioredis';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
+    private readonly redis: Redis,
     private readonly tokenService: TokenService,
     private readonly prismaService: PrismaService,
     @Inject(forwardRef(() => CommonUserRepository))
@@ -54,6 +56,12 @@ export class AuthGuard implements CanActivate {
       if (!payload) {
         this.throwException('Error.UnableToDecodeToken');
       }
+
+      const isRevoked = await this.redis.get(`blacklist:${token}`);
+      if (isRevoked) {
+        this.throwException('Error.TokenRevoked');
+      }
+
       const [user] = await Promise.all([
         this.validate(payload.userId),
         this.validateUserPermission(payload, request),
@@ -69,9 +77,18 @@ export class AuthGuard implements CanActivate {
     }
   }
 
-  private validate(id: number) {
-    console.log('Validating user with id:', id);
-    return this.commonUserRepository.findUniqueUser({ id });
+  private async validate(id: number) {
+    const cacheKey = `user:${id}`;
+    const cachedUser = await this.redis.get(cacheKey);
+    if (cachedUser) {
+      return JSON.parse(cachedUser);
+    }
+
+    const user = await this.commonUserRepository.findUniqueUser({ id });
+    if (user) {
+      await this.redis.set(cacheKey, JSON.stringify(user), 'EX', 300); // 5 min TTL
+    }
+    return user;
   }
 
   private async validateUserPermission(

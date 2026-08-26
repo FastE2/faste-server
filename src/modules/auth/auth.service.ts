@@ -32,11 +32,13 @@ import { EncryptionService } from 'src/common/libs/crypto/encryption.service';
 import { generateOTP } from 'src/utils/generate-otp.util';
 import { EmailAlreadyExistsException } from 'src/common/errors';
 import { CaptchaService } from 'src/common/libs/captcha/captcha.service';
+import Redis from 'ioredis';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly commonUserRepository: CommonUserRepository,
+    private readonly redis: Redis,
     private readonly commonRoleRepository: CommonRoleRepository,
     private readonly authRepository: AuthRepository,
     private readonly hashService: HashService,
@@ -212,7 +214,7 @@ export class AuthService {
     }
   }
 
-  async logout(token: string, res: Response) {
+  async logout(refreshToken: string, accessToken: string, res: Response) {
     try {
       res.clearCookie('refresh-token', {
         httpOnly: true,
@@ -221,12 +223,30 @@ export class AuthService {
         path: '/',
       });
 
-      await this.authRepository.deleteRefreshToken(token);
+      // Blacklist the access token in Redis until its natural expiry
+      await this.blacklistAccessToken(accessToken);
+
+      await this.authRepository.deleteRefreshToken(refreshToken);
 
       return { message: 'Logout successfully' };
     } catch (error) {
       console.log('/auth/logout', error);
       throw error;
+    }
+  }
+
+  private async blacklistAccessToken(accessToken: string): Promise<void> {
+    if (!accessToken) return;
+
+    const decoded = this.tokenService.decodeToken(accessToken);
+    if (!decoded?.exp) return;
+
+    const nowSeconds = Math.floor(Date.now() / 1000);
+    const ttl = decoded.exp - nowSeconds;
+
+    // Only add to blacklist if the token has not already expired
+    if (ttl > 0) {
+      await this.redis.set(`blacklist:${accessToken}`, '1', 'EX', ttl);
     }
   }
 

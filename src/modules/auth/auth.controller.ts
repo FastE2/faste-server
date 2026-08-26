@@ -83,9 +83,10 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const token = req.cookies['refresh-token'];
+    const refreshToken = req.cookies['refresh-token'];
+    const [, accessToken] = req.headers.authorization?.split(' ') ?? [];
 
-    return this.authService.logout(token, res);
+    return this.authService.logout(refreshToken, accessToken ?? '', res);
   }
 
   @Post('otp')

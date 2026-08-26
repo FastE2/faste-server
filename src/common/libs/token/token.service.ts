@@ -51,4 +51,8 @@ export class TokenService {
       secret: envConfig.SERECT_KEY_REFRESHTOKEN,
     });
   }
+
+  decodeToken(token: string): { exp?: number; [key: string]: unknown } | null {
+    return this.jwtService.decode(token);
+  }
 }
