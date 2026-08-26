@@ -13,6 +13,9 @@ import {
   Query,
   Res,
   NotFoundException,
+  UploadedFiles,
+  ParseFilePipeBuilder,
+  HttpStatus,
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { MediaService } from './media.service';
@@ -59,17 +62,19 @@ export class MediaController {
     }),
   )
   uploadFileMultiple(
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new FileTypeValidator({ fileType: /(jpg|jpeg|png|webp)$/ }),
-          new MaxFileSizeValidator({
-            maxSize: 1 * 1024 * 1024, // 1MB
-            message: 'File is too large. Max file size is 1MB',
-          }),
-        ],
-        fileIsRequired: true,
-      }),
+    @UploadedFiles(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: /(jpg|jpeg|png|webp)$/,
+        })
+        .addMaxSizeValidator({
+          maxSize: 1 * 1024 * 1024, // 1MB
+          message: 'File is too large. Max file size is 1MB',
+        })
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+          fileIsRequired: true,
+        }),
     )
     files: Array<Express.Multer.File>,
   ) {
