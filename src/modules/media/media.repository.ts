@@ -9,7 +9,10 @@ export class MediaRepository {
 
   create(data: Omit<FileMediaType, 'createdAt'>) {
     return this.prismaService.file.create({
-      data,
+      data: {
+        ...data,
+        createdById: 1,
+      },
     });
   }
 

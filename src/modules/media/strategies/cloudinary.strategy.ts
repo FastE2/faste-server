@@ -1,169 +1,257 @@
-// // Interface Segregation Principle
-// import { Injectable, InternalServerErrorException } from '@nestjs/common';
-// import { IStorageStrategy } from '../interfaces/storage-strategy.interface';
-// import {
-//   S3Client,
-//   PutObjectCommand,
-//   DeleteObjectCommand,
-//   GetObjectCommand,
-//   ListObjectsV2Command,
-//   ListObjectsV2CommandOutput,
-// } from '@aws-sdk/client-s3';
-// import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-// import envConfig from 'src/common/configs/validate-env';
-// import mime from 'mime-types';
-// import { Upload } from '@aws-sdk/lib-storage';
-// import { generateRandomFilename } from 'src/common/helpers/random-file-name.helper';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { IStorageStrategy } from '../interfaces/storage-strategy.interface';
+import { v2 as cloudinary } from 'cloudinary';
+import { Readable } from 'stream';
+import 'multer';
+import { v4 as uuidv4 } from 'uuid';
 
-// @Injectable()
-// export class CloudinaryStrategy implements IStorageStrategy {
-//   private client: S3Client;
-//   private bucket: string;
+@Injectable()
+export class CloudinaryStrategy implements IStorageStrategy {
+  constructor() {
+    const cloudinaryUrl = process.env.CLOUDINARY_URL;
+    if (cloudinaryUrl) {
+      cloudinary.config({
+        cloudinary_url: cloudinaryUrl,
+      });
+    }
+  }
 
-//   constructor() {
-//     this.bucket = envConfig.AWS_S3_PUBLIC_BUCKET;
-//     this.client = new S3Client({
-//       region: envConfig.AWS_S3_REGION,
-//       credentials: {
-//         accessKeyId: envConfig.AWS_S3_ACCESS_KEY_ID,
-//         secretAccessKey: envConfig.AWS_S3_SECRET_ACCESS_KEY,
-//       },
-//     });
-//   }
+  private checkConfig() {
+    if (!cloudinary.config().api_key) {
+      throw new InternalServerErrorException(
+        'Cloudinary credentials are not configured. Please set CLOUDINARY_URL in .env',
+      );
+    }
+  }
 
-//   async uploadFile(
-//     file: Express.Multer.File,
-//     isPublic: boolean,
-//   ): Promise<{ filename: string; url: string }> {
-//     const filename = generateRandomFilename(file.originalname);
+  private uploadStream(fileBuffer: Buffer, options: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        options,
+        (error, result) => {
+          if (error) {
+            return reject(
+              new Error(error.message || 'Cloudinary upload failed'),
+            );
+          }
+          resolve(result);
+        },
+      );
+      Readable.from(fileBuffer).pipe(stream);
+    });
+  }
 
-//     const cmd = new PutObjectCommand({
-//       Bucket: this.bucket,
-//       Key: filename,
-//       Body: file.buffer,
-//       ContentType: file.mimetype,
-//       ACL: isPublic ? 'public-read' : 'private',
-//     });
+  private uploadChunkedStream(fileBuffer: Buffer, options: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_chunked_stream(
+        options,
+        (error, result) => {
+          if (error) {
+            return reject(
+              new Error(error.message || 'Cloudinary chunked upload failed'),
+            );
+          }
+          resolve(result);
+        },
+      );
+      Readable.from(fileBuffer).pipe(stream);
+    });
+  }
 
-//     try {
-//       await this.client.send(cmd);
-//       const url = isPublic
-//         ? `https://${this.bucket}.s3.amazonaws.com/${filename}`
-//         : await this.getPresignedUrl(filename);
-//       return { filename, url };
-//     } catch (err) {
-//       throw new InternalServerErrorException('S3 upload error: ' + err.message);
-//     }
-//   }
+  async uploadFile(
+    file: Express.Multer.File,
+    isPublic: boolean,
+  ): Promise<{ filename: string; url: string }> {
+    this.checkConfig();
+    try {
+      const options: any = {
+        folder: 'faste',
+        resource_type: 'auto',
+        type: isPublic ? 'upload' : 'authenticated',
+      };
 
-//   async uploadFileMutiple(
-//     file: Express.Multer.File,
-//     isPublic: boolean,
-//   ): Promise<{ filename: string; url: string }> {
-//     const filename = generateRandomFilename(file.originalname.split('.')[0]);
+      const result = await this.uploadStream(file.buffer, options);
+      const filename = result.public_id;
+      const url = isPublic
+        ? result.secure_url
+        : await this.getPresignedUrl(filename);
+      return { filename, url };
+    } catch (err) {
+      throw new InternalServerErrorException(
+        'Cloudinary upload error: ' +
+          (err instanceof Error ? err.message : String(err)),
+      );
+    }
+  }
 
-//     try {
-//       // Sử dụng multipart upload cho file lớn
-//       const upload = new Upload({
-//         client: this.client,
-//         params: {
-//           Bucket: this.bucket,
-//           Key: filename,
-//           Body: file.buffer,
-//           ContentType: file.mimetype,
-//           ACL: isPublic ? 'public-read' : 'private',
-//         },
-//         queueSize: 4, // upload 4 part cùng lúc
-//         partSize: 5 * 1024 * 1024, // mỗi part 5MB
-//         leavePartsOnError: false,
-//       });
+  async uploadFileMutiple(
+    file: Express.Multer.File,
+    isPublic: boolean,
+  ): Promise<{ filename: string; url: string }> {
+    this.checkConfig();
+    try {
+      const options: any = {
+        folder: 'faste',
+        resource_type: 'auto',
+        type: isPublic ? 'upload' : 'authenticated',
+        chunk_size: 6000000,
+      };
 
-//       await upload.done();
+      const result = await this.uploadChunkedStream(file.buffer, options);
+      const filename = result.public_id;
+      const url = isPublic
+        ? result.secure_url
+        : await this.getPresignedUrl(filename);
+      return { filename, url };
+    } catch (err) {
+      throw new InternalServerErrorException(
+        'Cloudinary multiple upload error: ' +
+          (err instanceof Error ? err.message : String(err)),
+      );
+    }
+  }
 
-//       const url = isPublic
-//         ? `https://${this.bucket}.s3.amazonaws.com/${filename}`
-//         : await this.getPresignedUrl(filename);
+  async uploadMultipleFiles(
+    files: Express.Multer.File[],
+    isPublic: boolean,
+  ): Promise<{ filename: string; url: string }[]> {
+    this.checkConfig();
+    const uploadPromises = files.map(async (file) => {
+      try {
+        const options: any = {
+          folder: 'faste',
+          resource_type: 'auto',
+          type: isPublic ? 'upload' : 'authenticated',
+        };
+        const result = await this.uploadStream(file.buffer, options);
+        const filename = result.public_id;
+        const url = isPublic
+          ? result.secure_url
+          : await this.getPresignedUrl(filename);
+        return { filename, url };
+      } catch (err) {
+        throw new InternalServerErrorException(
+          'Cloudinary multiple upload error: ' +
+            (err instanceof Error ? err.message : String(err)),
+        );
+      }
+    });
+    return Promise.all(uploadPromises);
+  }
 
-//       return { filename, url };
-//     } catch (err) {
-//       console.log('upload', err.message);
-//       throw new InternalServerErrorException('S3 multipart upload error');
-//     }
-//   }
+  async deleteFile(filename: string): Promise<{ message: string }> {
+    this.checkConfig();
+    try {
+      await cloudinary.uploader.destroy(filename, { type: 'upload' });
+      await cloudinary.uploader.destroy(filename, { type: 'authenticated' });
+      return { message: 'Delete successfully' };
+    } catch (err) {
+      throw new InternalServerErrorException(
+        'Cloudinary delete error: ' +
+          (err instanceof Error ? err.message : String(err)),
+      );
+    }
+  }
 
-//   async deleteFile(filename: string): Promise<{
-//     message: string;
-//   }> {
-//     const cmd = new DeleteObjectCommand({ Bucket: this.bucket, Key: filename });
-//     await this.client.send(cmd);
-//     return { message: 'Delete successfully' };
-//   }
+  getPresignedUrl(filename: string): Promise<string> {
+    this.checkConfig();
+    try {
+      const url = cloudinary.url(filename, {
+        sign_url: true,
+        type: 'authenticated',
+        expires_at: Math.floor(Date.now() / 1000) + 60,
+        secure: true,
+      });
+      return Promise.resolve(url);
+    } catch (err) {
+      throw new InternalServerErrorException(
+        'Cloudinary presign error: ' +
+          (err instanceof Error ? err.message : String(err)),
+      );
+    }
+  }
 
-//   async getPresignedUrl(filename: string): Promise<string> {
-//     const cmd = new GetObjectCommand({ Bucket: this.bucket, Key: filename });
-//     return await getSignedUrl(this.client, cmd, { expiresIn: 60 });
-//   }
+  async getAllImages({
+    page = 1,
+    limit = 10,
+    prefix = '',
+  }: {
+    page: number;
+    limit: number;
+    prefix: string;
+  }): Promise<string[]> {
+    this.checkConfig();
+    try {
+      let nextCursor: string | undefined = undefined;
+      let currentPage = 1;
+      let images: string[] = [];
+      do {
+        const response = await cloudinary.api.resources({
+          type: 'upload',
+          prefix: 'faste',
+          max_results: limit,
+          next_cursor: nextCursor,
+        });
+        if (currentPage === page) {
+          images = response.resources.map(
+            (resource: any) => resource.secure_url,
+          );
+          break;
+        }
+        nextCursor = response.next_cursor;
+        currentPage++;
+      } while (nextCursor);
+      return images;
+    } catch (err) {
+      throw new InternalServerErrorException(
+        'Cloudinary list error: ' +
+          (err instanceof Error ? err.message : String(err)),
+      );
+    }
+  }
 
-//   async getAllImages({
-//     page = 1,
-//     limit = 10,
-//     prefix = '',
-//   }: {
-//     page: number;
-//     limit: number;
-//     prefix: string;
-//   }): Promise<string[]> {
-//     let continuationToken: string | undefined = undefined;
-//     let currentPage = 1;
-//     let images: any = [];
-//     do {
-//       const cmd = new ListObjectsV2Command({
-//         Bucket: this.bucket,
-//         Prefix: prefix, // nếu muốn lọc theo folder
-//         ContinuationToken: continuationToken,
-//         MaxKeys: limit,
-//       });
-//       const response: ListObjectsV2CommandOutput = await this.client.send(cmd);
-//       console.log(response)
-//       // Lọc chỉ lấy file ảnh theo đuôi
-//       if (response.Contents) {
-//         const filtered = response.Contents.filter(
-//           (item) => item.Key && /\.(jpg|jpeg|png|gif|webp)$/i.test(item.Key),
-//         ).map((item) => ({
-//           url: `https://${this.bucket}.s3.amazonaws.com/${item.Key}`,
-//           fileSize: item.Size,
-//           createdAt: item.LastModified,
-//         }));
-//         if (currentPage === page) {
-//           images = filtered;
-//           break;
-//         }
-//         // response.Contents.forEach((item) => {
-//         //   console.log(item);
-//         //   if (item.Key && /\.(jpg|jpeg|png|gif|webp)$/i.test(item.Key)) {
-//         //     images.push({
-//         //       url: `https://${this.bucket}.s3.amazonaws.com/${item.Key}`,
-//         //       fileSize: item.Size,
-//         //       createdAt: item.LastModified,
-//         //     });
-//         //   }
-//         // });
-//       }
-//       continuationToken = response.IsTruncated
-//         ? response.NextContinuationToken
-//         : undefined;
-//       currentPage++;
-//     } while (continuationToken);
-//     return images;
-//   }
+  createPresignedUrlWithClient(filename: string): Promise<string> {
+    this.checkConfig();
+    try {
+      const timestamp = Math.round(new Date().getTime() / 1000);
+      const apiSecret = cloudinary.config().api_secret!;
+      const apiKey = cloudinary.config().api_key;
+      const cloudName = cloudinary.config().cloud_name;
 
-//   async createPresignedUrlWithClient(filename: string): Promise<string> {
-//     const contentType = mime.lookup(filename) || 'application/octet-stream';
-//     const cmd = new PutObjectCommand({
-//       Bucket: this.bucket,
-//       Key: filename,
-//       ContentType: contentType,
-//     });
-//     return await getSignedUrl(this.client, cmd, { expiresIn: 30 });
-//   }
-// }
+      const baseName = filename.split('.')[0].replace(/[^a-zA-Z0-9_-]/g, '');
+      const publicId = `${baseName}_${uuidv4().slice(0, 8)}`;
+
+      const paramsToSign: Record<string, any> = {
+        folder: 'faste',
+        overwrite: false,
+        public_id: publicId,
+        timestamp: timestamp,
+        unique_filename: false,
+      };
+
+      const signature = cloudinary.utils.api_sign_request(
+        paramsToSign,
+        apiSecret,
+      );
+
+      const queryParams = new URLSearchParams({
+        api_key: apiKey!,
+        timestamp: timestamp.toString(),
+        signature: signature,
+        public_id: publicId,
+        folder: 'faste',
+        overwrite: 'false',
+        unique_filename: 'false',
+      });
+
+      const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload?${queryParams.toString()}`;
+
+      return Promise.resolve(url);
+    } catch (err) {
+      throw new InternalServerErrorException(
+        'Cloudinary client presign error: ' +
+          (err instanceof Error ? err.message : String(err)),
+      );
+    }
+  }
+}

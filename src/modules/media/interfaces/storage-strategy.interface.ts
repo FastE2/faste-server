@@ -1,3 +1,5 @@
+import 'multer';
+
 export interface GetAllImagesParams {
   page: number;
   limit: number;
@@ -14,6 +16,11 @@ export interface IStorageStrategy {
     file: Express.Multer.File,
     isPublic: boolean,
   ): Promise<{ filename: string; url: string }>;
+
+  uploadMultipleFiles(
+    files: Express.Multer.File[],
+    isPublic: boolean,
+  ): Promise<{ filename: string; url: string }[]>;
 
   deleteFile(filename: string): Promise<{
     message: string;

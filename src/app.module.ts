@@ -39,7 +39,7 @@ const modules = [
   CronModule,
   AuthModule,
   UserModule,
-  // MediaModule,
+  MediaModule,
   RoleModule,
   PermissionModule,
   LanguageModule,

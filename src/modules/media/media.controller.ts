@@ -20,12 +20,14 @@ import { GetMediasQueryDTO, PresignedUploadFileBodyDTO } from './media.dto';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { MessageResDTO } from 'src/common/dtos/response.dto';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
+import { Ispublic } from 'src/common/decorators/auth.decorator';
 
 @Controller('media')
 export class MediaController {
   constructor(private readonly mediaService: MediaService) {}
 
   @Post('upload')
+  @Ispublic()
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(
     @UploadedFile(
@@ -37,7 +39,7 @@ export class MediaController {
             message: 'File is too large. Max file size is 1MB',
           }),
         ],
-        // fileIsRequired: true,
+        fileIsRequired: true,
       }),
     )
     file: Express.Multer.File,
@@ -48,25 +50,31 @@ export class MediaController {
     return this.mediaService.upload(file, isPublicBool, userId);
   }
 
-  // @Post('upload-mutiple')
-  // @UseInterceptors(
-  //   FilesInterceptor('files', 100, {
-  //     limits: {
-  //       fileSize: 5 * 1024 * 1024, // 1MB
-  //     },
-  //   }),
-  // )
-  // uploadFile(
-  //   @UploadedFile() // new ParseFilePipeWithUnlink({
-  //   file //   validators: [
-  //   //     new MaxFileSizeValidator({ maxSize: 1 * 1024 * 1024 }), // 5MB
-  //   //     new FileTypeValidator({ fileType: /(jpg|jpeg|png|webp)$/ }),
-  //   //   ],
-  //   // }),
-  //   : Express.Multer.File,
-  // ) {
-  //   return this.mediaService.upload(file, false);
-  // }
+  @Post('upload-multiple')
+  @UseInterceptors(
+    FilesInterceptor('files', 10, {
+      limits: {
+        fileSize: 1 * 1024 * 1024, // 1MB
+      },
+    }),
+  )
+  uploadFileMultiple(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: /(jpg|jpeg|png|webp)$/ }),
+          new MaxFileSizeValidator({
+            maxSize: 1 * 1024 * 1024, // 1MB
+            message: 'File is too large. Max file size is 1MB',
+          }),
+        ],
+        fileIsRequired: true,
+      }),
+    )
+    files: Array<Express.Multer.File>,
+  ) {
+    return this.mediaService.uploadMultipleFiles(files, true);
+  }
 
   @Delete(':filename')
   @ZodSerializerDto(MessageResDTO)
@@ -80,8 +88,8 @@ export class MediaController {
   }
 
   @Get('all')
-  GetAllImagesInS3(@Query() query: GetMediasQueryDTO) {
-    return this.mediaService.getAllImagesInS3(query);
+  GetAllImagesInCloud(@Query() query: GetMediasQueryDTO) {
+    return this.mediaService.getAllImagesInCloud(query);
   }
 
   @Get('')

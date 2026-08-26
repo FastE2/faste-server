@@ -34,9 +34,9 @@ export class MediaService {
     });
   }
 
-  // uploadMutiple(files: Array<Express.Multer.File>, isPublic = true) {
-  //   return this.storage.uploadFileMutiple()
-  // }
+  uploadMultipleFiles(files: Array<Express.Multer.File>, isPublic = true) {
+    return this.storage.uploadMultipleFiles(files, isPublic);
+  }
 
   async delete(key: string) {
     try {
@@ -64,7 +64,7 @@ export class MediaService {
     return this.storage.createPresignedUrlWithClient(randomFilename);
   }
 
-  async getAllImagesInS3(query: PaginationQueryType) {
+  async getAllImagesInCloud(query: PaginationQueryType) {
     const data = await this.storage.getAllImages({
       page: query.page,
       limit: query.limit,

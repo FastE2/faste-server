@@ -1,5 +1,6 @@
 // Interface Segregation Principle
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import 'multer';
 import { IStorageStrategy } from '../interfaces/storage-strategy.interface';
 import {
   S3Client,
@@ -52,7 +53,10 @@ export class S3Strategy implements IStorageStrategy {
         : await this.getPresignedUrl(filename);
       return { filename, url };
     } catch (err) {
-      throw new InternalServerErrorException('S3 upload error: ' + err.message);
+      throw new InternalServerErrorException(
+        'S3 upload error: ' +
+          (err instanceof Error ? err.message : String(err)),
+      );
     }
   }
 
@@ -86,9 +90,17 @@ export class S3Strategy implements IStorageStrategy {
 
       return { filename, url };
     } catch (err) {
-      console.log('upload', err.message);
+      console.log('upload', err instanceof Error ? err.message : String(err));
       throw new InternalServerErrorException('S3 multipart upload error');
     }
+  }
+
+  // Don't implement this method
+  async uploadMultipleFiles(
+    files: Express.Multer.File[],
+    isPublic: boolean,
+  ): Promise<{ filename: string; url: string }[]> {
+    return Promise.all(files.map((file) => this.uploadFile(file, isPublic)));
   }
 
   async deleteFile(filename: string): Promise<{
