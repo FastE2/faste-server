@@ -29,6 +29,7 @@ import { TemplateModule } from './modules/template/template.module';
 import { WidgetModule } from './modules/widget/widget.module';
 import { SearchModule } from './modules/search/search.module';
 import { ReviewModule } from './modules/review/review.module';
+import { ReportModule } from './modules/report/report.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { HealthModule } from './modules/health/health.module';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
@@ -59,6 +60,7 @@ const modules = [
   WidgetModule,
   SearchModule,
   ReviewModule,
+  ReportModule,
   HealthModule,
 ];
 @Module({

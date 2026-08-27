@@ -539,6 +539,9 @@ model ProductSKUSnapshot {
   productTranslations Json
 
   createdAt DateTime @default(now())
+
+  @@index([orderId])
+  @@index([productId])
 }
 
 model Discount {
@@ -692,6 +695,8 @@ model Order {
 
   @@index([deletedAt, createdById])
   @@index([userId])
+  @@index([shopId, status, createdAt])
+  @@index([status, createdAt])
 }
 
 model Transaction {
@@ -870,12 +875,30 @@ model SellerSalesReport {
   id            Int      @id @default(autoincrement())
   sellerId      Int
   seller        User     @relation(fields: [sellerId], references: [id])
+  date          DateTime @db.Date
   totalRevenue  Float
   totalQuantity Int
   totalOrders   Int
+  totalReturns  Int      @default(0)
   createdAt     DateTime @default(now())
 
+  @@unique([sellerId, date])
   @@index([sellerId])
+  @@index([date])
+}
+
+model AdminDailySummary {
+  id             Int      @id @default(autoincrement())
+  date           DateTime @unique @db.Date
+  totalRevenue   Float
+  totalOrders    Int
+  totalQuantity  Int
+  totalReturns   Int
+  totalCustomers Int
+  totalSellers   Int
+  createdAt      DateTime @default(now())
+
+  @@index([date])
 }
 
 model Notification {
