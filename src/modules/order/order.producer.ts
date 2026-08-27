@@ -16,7 +16,7 @@ export class OrderProducer {
       CANCEL_PAYMENT_JOB_NAME,
       { transactionId },
       {
-        delay: 168 * 60 * 60 * 1000, // 24h
+        delay: 5 * 60 * 1000, // 5 minutes
         jobId: generateCancelPaymentJobId(transactionId),
         removeOnComplete: true,
         removeOnFail: true,

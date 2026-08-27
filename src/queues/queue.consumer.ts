@@ -13,11 +13,13 @@ export class PaymentConsumer extends WorkerHost {
   ) {
     super();
   }
-  async process(job: Job<{ paymentId: number }, any, string>): Promise<any> {
+  async process(
+    job: Job<{ transactionId: number }, any, string>,
+  ): Promise<any> {
     switch (job.name) {
       case CANCEL_PAYMENT_JOB_NAME: {
-        const { paymentId } = job.data;
-        await this.commonPaymentRepository.cancelPaymentAndOrder(paymentId);
+        const { transactionId } = job.data;
+        await this.commonPaymentRepository.cancelPaymentAndOrder(transactionId);
         return {};
       }
       default: {
